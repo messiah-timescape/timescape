@@ -1,0 +1,7 @@
+# Instructions for creating setup
+
+1. CouchDB: Install and run CouchDB (For MacOS: "brew install couchdb")
+2. Ionic: Install ionic CLI (npm install -g ionic)
+3. Create project (ionic start architecture-test blank --type=react)
+4. Setup gitignore
+5. Install Jest, PouchDB and PouchDB Authentication
