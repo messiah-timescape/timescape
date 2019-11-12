@@ -1,8 +1,8 @@
-#System Architecture Test
+# System Architecture Test
 
 This is a repo for testing different folder structures and supporting libraries. Play around with things to see where what should go, and what we should do with things like testing and code structure.
 
-#Instructions for install this repo
+# Instructions for install this repo
 
 1. Clone git repo
 2. CouchDB:
