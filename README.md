@@ -11,10 +11,30 @@ This is a repo for testing different folder structures and supporting libraries.
 	- Access TimeScape
 	- Configure DB with Application
 		1. Register App
-		2. Download config file
-		3. Add Firebase SDK
-		4. Add initialization code
-		5. Read the "Get Started Guide"
+		2. Run the following script:
+		```
+		<!-- The core Firebase JS SDK is always required and must be listed first -->
+		<script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-app.js"></script>
+
+		<!-- TODO: Add SDKs for Firebase products that you want to use
+   		  https://firebase.google.com/docs/web/setup#available-libraries -->
+
+		<script>
+  		// Your web app's Firebase configuration
+  		var firebaseConfig = {
+    		apiKey: "AIzaSyBXAeYJUl12zFhTfWw0UQQUZWlesKqQDwU",
+    		authDomain: "timescape-4e406.firebaseapp.com",
+    		databaseURL: "https://timescape-4e406.firebaseio.com",
+    		projectId: "timescape-4e406",
+    		storageBucket: "timescape-4e406.appspot.com",
+    		messagingSenderId: "68263258318",
+    		appId: "1:68263258318:web:2050374e6821c93215889f"
+  		};
+  		// Initialize Firebase
+  		firebase.initializeApp(firebaseConfig);
+		</script>
+		
+		```
 
 You finished, **Yay!**
 
