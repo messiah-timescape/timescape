@@ -5,17 +5,36 @@ This is a repo for testing different folder structures and supporting libraries.
 # Instructions for install this repo
 
 1. Clone git repo
-2. CouchDB:
-	- Install and run CouchDB (For MacOS: `brew install couchdb`)
-	- Configure CouchDB:
-	    1. Create admin user
-	    2. Configuration -> CORS -> Enable Cors
-	    3. Navigate to Configuration -> Main Config
-	    4. Set couch_httpd_auth.require_valid_user = true
-	    5. Set couch_peruser.enable = true
-3. Ionic
-	- Install ionic CLI (`npm install -g ionic`)
-	- Run `ionic serve` in the directory
+2. FirebaseDB:
+	- Navigate to [Firebase](https://firebase.google.com) and login
+	- Click "Go to console"
+	- Access TimeScape
+	- Configure DB with Application
+		1. Register App
+		2. Run the following script:
+		```
+		<!-- The core Firebase JS SDK is always required and must be listed first -->
+		<script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-app.js"></script>
+
+		<!-- TODO: Add SDKs for Firebase products that you want to use
+   		  https://firebase.google.com/docs/web/setup#available-libraries -->
+
+		<script>
+  		// Your web app's Firebase configuration
+  		var firebaseConfig = {
+    		apiKey: "AIzaSyBXAeYJUl12zFhTfWw0UQQUZWlesKqQDwU",
+    		authDomain: "timescape-4e406.firebaseapp.com",
+    		databaseURL: "https://timescape-4e406.firebaseio.com",
+    		projectId: "timescape-4e406",
+    		storageBucket: "timescape-4e406.appspot.com",
+    		messagingSenderId: "68263258318",
+    		appId: "1:68263258318:web:2050374e6821c93215889f"
+  		};
+  		// Initialize Firebase
+  		firebase.initializeApp(firebaseConfig);
+		</script>
+		
+		```
 
 You finished, **Yay!**
 
