@@ -5,27 +5,20 @@ This is a repo for testing different folder structures and supporting libraries.
 # Instructions for install this repo
 
 1. Clone git repo
-2. CouchDB:
-	- Install and run CouchDB (For MacOS: `brew install couchdb`)
-	- Configure CouchDB:
-	    1. Create admin user
-	    2. Configuration -> CORS -> Enable Cors
-	    3. Navigate to Configuration -> Main Config
-	    4. Set couch_httpd_auth.require_valid_user = true
-	    5. Set couch_peruser.enable = true
-3. Ionic
-	- Install ionic CLI (`npm install -g ionic`)
-	- Run `ionic serve` in the directory
+2. FirebaseDB:
+	- Navigate to [Firebase](https://firebase.google.com) and login
+	- Click "Go to console"
+	- Access TimeScape
+	- Configure DB with Application:
+		Create .env file with all environment variables provided for configuration file (API key, database URL, etc.)		
 
 You finished, **Yay!**
 
 # Instructions for creating setup
 
-
-2. Ionic: Install ionic CLI (npm install -g ionic)
-3. Create project (ionic start architecture-test blank --type=react)
-4. Setup gitignore
-5. Install Jest, PouchDB and PouchDB Authentication
+1. Ionic: Install ionic CLI (npm install -g ionic)
+2. Create project (ionic start architecture-test blank --type=react)
+3. Setup gitignore
 
 # Credits
 
