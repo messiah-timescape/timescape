@@ -26,3 +26,7 @@ You finished, **Yay!**
 3. Create project (ionic start architecture-test blank --type=react)
 4. Setup gitignore
 5. Install Jest, PouchDB and PouchDB Authentication
+
+# Credits
+
+Matthew Bromley, Nathan Chan, Leanne Weaver, Ethan Wong
