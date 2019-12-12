@@ -23,3 +23,5 @@ You finished, **Yay!**
 # Credits
 
 Matthew Bromley, Nathan Chan, Leanne Weaver, Ethan Wong
+
+Who are all just so epic epic epic epic epic.
