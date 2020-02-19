@@ -10,7 +10,7 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        The world is your oyster.
+        The world is your oyster. x2 version 1.5
         <p>
           If you get lost, the{' '}
           <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/">
