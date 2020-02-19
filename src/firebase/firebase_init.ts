@@ -12,9 +12,42 @@ const config = {
     appId: process.env.REACT_APP_ID
 };
 
-
-function FirebaseInit() {
-    firebase.initializeApp(config);
+const auth_user = {
+    email: process.env.REACT_APP_FIREBASE_TEST_AUTH_EMAIL,
+    password: process.env.REACT_APP_FIREBASE_TEST_AUTH_PWD
 }
 
-export default FirebaseInit;
+export function firebase_auth_test_email_password(auth:any){
+    if (!(auth_user.email && auth_user.password)){
+        throw new Error('Set REACT_APP_FIREBASE_AUTH_EMAIL and REACT_APP_FIREBASE_AUTH_PWD in .env.development.local'
+            + ' for testing purposes');
+    }
+    return auth.signInWithEmailAndPassword(auth_user.email, auth_user.password);
+}
+
+export default class FirebaseInit{
+    firestore:firebase.firestore.Firestore;
+    db:firebase.app.App;
+    constructor(auth_method?:Function, name?:string){
+    
+        this.db = firebase.initializeApp(config, name);
+        this.firestore = this.db.firestore();
+        if (auth_method) {
+            auth_method(this.db.auth()).catch(function(error:any) {
+                throw new Error('Failed firebase login');
+            });
+        }
+    }
+
+    wait_for_auth(){
+        return new Promise((resolve, reject) => {
+            this.db.auth().onAuthStateChanged((data)=>{
+                if( data ){
+                    resolve(data);
+                }
+            });
+        });
+    }
+
+
+}
