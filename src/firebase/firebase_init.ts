@@ -33,10 +33,14 @@ export default class FirebaseInit{
         this.db = firebase.initializeApp(config, name);
         this.firestore = this.db.firestore();
         if (auth_method) {
-            auth_method(this.db.auth()).catch(function(error:any) {
-                throw new Error('Failed firebase login');
-            });
+            this.authenticate(auth_method)
         }
+    }
+
+    authenticate(auth_method:Function):Promise<any>{
+        return auth_method(this.db.auth()).catch(function(error:any) {
+            throw new Error('Failed firebase login');
+        });
     }
 
     wait_for_auth(){
