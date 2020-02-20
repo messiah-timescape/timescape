@@ -10,18 +10,10 @@ This is a repo for testing different folder structures and supporting libraries.
 	- Click "Go to console"
 	- Access TimeScape
 	- Configure DB with Application:
-		Create .env file with all environment variables provided for configuration file (API key, database URL, etc.)		
+		Create .env file with all environment variables provided for configuration file (API key, database URL, etc.)	
 
 You finished, **Yay!**
-
-# Instructions for creating setup
-
-1. Ionic: Install ionic CLI (npm install -g ionic)
-2. Create project (ionic start architecture-test blank --type=react)
-3. Setup gitignore
 
 # Credits
 
 Matthew Bromley, Nathan Chan, Leanne Weaver, Ethan Wong
-
-Who are all just so epic epic epic epic epic.
