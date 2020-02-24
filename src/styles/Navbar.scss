@@ -16,13 +16,42 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  img {
+
+  .svg {
     height: 28px;
+    width: 28px;
+    background-color: #888888;
+  }
+
+  .todo {
+    mask: url("../assets/icons/todo.svg") no-repeat center;
+    mask-size: 28px;
+  }
+
+  .report {
+    mask: url("../assets/icons/file.svg") no-repeat center;
+    mask-size: 28px;
+  }
+
+  .dashboard {
+    mask: url("../assets/icons/stopwatch.svg") no-repeat center;
+    mask-size: 28px;
+  }
+
+  .calendar {
+    mask: url("../assets/icons/calendar.svg") no-repeat center;
+    mask-size: 28px;
+  }
+
+  .settings {
+    mask: url("../assets/icons/settings.svg") no-repeat center;
+    mask-size: 28px;
   }
 
   p {
     margin: 5px 0 0 0;
     color: #888888;
     font-weight: 300;
+    font-size: 14px;
   }
 }
