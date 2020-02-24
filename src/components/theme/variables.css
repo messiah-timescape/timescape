@@ -2,39 +2,9 @@
 http://ionicframework.com/docs/theming/ */
 
 /** Ionic CSS Variables **/
-
-@font-face {
-  font-family: Manrope;
-  src: url("../../assets/fonts/Manrope-Regular.otf");
-}
-
-@font-face {
-  font-family: Manrope;
-  font-weight: bold;
-  src: url("../../assets/fonts/Manrope-Bold.otf");
-}
-
-* {
-  font-family: "Manrope";
-}
-
-body {
-  font-family: "Manrope";
-}
-
-.page-header {
-  h1 {
-    margin-bottom: 0;
-  }
-
-  p {
-    margin-top: 0;
-  }
-}
-
 :root {
   /** primary **/
-  --ion-color-primary: #fdd036;
+  --ion-color-primary: #3880ff;
   --ion-color-primary-rgb: 56, 128, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
