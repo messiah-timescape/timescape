@@ -7,25 +7,27 @@ import "../styles/Login.scss";
 const Login: React.FC = () => {
     return (
       <React.Fragment>        
-        <img src={topImage} />
+        
         <IonContent class="ion-padding">
           <div className="div-content">
             <h1>Login</h1>
 
-            <IonItem>
+          <div className="field">
+            <IonItem className="input">
               <IonInput placeholder="Email" required></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem className="input">
               <IonInput placeholder="Password" required></IonInput>
             </IonItem>
+          </div>
 
             <p>Forgot Password?</p>
 
-            <IonButton className="button" fill="solid" size="default" color="#FDD036">Login</IonButton>
+            <IonButton className="button">Login</IonButton>
           </div>
-          
         </IonContent>
-      <img src={bottomImage} />
+        <img id="top-border" src={topImage} />
+        <img id="bot-border" src={bottomImage} />
       </React.Fragment>
     );
   };
