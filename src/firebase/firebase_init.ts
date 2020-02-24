@@ -2,6 +2,8 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
+import wait_for_auth from '../utils/wait_auth';
+
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -33,7 +35,7 @@ export default class FirebaseInit{
         this.db = firebase.initializeApp(config, name);
         this.firestore = this.db.firestore();
         if (auth_method) {
-            this.authenticate(auth_method)
+            this.authenticate(auth_method);
         }
     }
 
@@ -43,15 +45,9 @@ export default class FirebaseInit{
         });
     }
 
+    
     wait_for_auth(){
-        return new Promise((resolve, reject) => {
-            this.db.auth().onAuthStateChanged((data)=>{
-                if( data ){
-                    resolve(data);
-                }
-            });
-        });
+        return wait_for_auth(this.db);
     }
-
 
 }

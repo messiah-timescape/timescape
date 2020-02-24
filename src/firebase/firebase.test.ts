@@ -22,11 +22,11 @@ class TestDbActions {
 describe('with authentication', ()=>{
     let actions:TestDbActions;
     let db:FirebaseInit
-    beforeAll(() => {
+    beforeAll(async () => {
         db = new FirebaseInit(firebase_auth_test_email_password, 'with_auth');
         actions = new TestDbActions(db.firestore);
         
-        return db.wait_for_auth();
+        await db.wait_for_auth();
     });
 
     it('can create document', () =>{
