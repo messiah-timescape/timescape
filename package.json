@@ -18,6 +18,7 @@
     "fireorm": "^0.12.1",
     "ionicons": "^4.6.3",
     "moment": "^2.24.0",
+    "node-sass": "^4.13.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-router": "^5.1.0",
