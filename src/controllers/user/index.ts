@@ -1,5 +1,7 @@
 import { User } from "../../models";
 import {Plugins} from "@capacitor/core";
+import { getRepository } from "fireorm";
+import firebase from "firebase";
 const {Storage} = Plugins;
 
 const USER_STORAGE_KEY = 'current_user';
@@ -19,14 +21,23 @@ class CurrentUser {
         });
     }
 
-    static async get_user():Promise<User> {
-        return Storage.get({key: USER_STORAGE_KEY}).then((user_obj:{value: string | null}) => {
-            if ( user_obj.value ) {
-                return User.create_from_json(user_obj.value);
-            } else {
-                throw new Error("No user");
-            }
-        });
+    static async get_user():Promise<User | null> {
+        let user_repo = getRepository(User);
+        let curr_user = firebase.auth().currentUser;
+        if (!curr_user) {
+            return new Promise(resolve => {
+                resolve(null);
+            });
+        }
+        return user_repo.whereEqualTo('user_id', curr_user.uid).findOne();
+            
+        // return Storage.get({key: USER_STORAGE_KEY}).then((user_obj:{value: string | null}) => {
+        //     if ( user_obj.value ) {
+        //         return User.create_from_json(user_obj.value);
+        //     } else {
+        //         throw new Error("No user");
+        //     }
+        // });
     }
     
 }

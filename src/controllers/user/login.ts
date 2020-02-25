@@ -10,7 +10,6 @@ export let userlogin_email_password = (email:string, password:string) => {
             let user = FirebaseUser.create_from_firebase(data.user);
             
             await user.user().then((user) => {
-                console.log(user);
                 CurrentUser.set_user(user);
             });
             return user;
