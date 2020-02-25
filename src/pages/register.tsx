@@ -1,10 +1,10 @@
-import { IonContent, IonInput, IonItem, IonButton, IonIcon, IonRouterLink } from "@ionic/react";
+import { IonContent, IonInput, IonItem, IonButton, IonIcon } from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import bottomImage from "../assets/loginPageBottom.png";
 import googleLogin from "../assets/googleIcon.png";
-import "../styles/Login.scss";
+import "../styles/Register.scss";
 import { Route } from "react-router";
 
 const Login: React.FC = () => {
@@ -15,31 +15,28 @@ const Login: React.FC = () => {
       <React.Fragment>        
         <IonContent class="ion-padding">
           <div className="div-content">
-            <h1>Login</h1>
+            <h1>Register</h1>
 
           <form>
             <IonItem className="input">
-              <IonInput name="user" placeholder="Email or Username" required></IonInput>
+              <IonInput name="user" placeholder="Username" required></IonInput>
+            </IonItem>
+            <IonItem className="input">
+              <IonInput name="user" placeholder="Email" required></IonInput>
             </IonItem>
             <IonItem className="input">
               <IonInput name="password" placeholder="Password" type={showPassword ? 'text' : 'password'} required></IonInput>
               <IonIcon icon={passwordIcon} onClick={function () {setShowPassword(!showPassword); if(passwordIcon == eye){setPasswordIcon(eyeOff)} else{setPasswordIcon(eye);}}}></IonIcon>
             </IonItem>
 
-            <IonRouterLink href="/register">
-              <p className="link-text">Forgot Password?</p>
-            </IonRouterLink>
-
-            <IonButton className="button" type="submit">Login</IonButton>
+            <IonButton className="button" type="submit">Register</IonButton>
+            <p className="link-text">Cancel</p>
           </form>
 
-            
-
             <div className="alt-login">
-              <img src={googleLogin} />
-
-              <p>Don't have an account?<br /><span className="link-text">Sign Up</span></p>
+              <p>Already have an account?<br /><span className="link-text">Login</span></p>
             </div>
+
           </div>
         </IonContent>
         <img id="top-border" src={topImage} />
