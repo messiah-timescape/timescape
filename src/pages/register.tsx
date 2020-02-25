@@ -3,7 +3,6 @@ import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import bottomImage from "../assets/loginPageBottom.png";
-import googleLogin from "../assets/googleIcon.png";
 import "../styles/Register.scss";
 import { Route } from "react-router";
 
