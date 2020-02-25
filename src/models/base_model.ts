@@ -4,4 +4,4 @@ export default abstract class BaseModel<T> {
     constructor(init_fields?:Partial<T>) {
         Object.assign(this, init_fields);
     }
-}
+};

@@ -1,5 +1,5 @@
-import userlogout from "./user.logout";
-import { TestLoginActions } from "./user.login.test";
+import userlogout from "./logout";
+import { TestLoginActions } from "./login.test";
 import firebase from "firebase";
 
 it('must log user out', ()=>{

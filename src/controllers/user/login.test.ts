@@ -1,6 +1,7 @@
-import init_app from "../init_app"
-import { userlogin_email_password } from "./user.login";
+import init_app from "../../init_app"
+import { userlogin_email_password,userlogin_google_oauth } from "./login";
 import firebase from "firebase";
+import CurrentUser from ".";
 
 
     
@@ -14,6 +15,10 @@ export class TestLoginActions {
     static email_password() {
         return userlogin_email_password(auth_user.email!, auth_user.password!)
     }
+
+    static google_oauth() {
+        return userlogin_google_oauth();
+    }
 }
 
 
@@ -23,11 +28,19 @@ describe('User Login with Email and Password', ()=>{
     })
 
     it('must login user when email and password are right', ()=>{
-        expect.assertions(1);
+        expect.assertions(2);
         return TestLoginActions.email_password().then((user:any)=>{
+            expect(CurrentUser.user.email).toBe(auth_user.email);
             return expect(user.email).toBe(auth_user.email);
         });
     });
+
+    // it('must login user when oauth creds are right', ()=>{
+    //     expect.assertions(1);
+    //     return TestLoginActions.google_oauth().then((user:any)=>{
+    //         return expect(user.email).toBeTruthy();
+    //     })
+    // });
 
     afterEach(()=>{
         firebase.auth().signOut();
