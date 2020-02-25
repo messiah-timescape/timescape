@@ -14,28 +14,12 @@
     form {
         width: 275px;
         margin-top: 2em;
+        margin-bottom: 3em;
     }
 }
-
-// will hide nav bar but hides on all pages
-// .navbar-parent {
-//     display: none !important;
-// }
 
 .link-text {
     color: var(--color-secondary);
-}
-
-.alt-login {
-    width: 300px;
-    position: absolute;
-    bottom: -80%;
-    left: 50%;
-    transform: translate(-50%, 0%);
-
-    p {
-        margin-top: 2em;
-    }
 }
 
 .input {
@@ -60,4 +44,5 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    z-index: -1;
 }

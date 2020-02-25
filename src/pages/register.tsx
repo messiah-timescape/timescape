@@ -35,7 +35,10 @@ const Login: React.FC = () => {
           </form>
 
             <div className="alt-register">
-              <p>Already have an account?<br /><span className="link-text">Login</span></p>
+              <p>
+                Already have an account?<br />
+                <IonRouterLink href="/login" className="link-text">Login</IonRouterLink>
+              </p>
             </div>
 
           </div>

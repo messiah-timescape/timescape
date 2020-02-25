@@ -30,10 +30,11 @@ const Login: React.FC = () => {
 
             <IonButton className="button" type="submit">Login</IonButton>
           </form>
-            <div className="alt-login">
-              <img src={googleLogin} />
-                <p>Don't have an account?<br /><span className="link-text">Sign Up</span></p>
-            </div>
+            <img src={googleLogin} />
+            <p>
+              Don't have an account?<br />
+              <IonRouterLink href="/register" className="link-text">Sign Up</IonRouterLink>
+            </p>
           </div>
         </IonContent>
         <img id="top-border" src={topImage} />
