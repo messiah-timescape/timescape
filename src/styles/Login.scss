@@ -11,10 +11,10 @@
         color: var(--color-text-primary)
     }
 
-    form {
+    .form-login {
         width: 275px;
         margin-top: 2em;
-        margin-bottom: 3em;
+        margin-bottom: 5em;
     }
 }
 
@@ -44,5 +44,8 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    z-index: -1;
+}
+
+#googlePic {
+    margin-bottom: 1.5em;
 }

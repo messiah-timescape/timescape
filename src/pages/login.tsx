@@ -12,12 +12,14 @@ const Login: React.FC = () => {
   const [passwordIcon, setPasswordIcon] = useState(eye);
    
     return (
-      <React.Fragment>        
+      <React.Fragment>      
         <IonContent class="ion-padding">
+        <img id="top-border" src={topImage} />
+        <img id="bot-border" src={bottomImage} />  
           <div className="div-content">
             <h1>Login</h1>
 
-          <form>
+          <form className="form-login">
             <IonItem className="input">
               <IonInput name="user" placeholder="Email or Username" required></IonInput>
             </IonItem>
@@ -30,15 +32,16 @@ const Login: React.FC = () => {
 
             <IonButton className="button" type="submit">Login</IonButton>
           </form>
-            <img src={googleLogin} />
+            <img id="googlePic" src={googleLogin} />
             <p>
               Don't have an account?<br />
               <IonRouterLink href="/register" className="link-text">Sign Up</IonRouterLink>
             </p>
           </div>
+          
         </IonContent>
-        <img id="top-border" src={topImage} />
-        <img id="bot-border" src={bottomImage} />
+        
+        
       </React.Fragment>
     );
   };

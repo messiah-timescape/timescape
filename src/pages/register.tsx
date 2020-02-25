@@ -13,10 +13,12 @@ const Login: React.FC = () => {
     return (
       <React.Fragment>        
         <IonContent class="ion-padding">
+        <img id="top-border" src={topImage} />
+        <img id="bot-border" src={bottomImage} />
           <div className="div-content">
             <h1>Register</h1>
 
-          <form>
+          <form className="form-register">
             <IonItem className="input">
               <IonInput name="user" placeholder="Username" required></IonInput>
             </IonItem>
@@ -43,8 +45,6 @@ const Login: React.FC = () => {
 
           </div>
         </IonContent>
-        <img id="top-border" src={topImage} />
-        <img id="bot-border" src={bottomImage} />
       </React.Fragment>
     );
   };
