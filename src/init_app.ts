@@ -3,6 +3,7 @@ import FirebaseInit from './firebase/firebase_init';
 
 export let firebase_initializer:FirebaseInit;
 export default function init_app(auth_fn?:Function):void {
+    Error.stackTraceLimit = Infinity;
     if (!firebase_initializer){
         firebase_initializer = init_db(auth_fn);
     } else {

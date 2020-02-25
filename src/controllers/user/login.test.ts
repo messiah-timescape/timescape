@@ -29,8 +29,11 @@ describe('User Login with Email and Password', ()=>{
 
     it('must login user when email and password are right', ()=>{
         expect.assertions(2);
-        return TestLoginActions.email_password().then((user:any)=>{
-            expect(CurrentUser.user.email).toBe(auth_user.email);
+        return TestLoginActions.email_password().then(async (user:any)=>{
+            let current_user = await CurrentUser.get_user();
+            if(current_user){
+                expect(current_user.email).toBe(auth_user.email);
+            }
             return expect(user.email).toBe(auth_user.email);
         });
     });

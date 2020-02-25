@@ -5,10 +5,14 @@ import CurrentUser from ".";
 
 export let userlogin_email_password = (email:string, password:string) => {
 
-    return firebase.auth().signInWithEmailAndPassword(email, password).then((data:firebase.auth.UserCredential)=>{
+    return firebase.auth().signInWithEmailAndPassword(email, password).then(async (data:firebase.auth.UserCredential)=>{
         if(data && data.user){
             let user = FirebaseUser.create_from_firebase(data.user);
-            CurrentUser.user = user;
+            
+            await user.user().then((user) => {
+                console.log(user);
+                CurrentUser.set_user(user);
+            });
             return user;
         } else {
             throw new Error("User not logged in");
@@ -30,7 +34,9 @@ export let userlogin_google_oauth = () => {
             let token = result.credential.accessToken;
             let user = FirebaseUser.create_from_firebase(result.user);
             user.google_access_token = token;
-            CurrentUser.user = user;
+            user.user().then((user) => {
+                CurrentUser.set_user(user);
+            });
             return user;
         } else {
             throw new Error("User not logged in");
