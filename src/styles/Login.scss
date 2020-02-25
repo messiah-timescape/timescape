@@ -10,6 +10,11 @@
         font-size: 36px;
         color: var(--color-text-primary)
     }
+
+    form {
+        width: 275px;
+        margin-top: 2em;
+    }
 }
 
 // will hide nav bar but hides on all pages
@@ -24,18 +29,13 @@
 .alt-login {
     width: 300px;
     position: absolute;
-    bottom: -80%;
+    bottom: -60%;
     left: 50%;
     transform: translate(-50%, 0%);
 
     p {
         margin-top: 2em;
     }
-}
-
-.field {
-    width: 275px;
-    margin-top: 2em;
 }
 
 .input {

@@ -1,30 +1,37 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonGrid, IonRow, IonButton, IonIcon } from "@ionic/react";
-import React from "react";
+import { eye, eyeOff } from "ionicons/icons";
+import React, { useState, useEffect } from "react";
 import topImage from "../assets/loginPageTop.png";
 import bottomImage from "../assets/loginPageBottom.png";
-import googleLogin from "../assets/googleLogin.png";
+import googleLogin from "../assets/googleIcon.png";
 import "../styles/Login.scss";
+import { Route } from "react-router";
 
 const Login: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordIcon, setPasswordIcon] = useState(eye);
+   
     return (
       <React.Fragment>        
-
         <IonContent class="ion-padding">
           <div className="div-content">
             <h1>Login</h1>
 
-          <div className="field">
+          <form>
             <IonItem className="input">
-              <IonInput placeholder="Email or Username" required></IonInput>
+              <IonInput name="user" placeholder="Email or Username" required></IonInput>
             </IonItem>
             <IonItem className="input">
-              <IonInput placeholder="Password" type="password" required></IonInput>
+              <IonInput name="password" placeholder="Password" type={showPassword ? 'text' : 'password'} required></IonInput>
+              <IonIcon icon={passwordIcon} onClick={function () {setShowPassword(!showPassword); if(passwordIcon == eye){setPasswordIcon(eyeOff)} else{setPasswordIcon(eye);}}}></IonIcon>
             </IonItem>
-          </div>
 
             <p className="link-text">Forgot Password?</p>
 
-            <IonButton className="button">Login</IonButton>
+            <IonButton className="button" type="submit">Login</IonButton>
+          </form>
+
+            
 
             <div className="alt-login">
               <img src={googleLogin} />
@@ -39,3 +46,4 @@ const Login: React.FC = () => {
     );
   };
   export default Login;
+
