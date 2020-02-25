@@ -26,19 +26,13 @@ const Login: React.FC = () => {
               <IonIcon icon={passwordIcon} onClick={function () {setShowPassword(!showPassword); if(passwordIcon == eye){setPasswordIcon(eyeOff)} else{setPasswordIcon(eye);}}}></IonIcon>
             </IonItem>
 
-            <IonRouterLink href="/register">
-              <p className="link-text">Forgot Password?</p>
-            </IonRouterLink>
+            <p className="link-text">Forgot Password?</p>
 
             <IonButton className="button" type="submit">Login</IonButton>
           </form>
-
-            
-
             <div className="alt-login">
               <img src={googleLogin} />
-
-              <p>Don't have an account?<br /><span className="link-text">Sign Up</span></p>
+                <p>Don't have an account?<br /><span className="link-text">Sign Up</span></p>
             </div>
           </div>
         </IonContent>

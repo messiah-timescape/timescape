@@ -1,4 +1,4 @@
-import { IonContent, IonInput, IonItem, IonButton, IonIcon } from "@ionic/react";
+import { IonContent, IonInput, IonItem, IonButton, IonIcon, IonRouterLink } from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
@@ -30,10 +30,12 @@ const Login: React.FC = () => {
             </IonItem>
 
             <IonButton className="button" type="submit">Register</IonButton>
-            <p className="link-text">Cancel</p>
+            <IonRouterLink href="/login">
+              <p className="link-text">Cancel</p>
+            </IonRouterLink>
           </form>
 
-            <div className="alt-login">
+            <div className="alt-register">
               <p>Already have an account?<br /><span className="link-text">Login</span></p>
             </div>
 
