@@ -34,6 +34,13 @@ export default class FirebaseInit{
     
         this.db = firebase.initializeApp(config, name);
         this.firestore = this.db.firestore();
+        this.firestore.enablePersistence().catch(function(err) {
+            if (err.code === 'failed-precondition') {
+                throw new Error('Multiple tabs open, close all others');
+            } else if (err.code == 'unimplemented') {
+                throw new Error('I hate your browser');
+            }
+        });
         if (auth_method) {
             this.authenticate(auth_method);
         }
