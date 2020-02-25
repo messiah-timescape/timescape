@@ -1,9 +1,7 @@
-export default class BaseModel {
-    id: string;
+export default abstract class BaseModel<T> {
+    id: string = '';
 
-    constructor(...args: any[]) {
-        for (const key in args) {
-            this[key] = args[key];
-        }
+    constructor(init_fields?:Partial<T>) {
+        Object.assign(this, init_fields);
     }
 }

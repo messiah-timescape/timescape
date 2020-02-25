@@ -34,6 +34,9 @@ export default class FirebaseInit{
     
         this.db = firebase.initializeApp(config, name);
         this.firestore = this.db.firestore();
+        this.firestore.settings({
+            timestampsInSnapshots: true
+        });
         if (auth_method) {
             this.authenticate(auth_method);
         }

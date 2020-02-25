@@ -1,22 +1,21 @@
-import { Collection, Type } from "fireorm";
+import { Collection } from "fireorm";
 import BaseModel from "./base_model";
 import { TagColors } from "./field_types";
 
-class GenericTag {
-    name: string;
-    @Type(() => TagColors)
-    color: TagColors;
+class GenericTag extends BaseModel<GenericTag>{
+    name!: string;
+    color!: TagColors;
 }
 
 @Collection('user')
-export class User extends BaseModel{
-    email: string;
-    auth: string;
+export class User extends BaseModel<User>{
+    email!: string;
+    auth!: string;
 }
 
 @Collection('tag')
-export class Tag extends BaseModel implements GenericTag{
-
+export class Tag extends GenericTag{
+    
 }
 
 export default {User, Tag};

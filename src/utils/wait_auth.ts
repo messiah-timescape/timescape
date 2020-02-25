@@ -5,7 +5,7 @@ let wait_for_auth = (db?:any) =>{
         if(!db){
             db = firebase;
         }
-        db.auth().onAuthStateChanged((data)=>{
+        db.auth().onAuthStateChanged((data:any)=>{
             if( data ){
                 resolve(data);
             }
