@@ -1,25 +1,27 @@
 import React from "react";
-import { IonContent, IonItem, IonIcon } from "@ionic/react";
+import calendarIcon from "../assets/calendarIcon.png";
+import fileIcon from "../assets/fileIcon.png";
+import settingsIcon from "../assets/settingsIcon.png";
+import stopwatchIcon from "../assets/stopwatchIcon.png";
+import todoIcon from "../assets/todoIcon.png";
 import "../styles/Navbar.scss";
 
 const Links = () => {
   const tabs = [
-    { name: "To-Do", className: "svg todo" },
-    { name: "Report", className: "svg report" },
-    { name: "Dashboard", className: "svg dashboard" },
-    { name: "Calendar", className: "svg calendar" },
-    { name: "Settings", className: "svg settings" }
+    { name: "To-Do", icon: todoIcon },
+    { name: "Report", icon: fileIcon },
+    { name: "Dashboard", icon: stopwatchIcon },
+    { name: "Calendar", icon: calendarIcon },
+    { name: "Settings", icon: settingsIcon }
   ];
   let returnTabs = [];
 
   tabs.forEach(tab => {
     returnTabs.push(
-      <IonItem routerLink="/calendar">
-        <div className="tab-div">
-          <div className={tab.className} />
-          <p>{tab.name}</p>
-        </div>
-      </IonItem>
+      <div className="tab-div">
+        <img src={tab.icon} />
+        <p>{tab.name}</p>
+      </div>
     );
   });
 
