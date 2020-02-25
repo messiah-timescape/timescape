@@ -1,6 +1,6 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonItem, IonLabel, IonGrid, IonRow, IonButton, IonIcon } from "@ionic/react";
+import { IonContent, IonInput, IonItem, IonButton, IonIcon } from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import bottomImage from "../assets/loginPageBottom.png";
 import googleLogin from "../assets/googleIcon.png";
