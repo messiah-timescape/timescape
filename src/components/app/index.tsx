@@ -7,6 +7,7 @@ import { checkmark, document, stopwatch, calendar, settings } from "ionicons/ico
 import Home from "../../pages/home";
 import Calendar from "../../pages/calendar";
 import Login from "../../pages/login";
+import Register from "../../pages/register";
 import AddTask from "../../pages/addTask";
 import Todo from "../../pages/todo";
 
@@ -41,6 +42,7 @@ const App: React.FC = () => {
             <Route path="/home" component={Home} exact={true} />
             <Route path="/calendar" component={Calendar} exact={true} />
             <Route path="/login" component={Login} exact={true} />
+            <Route path="/register" component={Register} exact={true} />
             <Route path="/addtask" component={AddTask} exact={true} />
             <Route path="/todo" component={Todo} exact={true} />
             <Route exact path="/" render={() => <Redirect to="/home" />} />

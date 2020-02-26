@@ -11,26 +11,15 @@
         color: var(--color-text-primary)
     }
 
-    form {
+    .form-register {
         width: 275px;
         margin-top: 2em;
+        margin-bottom: 6.5em;
     }
 }
 
 .link-text {
     color: var(--color-secondary);
-}
-
-.alt-register {
-    width: 300px;
-    position: absolute;
-    bottom: -40%;
-    left: 50%;
-    transform: translate(-50%, 0%);
-
-    p {
-        margin-top: 2em;
-    }
 }
 
 .input {
