@@ -7,8 +7,9 @@ import { checkmark, document, stopwatch, calendar, settings } from "ionicons/ico
 import Home from "../../pages/home";
 import Calendar from "../../pages/calendar";
 import Login from "../../pages/login";
-// import AddTask from "../../pages/addTask";
-// import Todo from "../../pages/todo";
+import Register from "../../pages/register";
+import AddTask from "../../pages/addTask";
+import Todo from "../../pages/todo";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -28,12 +29,10 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "../theme/variables.scss";
-import init_app from "../../init_app";
 
 const App: React.FC = () => {
   let currentTab = window.location.href.split("/");
   let currentTabString = currentTab[currentTab.length - 1];
-  init_app();
 
   return (
     <IonApp>
@@ -43,8 +42,9 @@ const App: React.FC = () => {
             <Route path="/home" component={Home} exact={true} />
             <Route path="/calendar" component={Calendar} exact={true} />
             <Route path="/login" component={Login} exact={true} />
-            {/* <Route path="/addtask" component={AddTask} exact={true} />
-            <Route path="/todo" component={Todo} exact={true} /> */}
+            <Route path="/register" component={Register} exact={true} />
+            <Route path="/addtask" component={AddTask} exact={true} />
+            <Route path="/todo" component={Todo} exact={true} />
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 

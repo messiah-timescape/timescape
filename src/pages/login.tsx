@@ -1,4 +1,12 @@
-import { IonContent, IonInput, IonItem, IonButton, IonIcon, IonPage } from "@ionic/react";
+import {
+  IonContent,
+  IonInput,
+  IonItem,
+  IonButton,
+  IonIcon,
+  IonPage,
+  IonRouterLink
+} from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
@@ -31,7 +39,7 @@ const Login: React.FC = () => {
         <div className="div-content">
           <h1>Login</h1>
 
-          <form>
+          <form className="form-login">
             <IonItem className="input">
               <IonInput
                 name="user"
@@ -80,19 +88,16 @@ const Login: React.FC = () => {
               Login
             </IonButton>
           </form>
-
-          <div className="alt-login">
-            <img src={googleLogin} />
-            <p>
-              Don't have an account?
-              <br />
-              <span className="link-text">Sign Up</span>
-            </p>
-          </div>
+          <img id="googlePic" src={googleLogin} />
+          <p>
+            Don't have an account?
+            <br />
+            <IonRouterLink href="/register" className="link-text">
+              Sign Up
+            </IonRouterLink>
+          </p>
         </div>
       </IonContent>
-      <img id="top-border" src={topImage} />
-      <img id="bot-border" src={bottomImage} />
     </IonPage>
   );
 };

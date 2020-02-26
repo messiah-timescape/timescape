@@ -11,16 +11,12 @@
     color: var(--color-text-primary);
   }
 
-  form {
+  .form-login {
     width: 275px;
     margin-top: 2em;
+    margin-bottom: 5em;
   }
 }
-
-// will hide nav bar but hides on all pages
-// .navbar-parent {
-//     display: none !important;
-// }
 
 .link-text {
   color: var(--color-secondary);
@@ -66,4 +62,8 @@
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+#googlePic {
+  margin-bottom: 1.5em;
 }
