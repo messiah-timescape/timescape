@@ -36,6 +36,8 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonContent class="ion-padding">
+        <img id="top-border" src={topImage} />
+        <img id="bot-border" src={bottomImage} />
         <div className="div-content">
           <h1>Login</h1>
 
