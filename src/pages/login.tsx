@@ -90,6 +90,8 @@ const Login: React.FC = () => {
               Login
             </IonButton>
           </form>
+          <IonRouterLink href="/home">Home</IonRouterLink>
+          <div className="alt-login">
           <img id="googlePic" src={googleLogin} />
           <p>
             Don't have an account?
@@ -98,6 +100,7 @@ const Login: React.FC = () => {
               Sign Up
             </IonRouterLink>
           </p>
+          </div>
         </div>
       </IonContent>
     </IonPage>
