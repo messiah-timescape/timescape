@@ -40,6 +40,8 @@ jobs:
       # run tests!
       - run: npm run test
 
+      - run: npx ionic build --prod
+
 workflows:
   heroku_deploy:
     jobs:
