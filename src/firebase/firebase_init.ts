@@ -5,13 +5,13 @@ import 'firebase/firestore';
 import wait_for_auth from '../utils/wait_auth';
 
 const config = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    databaseURL: process.env.REACT_APP_DATABASE_URL,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_ID
+    apiKey: "AIzaSyDGmOZPPAAltI95GajKg4djpZIGFvYZWDs",
+    authDomain: "messiah-timescape.firebaseapp.com",
+    databaseURL: "https://messiah-timescape.firebaseio.com",
+    projectId: "messiah-timescape",
+    storageBucket: "messiah-timescape.appspot.com",
+    messagingSenderId: "293865584542",
+    appId: "1:293865584542:web:82954d85d3fdeee5cd888f"
 };
 
 const auth_user = {
