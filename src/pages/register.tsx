@@ -11,10 +11,20 @@ import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 // import bottomImage from "../assets/loginPageBottom.png";
 import "../styles/Register.scss";
+import { usersignup } from "../controllers/user/signup";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
+
+  function handleSubmitSignUp(email_input: string, password_input: string) {
+    usersignup({ email: email_input, password:password_input });
+
+    let url = window.location.href.split("/");
+
+    url[3] = "home";
+    window.location.href = url.join("/");
+  }
 
   return (
     <React.Fragment>
@@ -26,16 +36,17 @@ const Login: React.FC = () => {
 
           <form className="form-register">
             <IonItem className="input">
-              <IonInput name="user" placeholder="Username" required></IonInput>
+              <IonInput name="user" placeholder="Username" id="username-field"required></IonInput>
             </IonItem>
             <IonItem className="input">
-              <IonInput name="user" placeholder="Email" required></IonInput>
+              <IonInput name="email" placeholder="Email" id="email-field" required></IonInput>
             </IonItem>
             <IonItem className="input">
               <IonInput
                 name="password"
                 placeholder="Password"
                 type={showPassword ? "text" : "password"}
+                id="password-field"
                 required
               ></IonInput>
               <IonIcon
@@ -51,9 +62,11 @@ const Login: React.FC = () => {
               ></IonIcon>
             </IonItem>
 
-            <IonButton className="button" type="submit">
-              Register
-            </IonButton>
+            <IonButton className="button" type="submit" onClick={() => handleSubmitSignUp(
+              (document.getElementById("username-field") as HTMLInputElement).value, 
+              (document.getElementById("password-field") as HTMLInputElement).value)
+              }>Register</IonButton>
+
             <IonRouterLink href="/login">
               <p className="link-text">Cancel</p>
             </IonRouterLink>
