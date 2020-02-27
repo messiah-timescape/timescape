@@ -13,6 +13,7 @@ export enum UserProvider{
 export class FirebaseUser{
     uid!: string | null;
     email!: string | null;
+    password!: string | null;
     display_name!: string | null;
     phone_number!: string | null;
     photo_url!: string | null;

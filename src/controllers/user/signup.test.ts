@@ -21,7 +21,7 @@ describe('User Signup with Email and Password', ()=> {
         let rand_pass = chance.string();
         new_user = {
             email: rand_email,
-            password: rand_pass,
+            password: rand_pass
         };
     });
     
