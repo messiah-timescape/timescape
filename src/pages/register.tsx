@@ -46,14 +46,6 @@ const Login: React.FC = () => {
           <form className="form-register">
             <IonItem className="input">
               <IonInput
-                name="user"
-                placeholder="Username"
-                id="username-field"
-                required
-              ></IonInput>
-            </IonItem>
-            <IonItem className="input">
-              <IonInput
                 name="email"
                 placeholder="Email"
                 id="email-field"
@@ -87,7 +79,6 @@ const Login: React.FC = () => {
             )}
             <IonButton
               className="button"
-              type="submit"
               onClick={() =>
                 handleSubmitSignUp(
                   (document.getElementById("email-field") as HTMLInputElement)
