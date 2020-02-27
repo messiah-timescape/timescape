@@ -1,10 +1,9 @@
-import moment, { now } from "moment";
+import moment from "moment";
 import { store_survey } from "./survey";
 import init_app from "../../init_app";
 import firebase from "firebase";
 import Weekdays from "../../utils/weekdays";
 import { Moment } from "moment";
-import { FirebaseUser } from "../../models";
 
 describe('Store User Survey Data', ()=> {
     beforeAll(()=> {

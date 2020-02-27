@@ -1,5 +1,4 @@
 import CurrentUser from "../user";
-import firebase from "firebase";
 import { getRepository } from "fireorm";
 import { User } from "../../models";
 import Weekdays from "../../utils/weekdays";
