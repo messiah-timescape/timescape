@@ -1,6 +1,4 @@
-import { User } from "firebase";
 import firebase from "firebase";
-import { stringify } from "querystring";
 import { FirebaseUser } from "../../models/user";
 import { userlogin_email_password } from "./login";
 
