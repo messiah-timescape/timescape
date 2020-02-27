@@ -1,6 +1,6 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "architecture-test",
+  "appName": "timescape",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",

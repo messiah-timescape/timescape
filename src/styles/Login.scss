@@ -1,63 +1,67 @@
 .div-content {
-    text-align: center;
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translate(-50%, 0%);
+  text-align: center;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, 0%);
 
-    h1 {
-        font-weight: 700;
-        font-size: 36px;
-        color: var(--color-text-primary)
-    }
+  h1 {
+    font-weight: 700;
+    font-size: 36px;
+    color: var(--color-text-primary);
+  }
 
-    form {
-        width: 275px;
-        margin-top: 2em;
-    }
+  .form-login {
+    width: 275px;
+    margin-top: 2em;
+  }
 }
 
-// will hide nav bar but hides on all pages
-// .navbar-parent {
-//     display: none !important;
-// }
-
 .link-text {
-    color: var(--color-secondary);
+  color: var(--color-secondary);
 }
 
 .alt-login {
-    width: 300px;
-    position: absolute;
-    bottom: -80%;
-    left: 50%;
-    transform: translate(-50%, 0%);
+  width: 100%;
+  position: absolute;
+  bottom: -14em;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
 
-    p {
-        margin-top: 2em;
-    }
+  p {
+    margin-top: 2em;
+  }
 }
 
 .input {
-    margin-bottom: 0.75em;
+  margin-bottom: 0.75em;
 }
 
 .button {
-    background-color: var(--color-primary);
-    border-radius: 5px;
-    font-weight: 600;
-    width: 125px;
-    margin-top: 1em;
+  background-color: var(--color-primary);
+  border-radius: 5px;
+  font-weight: 600;
+  width: 125px;
+  margin-top: 1em;
+}
+
+.wrong-password-text {
+  color: red;
 }
 
 #top-border {
-    position: absolute;
-    top: 0;
-    left: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #bot-border {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+#googlePic {
+  margin-bottom: 1.5em;
 }
