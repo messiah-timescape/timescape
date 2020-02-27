@@ -18,7 +18,7 @@ describe('User Signup with Email and Password', ()=> {
     beforeEach(()=> {
          // create a random new user 
         let rand_email = chance.email();
-        let rand_pass = chance.string();
+        let rand_pass = chance.string({ length: 7 });
         new_user = {
             email: rand_email,
             password: rand_pass
