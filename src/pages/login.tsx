@@ -93,7 +93,6 @@ const Login: React.FC = () => {
               Login
             </IonButton>
           </form>
-          <IonRouterLink href="/home">Home</IonRouterLink>
           <div className="alt-login">
           <img id="googlePic" src={googleLogin} />
           <p>
