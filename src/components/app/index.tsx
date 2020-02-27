@@ -63,9 +63,9 @@ const App: React.FC = () => {
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 
-          {currentTabString != "login" &&
-          currentTabString != "register" &&
-          currentTabString != "addtask" ? (
+          {currentTabString !== "login" &&
+          currentTabString !== "register" &&
+          currentTabString !== "addtask" ? (
             <IonTabBar slot="bottom">
               <IonTabButton tab="todo" href="/todo">
                 <IonIcon icon={checkmark} />
