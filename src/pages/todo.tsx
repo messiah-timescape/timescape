@@ -1,10 +1,6 @@
-import { IonContent, IonPage, IonRouterLink, IonButton } from "@ionic/react";
+import { IonContent, IonPage, IonRouterLink } from "@ionic/react";
 import React from "react";
 import "../styles/Todo.scss";
-
-const AddButton = () => {
-  return <div></div>;
-};
 
 const Todo: React.FC = () => {
   return (

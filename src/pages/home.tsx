@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonRouterLink } from "@ionic/react";
+import { IonContent, IonPage, IonRouterLink } from "@ionic/react";
 import React from "react";
 import homepageGraphic from "../assets/homepage-graphic.png";
 import "../styles/Home.scss";
@@ -14,7 +14,11 @@ const Home: React.FC = () => {
         <IonRouterLink href="/Register">
           <h4>Register</h4>
         </IonRouterLink>
-        <img src={homepageGraphic} className="homepage-graphic" />
+        <img
+          src={homepageGraphic}
+          className="homepage-graphic"
+          alt="home page graphic"
+        />
       </IonContent>
     </IonPage>
   );

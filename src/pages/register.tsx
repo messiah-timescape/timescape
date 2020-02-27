@@ -9,7 +9,7 @@ import {
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
-import bottomImage from "../assets/loginPageBottom.png";
+// import bottomImage from "../assets/loginPageBottom.png";
 import "../styles/Register.scss";
 
 const Login: React.FC = () => {
@@ -19,8 +19,8 @@ const Login: React.FC = () => {
   return (
     <React.Fragment>
       <IonContent class="ion-padding">
-        <img id="top-border" src={topImage} />
-        <img id="bot-border" src={bottomImage} />
+        <img id="top-border" src={topImage} alt="login" />
+        {/* <img id="bot-border" src={bottomImage} /> */}
         <div className="div-content">
           <h1>Register</h1>
 
@@ -42,7 +42,7 @@ const Login: React.FC = () => {
                 icon={passwordIcon}
                 onClick={function() {
                   setShowPassword(!showPassword);
-                  if (passwordIcon == eye) {
+                  if (passwordIcon === eye) {
                     setPasswordIcon(eyeOff);
                   } else {
                     setPasswordIcon(eye);

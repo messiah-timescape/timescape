@@ -10,7 +10,7 @@ import {
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
-import bottomImage from "../assets/loginPageBottom.png";
+// import bottomImage from "../assets/loginPageBottom.png";
 import googleLogin from "../assets/googleIcon.png";
 import "../styles/Login.scss";
 import { userlogin_email_password } from "../controllers/user/login";
@@ -19,7 +19,6 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
   const [showWrongCredentials, setShowWrongCredentials] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   function handleSubmit(username: string, password: string) {
     userlogin_email_password(username, password).then(
@@ -40,7 +39,7 @@ const Login: React.FC = () => {
     }
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: any) {
     if (e.key === "Enter") {
       handleSubmit(
         (document.getElementById("username-field") as HTMLInputElement).value,
@@ -51,7 +50,7 @@ const Login: React.FC = () => {
 
   return (
     <React.Fragment>
-      <img id="top-border" src={topImage} />
+      <img id="top-border" src={topImage} alt="login" />
       {/* <img id="bot-border" src={bottomImage} /> */}
       <IonPage>
         <IonContent class="ion-padding" color="transparent">
@@ -85,7 +84,7 @@ const Login: React.FC = () => {
                   icon={passwordIcon}
                   onClick={function() {
                     setShowPassword(!showPassword);
-                    if (passwordIcon == eye) {
+                    if (passwordIcon === eye) {
                       setPasswordIcon(eyeOff);
                     } else {
                       setPasswordIcon(eye);
@@ -120,7 +119,7 @@ const Login: React.FC = () => {
               </IonButton>
             </form>
             <div className="alt-login">
-              <img id="googlePic" src={googleLogin} />
+              <img id="googlePic" src={googleLogin} alt="google login icon" />
               <p>
                 Don't have an account?
                 <br />
