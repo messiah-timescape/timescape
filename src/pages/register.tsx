@@ -13,7 +13,7 @@ const Login: React.FC = () => {
     <React.Fragment>
       <IonContent class="ion-padding">
         <img id="top-border" src={topImage} />
-        <img id="bot-border" src={bottomImage} />
+        {/* <img id="bot-border" src={bottomImage} /> */}
         <div className="div-content">
           <h1>Register</h1>
 

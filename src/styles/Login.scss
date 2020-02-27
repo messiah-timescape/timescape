@@ -14,7 +14,6 @@
   .form-login {
     width: 275px;
     margin-top: 2em;
-    margin-bottom: 5em;
   }
 }
 
@@ -24,12 +23,11 @@
 
 .alt-login {
   width: 100%;
-  position: fixed;
-  bottom: -16em;
-  //       position: absolute;
-  //   bottom: -17em;
-  //   left: 50%;
-  //   transform: translate(-50%, 0%);
+  position: absolute;
+  bottom: -14em;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
 
   p {
     margin-top: 2em;
