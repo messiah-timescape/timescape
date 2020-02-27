@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import { Collection, getRepository, Type, BaseFirestoreRepository } from "fireorm";
+import { Collection, getRepository, BaseFirestoreRepository } from "fireorm";
 
 import Weekdays from "../utils/weekdays";
 import moment from "moment";
