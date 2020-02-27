@@ -1,4 +1,11 @@
-import { IonContent, IonInput, IonItem, IonButton, IonIcon, IonRouterLink } from "@ionic/react";
+import {
+  IonContent,
+  IonInput,
+  IonItem,
+  IonButton,
+  IonIcon,
+  IonRouterLink
+} from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
@@ -13,7 +20,7 @@ const Login: React.FC = () => {
     <React.Fragment>
       <IonContent class="ion-padding">
         <img id="top-border" src={topImage} />
-        {/* <img id="bot-border" src={bottomImage} /> */}
+        <img id="bot-border" src={bottomImage} />
         <div className="div-content">
           <h1>Register</h1>
 
