@@ -214,5 +214,5 @@ ehthumbs_vista.db
 
 .gradle/**
 
-ios/**
-android/**
+/ios
+/android
