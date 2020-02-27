@@ -16,30 +16,49 @@ import { usersignup } from "../controllers/user/signup";
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
+  const [showFailedLogin, setShowFailedLogin] = useState(false);
 
   function handleSubmitSignUp(email_input: string, password_input: string) {
-    usersignup({ email: email_input, password:password_input });
+    usersignup({ email: email_input, password: password_input }).then(
+      successfulRegister,
+      failedRegister
+    );
 
-    let url = window.location.href.split("/");
+    function successfulRegister() {
+      setShowFailedLogin(false);
+      let url = window.location.href.split("/");
+      url[3] = "home";
+      window.location.href = url.join("/");
+    }
 
-    url[3] = "home";
-    window.location.href = url.join("/");
+    function failedRegister() {
+      setShowFailedLogin(true);
+    }
   }
 
   return (
     <React.Fragment>
       <IonContent class="ion-padding">
         <img id="top-border" src={topImage} alt="login" />
-        {/* <img id="bot-border" src={bottomImage} /> */}
         <div className="div-content">
           <h1>Register</h1>
 
           <form className="form-register">
             <IonItem className="input">
-              <IonInput name="user" placeholder="Username" id="username-field"required></IonInput>
+              <IonInput
+                name="user"
+                placeholder="Username"
+                id="username-field"
+                required
+              ></IonInput>
             </IonItem>
             <IonItem className="input">
-              <IonInput name="email" placeholder="Email" id="email-field" required></IonInput>
+              <IonInput
+                name="email"
+                placeholder="Email"
+                id="email-field"
+                required
+              ></IonInput>
             </IonItem>
             <IonItem className="input">
               <IonInput
@@ -61,11 +80,26 @@ const Login: React.FC = () => {
                 }}
               ></IonIcon>
             </IonItem>
-
-            <IonButton className="button" type="submit" onClick={() => handleSubmitSignUp(
-              (document.getElementById("username-field") as HTMLInputElement).value, 
-              (document.getElementById("password-field") as HTMLInputElement).value)
-              }>Register</IonButton>
+            {showFailedLogin ? (
+              <p className="wrong-password-text">Email already registered.</p>
+            ) : (
+              <p></p>
+            )}
+            <IonButton
+              className="button"
+              type="submit"
+              onClick={() =>
+                handleSubmitSignUp(
+                  (document.getElementById("email-field") as HTMLInputElement)
+                    .value,
+                  (document.getElementById(
+                    "password-field"
+                  ) as HTMLInputElement).value
+                )
+              }
+            >
+              Register
+            </IonButton>
 
             <IonRouterLink href="/login">
               <p className="link-text">Cancel</p>
