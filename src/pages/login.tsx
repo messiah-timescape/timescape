@@ -14,6 +14,9 @@ import bottomImage from "../assets/loginPageBottom.png";
 import googleLogin from "../assets/googleIcon.png";
 import "../styles/Login.scss";
 import { userlogin_email_password } from "../controllers/user/login";
+import init_app from "../init_app";
+
+init_app();
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +40,7 @@ const Login: React.FC = () => {
     <IonPage>
       <IonContent class="ion-padding">
         <img id="top-border" src={topImage} />
-        <img id="bot-border" src={bottomImage} />
+        {/* <img id="bot-border" src={bottomImage} /> */}
         <div className="div-content">
           <h1>Login</h1>
 
