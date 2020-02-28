@@ -36,10 +36,6 @@ const AddTask: React.FC = () => {
           </IonItem>
         </form>
 
-        {/* <IonItem>
-          <IonDatetime displayFormat="MM DD YYYY" placeholder="Select Date"></IonDatetime>
-        </IonItem> */}
-
       </IonContent>
       <hr></hr>
     </IonPage>
