@@ -27,7 +27,7 @@
   height: 50px;
   width: 50px;
   border-radius: 10em;
-  position: absolute;
+  position: fixed;
   bottom: 1.5em;
   right: 2em;
   outline: none;
@@ -39,4 +39,51 @@
     mask: url("../assets/add-icon.svg") no-repeat center;
     mask-size: 100%;
   }
+}
+
+.task {
+  display: flex;
+  margin: 1em 0;
+  p {
+    margin: 0 0 10px 0;
+  }
+
+  .checkbox-div {
+    display: flex;
+
+    .checkbox {
+      margin-right: 1em;
+    }
+  }
+}
+
+.date {
+  margin-bottom: 0;
+}
+
+.tag {
+  color: white;
+  text-align: center;
+  border-radius: 20px;
+  font-size: 12px;
+  /* padding: 0 16px; */
+  /* padding-right: 23px; */
+  width: fit-content;
+  padding: 3px 11px;
+}
+
+.red {
+  background: #ff6f6f;
+}
+
+.blue {
+  background: #6999d0;
+}
+
+.green {
+  background: #7ad683;
+}
+
+.purple {
+  background: #c05fd5;
 }
