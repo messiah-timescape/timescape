@@ -3,66 +3,66 @@ import {
   IonPage,
   IonRouterLink,
   IonCheckbox,
-  IonHeader
+  IonCard
 } from "@ionic/react";
-import React from "react";
+import React, { useState } from "react";
 import "../styles/Todo.scss";
 
-const Task = ({ taskTitle, tag, tagColor }) => {
-  let tagClass = "tag " + tagColor;
-
-  return (
-    <React.Fragment>
-      <div className="task">
-        <div className="checkbox-div">
-          <IonCheckbox className="checkbox" />
-        </div>
-        <div>
-          <p>{taskTitle}</p>
-          <p className={tagClass}>{tag}</p>
-        </div>
-      </div>
-    </React.Fragment>
-  );
-};
-
 const Todo: React.FC = () => {
+  const [tasks, setTasks] = useState([]);
+  const sampleTasks = [
+    { title: "CIS 412 Sprint 1", tag: "#homework", color: "red" },
+    { title: "Have Ethan make coffee", tag: "#fun", color: "blue" },
+    {
+      title:
+        "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
+      tag: "#assignment",
+      color: "green"
+    },
+    { title: "Ethan Wong", tag: "#timescape", color: "purple" }
+  ];
+
+  const Task = () => {
+    let temp: any = [];
+
+    sampleTasks.forEach(task => {
+      let tagClass = "tag " + task.color;
+
+      temp.push(
+        <div className="task" key={task.title + task.tag}>
+          <div className="checkbox-div">
+            <IonCheckbox className="checkbox" />
+          </div>
+          <div>
+            <p>{task.title}</p>
+            <p className={tagClass}>{task.tag}</p>
+          </div>
+        </div>
+      );
+    });
+
+    return <React.Fragment>{temp}</React.Fragment>;
+  };
+
+  //Get all tasks > Promise returns the list of items
+
   return (
-    <React.Fragment>
+    <div className="todo-parent-div">
       <IonPage>
-        <IonHeader className="ion-padding">
-          <h1>To-Do</h1>
-        </IonHeader>
+        <div className="header-div-parent">
+          <div className="header-div">
+            <h1 className="todo-header">To-Do</h1>
+          </div>
+        </div>
+        <div className="ion-card-div">
+          <IonCard>
+            <div className="angle-down"></div>
+          </IonCard>
+        </div>
+
         <IonContent className="ion-padding">
           <h3 className="date">Today</h3>
-          <Task
-            taskTitle={"CIS 412 Sprint 1"}
-            tag={"#homework"}
-            tagColor={"red"}
-          />
-          <Task
-            taskTitle={"Have Ethan make coffee"}
-            tag={"#fun"}
-            tagColor={"blue"}
-          />
-          <Task
-            taskTitle={
-              "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"
-            }
-            tag={"#assignment"}
-            tagColor={"green"}
-          />
-          <Task
-            taskTitle={"Ethan Wong"}
-            tag={"#timescape"}
-            tagColor={"purple"}
-          />
-
-          {/* <div className="nothing-here">
-            <div className="hourglass" />
-            <p>You're all caught up!</p>
-            <p>Add a task to get started.</p>
-          </div> */}
+          {tasks.length == 0 ? <Task /> : <React.Fragment></React.Fragment>}
           <IonRouterLink routerLink="/addtask">
             <button className="yellow-add-button">
               <div className="add-icon"></div>
@@ -70,7 +70,7 @@ const Todo: React.FC = () => {
           </IonRouterLink>
         </IonContent>
       </IonPage>
-    </React.Fragment>
+    </div>
   );
 };
 export default Todo;
