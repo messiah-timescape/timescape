@@ -5,7 +5,34 @@
   color: var(--ion-color-primary);
 }
 
+.icon {
+  margin-right: 1em;
+}
+
 hr {
   height: 1px;
   background-color: var(--ion-color-medium-shade);
+}
+
+#title-field {
+  font-size: 24px;
+}
+
+#notes-field {
+  height: 200px;
+  margin-left: 3em;
+  opacity: 65%;
+}
+
+#clipboard {
+  position: absolute;
+  top: 6.5%;
+}
+
+#tags-field {
+  margin-left: -1em;
+}
+
+#time-field {
+  margin-left: -1em;
 }
