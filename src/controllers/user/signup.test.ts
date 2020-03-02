@@ -1,9 +1,10 @@
 import init_app from "../../init_app";
 import firebase from "firebase";
 import { usersignup } from "./signup";
-import { FirebaseUser } from "../../models/user";
+import { FirebaseUser, User } from "../../models/user";
 import CurrentUser from ".";
 import * as Chance from "chance";
+import { getRepository } from "fireorm";
 const chance = new Chance.Chance();
 // functions
 // 1 - sign the user up
@@ -25,10 +26,12 @@ describe('User Signup with Email and Password', ()=> {
         };
     });
     
+    let uid:string | null;
     it('logs in new user', ()=> {
         expect.assertions(1);
-       return usersignup(new_user).then(async ()=> {
-           // compare logged in user to data of new user
+       return usersignup(new_user).then(async user=> {
+            uid = (await user.user()).id;
+            // compare logged in user to data of new user
             let current_user = await CurrentUser.get_user();
             if ( current_user ) {
                 return expect(current_user.email).toBe(new_user.email);
@@ -45,6 +48,21 @@ describe('User Signup with Email and Password', ()=> {
             throw err;
         });
     });
+
+    afterEach(async () => {
+        if(uid){
+            let user_repo = getRepository(User);
+            await user_repo.delete(uid);
+            uid = null;
+        }
+        let current_user = firebase.auth().currentUser;
+        if(current_user) {
+            console.log("DELETING", current_user.email);
+            await current_user.delete();
+        }
+
+    });
+
     afterAll(()=>{
         firebase.auth().signOut();
     });

@@ -3,19 +3,21 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
+const TEST_COLLECTION = 'test';
+
 class TestDbActions {
     db: firebase.firestore.Firestore;
     constructor(db: firebase.firestore.Firestore) {
         this.db = db;
     }
     create_test_doc() {
-        return this.db.collection('test').add({
+        return this.db.collection(TEST_COLLECTION).add({
             timestamp: new Date()
         });
     }
 
     list_test_docs() {
-        return this.db.collection('test').get();
+        return this.db.collection(TEST_COLLECTION).get();
     }
 }
 
@@ -29,13 +31,21 @@ describe('with authentication', ()=>{
         await db.wait_for_auth();
     });
 
+    let created_id:string;
     it('can create document', () =>{
         expect.assertions(1);
         return actions.create_test_doc().then(ref => {
+            created_id = ref.id;
             expect(ref).toBeDefined();
         }).catch((err:firebase.FirebaseError) => {
             expect(err.code).toBeUndefined();
         });
+    });
+
+    afterAll(()=>{
+        if ( created_id ) {
+            db.firestore.collection(TEST_COLLECTION).doc(created_id).delete();   
+        }
     });
     
     it('can list test documents', () =>{
