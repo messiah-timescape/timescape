@@ -62,7 +62,7 @@ const Todo: React.FC = () => {
 
         <IonContent className="ion-padding">
           <h3 className="date">Today</h3>
-          {tasks.length == 0 ? <Task /> : <React.Fragment></React.Fragment>}
+          {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>}
           <IonRouterLink routerLink="/addtask">
             <button className="yellow-add-button">
               <div className="add-icon"></div>
