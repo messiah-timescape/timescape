@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import "../styles/Todo.scss";
 
 const Todo: React.FC = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks] = useState([]);
   const sampleTasks = [
     { title: "CIS 412 Sprint 1", tag: "#homework", color: "red" },
     { title: "Have Ethan make coffee", tag: "#fun", color: "blue" },
