@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import { Collection, getRepository, Type, BaseFirestoreRepository } from "fireorm";
+import { Collection, getRepository, BaseFirestoreRepository } from "fireorm";
 
 import Weekdays from "../utils/weekdays";
 import moment from "moment";
@@ -13,6 +13,7 @@ export enum UserProvider{
 export class FirebaseUser{
     uid!: string | null;
     email!: string | null;
+    password!: string | null;
     display_name!: string | null;
     phone_number!: string | null;
     photo_url!: string | null;

@@ -1,15 +1,28 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
+import {
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { checkmark, document, stopwatch, calendar, settings } from "ionicons/icons";
+import {
+  checkmark,
+  document,
+  stopwatch,
+  calendar,
+  settings
+} from "ionicons/icons";
 import Home from "../../pages/home";
 import Calendar from "../../pages/calendar";
 import Login from "../../pages/login";
 import Register from "../../pages/register";
 import AddTask from "../../pages/addTask";
 import Todo from "../../pages/todo";
+import init_app from "../../init_app";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -34,6 +47,8 @@ const App: React.FC = () => {
   let currentTab = window.location.href.split("/");
   let currentTabString = currentTab[currentTab.length - 1];
 
+  init_app();
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -48,9 +63,9 @@ const App: React.FC = () => {
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 
-          {currentTabString != "login" &&
-          currentTabString != "register" &&
-          currentTabString != "addtask" ? (
+          {currentTabString !== "login" &&
+          currentTabString !== "register" &&
+          currentTabString !== "addtask" ? (
             <IonTabBar slot="bottom">
               <IonTabButton tab="todo" href="/todo">
                 <IonIcon icon={checkmark} />
@@ -87,3 +102,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

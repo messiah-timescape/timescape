@@ -23,7 +23,15 @@ class CurrentUser {
 
     static async get_user():Promise<User | null> {
         let user_repo = getRepository(User);
+
+        await new Promise(resolve => {
+            firebase.auth().onAuthStateChanged(user => {
+                resolve(null);
+            });
+        });
+        
         let curr_user = firebase.auth().currentUser;
+        
         if (!curr_user) {
             return new Promise(resolve => {
                 resolve(null);
