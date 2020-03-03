@@ -2,15 +2,15 @@ import { IonContent, IonPage, IonRouterLink } from "@ionic/react";
 import React from "react";
 import homepageGraphic from "../assets/homepage-graphic.png";
 import "../styles/Home.scss";
-import user from "../controllers/user/index";
+import CurrentUser from "../controllers/user/index";
 
 const Home: React.FC = () => {
 
-  let token = user.get_user();
   let output;
-  token.then(function(result) {
+  CurrentUser.get_user().then(function(result) {
     console.log(result ? result.email : null);
     output = result ? result.email : null;
+    test = <h3>Email: {output}</h3>
   });
   let test = <h3>Email: {output}</h3>
 
