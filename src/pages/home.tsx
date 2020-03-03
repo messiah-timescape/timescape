@@ -2,17 +2,18 @@ import { IonContent, IonPage, IonRouterLink } from "@ionic/react";
 import React from "react";
 import homepageGraphic from "../assets/homepage-graphic.png";
 import "../styles/Home.scss";
-import CurrentUser from "../controllers/user/index";
+import user from "../controllers/user/index";
+
+export const Display = ({ out }) => <h3>Email: {out}</h3>
 
 const Home: React.FC = () => {
 
+  let token = user.get_user();
   let output;
-  CurrentUser.get_user().then(function(result) {
+  token.then(function(result) {
     console.log(result ? result.email : null);
     output = result ? result.email : null;
-    test = <h3>Email: {output}</h3>
   });
-  let test = <h3>Email: {output}</h3>
 
   return (
     <IonPage>
@@ -25,7 +26,7 @@ const Home: React.FC = () => {
           <h4>Register</h4>
         </IonRouterLink>
 
-        {test}
+        <Display out={output}></Display>
 
         <img
           src={homepageGraphic}
