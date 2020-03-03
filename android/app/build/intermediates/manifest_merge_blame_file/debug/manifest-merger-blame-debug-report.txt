@@ -58,18 +58,18 @@
 33-->[:capacitor-android] /Users/nathanczh/Timescape/timescape/node_modules/@capacitor/android/capacitor/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:9-33
 34
 35    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Required by older versions of Google Play services to create IID tokens -->
-35-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:24:5-68
-35-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:24:22-65
+35-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:24:5-68
+35-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:24:22-65
 36    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-36-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:26:5-82
-36-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:26:22-79
+36-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:26:5-82
+36-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:26:22-79
 37
 38    <application
 38-->/Users/nathanczh/Timescape/timescape/android/app/src/main/AndroidManifest.xml:5:5-43:19
 39        android:allowBackup="true"
 39-->/Users/nathanczh/Timescape/timescape/android/app/src/main/AndroidManifest.xml:6:9-35
 40        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
-40-->[com.android.support:support-compat:28.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/2ce3cd691ea78ff215be1affa95bc490/support-compat-28.0.0/AndroidManifest.xml:22:18-91
+40-->[com.android.support:support-compat:28.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/976475a846828c035308218b5ee63574/support-compat-28.0.0/AndroidManifest.xml:22:18-91
 41        android:debuggable="true"
 42        android:icon="@mipmap/ic_launcher"
 42-->/Users/nathanczh/Timescape/timescape/android/app/src/main/AndroidManifest.xml:7:9-43
@@ -179,11 +179,11 @@
 99             but set to not exported to explicitly avoid allowing another app to call it.
 100        -->
 101        <service
-101-->[com.google.firebase:firebase-messaging:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/81120b75faa26d836cfc442291fb70c2/firebase-messaging-18.0.0/AndroidManifest.xml:28:9-34:19
+101-->[com.google.firebase:firebase-messaging:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/ca5620bdc7bf0cf98e824095504d60e7/firebase-messaging-18.0.0/AndroidManifest.xml:28:9-34:19
 102            android:name="com.google.firebase.messaging.FirebaseMessagingService"
-102-->[com.google.firebase:firebase-messaging:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/81120b75faa26d836cfc442291fb70c2/firebase-messaging-18.0.0/AndroidManifest.xml:29:13-82
+102-->[com.google.firebase:firebase-messaging:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/ca5620bdc7bf0cf98e824095504d60e7/firebase-messaging-18.0.0/AndroidManifest.xml:29:13-82
 103            android:exported="false" >
-103-->[com.google.firebase:firebase-messaging:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/81120b75faa26d836cfc442291fb70c2/firebase-messaging-18.0.0/AndroidManifest.xml:30:13-37
+103-->[com.google.firebase:firebase-messaging:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/ca5620bdc7bf0cf98e824095504d60e7/firebase-messaging-18.0.0/AndroidManifest.xml:30:13-37
 104            <intent-filter android:priority="-500" >
 104-->[:capacitor-android] /Users/nathanczh/Timescape/timescape/node_modules/@capacitor/android/capacitor/build/intermediates/library_manifest/debug/AndroidManifest.xml:30:13-32:29
 105                <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -192,67 +192,67 @@
 106            </intent-filter>
 107        </service>
 108        <service
-108-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:29:9-35:19
+108-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:29:9-35:19
 109            android:name="com.google.firebase.components.ComponentDiscoveryService"
-109-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:30:13-84
+109-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:30:13-84
 110            android:exported="false" >
-110-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:31:13-37
+110-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:31:13-37
 111            <meta-data
-111-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:32:13-34:85
+111-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:32:13-34:85
 112                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
-112-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:33:17-96
+112-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:33:17-96
 113                android:value="com.google.firebase.components.ComponentRegistrar" />
-113-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:34:17-82
+113-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:34:17-82
 114        </service>
 115
 116        <receiver
-116-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:37:9-44:20
+116-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:37:9-44:20
 117            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
-117-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:38:13-78
+117-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:38:13-78
 118            android:exported="true"
-118-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:39:13-36
+118-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:39:13-36
 119            android:permission="com.google.android.c2dm.permission.SEND" >
-119-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:40:13-73
+119-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:40:13-73
 120            <intent-filter>
-120-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:41:13-43:29
+120-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:41:13-43:29
 121                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-121-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:42:17-81
-121-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/9cfd87918a99a25408235334ee0b9e4a/firebase-iid-18.0.0/AndroidManifest.xml:42:25-78
+121-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:42:17-81
+121-->[com.google.firebase:firebase-iid:18.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4139f7ecb2f78c138a02bd1cb1e30194/firebase-iid-18.0.0/AndroidManifest.xml:42:25-78
 122            </intent-filter>
 123        </receiver>
 124
 125        <provider
-125-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/b9708b28c61083d1be420997bfc1953b/firebase-common-17.0.0/AndroidManifest.xml:12:9-16:39
+125-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/0c92657f988e398f7161d4b4b73133ef/firebase-common-17.0.0/AndroidManifest.xml:12:9-16:39
 126            android:name="com.google.firebase.provider.FirebaseInitProvider"
-126-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/b9708b28c61083d1be420997bfc1953b/firebase-common-17.0.0/AndroidManifest.xml:13:13-77
+126-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/0c92657f988e398f7161d4b4b73133ef/firebase-common-17.0.0/AndroidManifest.xml:13:13-77
 127            android:authorities="io.ionic.starter.firebaseinitprovider"
-127-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/b9708b28c61083d1be420997bfc1953b/firebase-common-17.0.0/AndroidManifest.xml:14:13-72
+127-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/0c92657f988e398f7161d4b4b73133ef/firebase-common-17.0.0/AndroidManifest.xml:14:13-72
 128            android:exported="false"
-128-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/b9708b28c61083d1be420997bfc1953b/firebase-common-17.0.0/AndroidManifest.xml:15:13-37
+128-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/0c92657f988e398f7161d4b4b73133ef/firebase-common-17.0.0/AndroidManifest.xml:15:13-37
 129            android:initOrder="100" />
-129-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/b9708b28c61083d1be420997bfc1953b/firebase-common-17.0.0/AndroidManifest.xml:16:13-36
+129-->[com.google.firebase:firebase-common:17.0.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/0c92657f988e398f7161d4b4b73133ef/firebase-common-17.0.0/AndroidManifest.xml:16:13-36
 130
 131        <activity
-131-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3a91e5ceb48d34e88a452c235dbe2dc6/play-services-base-16.0.1/AndroidManifest.xml:23:9-26:75
+131-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/1df0ca3145ff116788e1eb28abe1d543/play-services-base-16.0.1/AndroidManifest.xml:23:9-26:75
 132            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-132-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3a91e5ceb48d34e88a452c235dbe2dc6/play-services-base-16.0.1/AndroidManifest.xml:24:13-79
+132-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/1df0ca3145ff116788e1eb28abe1d543/play-services-base-16.0.1/AndroidManifest.xml:24:13-79
 133            android:exported="false"
-133-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3a91e5ceb48d34e88a452c235dbe2dc6/play-services-base-16.0.1/AndroidManifest.xml:25:13-37
+133-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/1df0ca3145ff116788e1eb28abe1d543/play-services-base-16.0.1/AndroidManifest.xml:25:13-37
 134            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-134-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3a91e5ceb48d34e88a452c235dbe2dc6/play-services-base-16.0.1/AndroidManifest.xml:26:13-72
+134-->[com.google.android.gms:play-services-base:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/1df0ca3145ff116788e1eb28abe1d543/play-services-base-16.0.1/AndroidManifest.xml:26:13-72
 135
 136        <meta-data
-136-->[com.google.android.gms:play-services-basement:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4ea1c96de3dedb4b7e3cbf6ff1cc8518/play-services-basement-16.0.1/AndroidManifest.xml:23:9-25:69
+136-->[com.google.android.gms:play-services-basement:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/fdb5da0ed38cc04ccb72e4795eb89cf7/play-services-basement-16.0.1/AndroidManifest.xml:23:9-25:69
 137            android:name="com.google.android.gms.version"
-137-->[com.google.android.gms:play-services-basement:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4ea1c96de3dedb4b7e3cbf6ff1cc8518/play-services-basement-16.0.1/AndroidManifest.xml:24:13-58
+137-->[com.google.android.gms:play-services-basement:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/fdb5da0ed38cc04ccb72e4795eb89cf7/play-services-basement-16.0.1/AndroidManifest.xml:24:13-58
 138            android:value="@integer/google_play_services_version" />
-138-->[com.google.android.gms:play-services-basement:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/4ea1c96de3dedb4b7e3cbf6ff1cc8518/play-services-basement-16.0.1/AndroidManifest.xml:25:13-66
+138-->[com.google.android.gms:play-services-basement:16.0.1] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/fdb5da0ed38cc04ccb72e4795eb89cf7/play-services-basement-16.0.1/AndroidManifest.xml:25:13-66
 139        <meta-data
-139-->[com.android.support:support-v4:26.1.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/6af985deecb3c9c38a45d531176e9566/support-v4-26.1.0/AndroidManifest.xml:26:9-28:38
+139-->[com.android.support:support-v4:26.1.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3add587345b94788bd75b4b96bd3241e/support-v4-26.1.0/AndroidManifest.xml:26:9-28:38
 140            android:name="android.support.VERSION"
-140-->[com.android.support:support-v4:26.1.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/6af985deecb3c9c38a45d531176e9566/support-v4-26.1.0/AndroidManifest.xml:27:13-51
+140-->[com.android.support:support-v4:26.1.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3add587345b94788bd75b4b96bd3241e/support-v4-26.1.0/AndroidManifest.xml:27:13-51
 141            android:value="26.1.0" />
-141-->[com.android.support:support-v4:26.1.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/6af985deecb3c9c38a45d531176e9566/support-v4-26.1.0/AndroidManifest.xml:28:13-35
+141-->[com.android.support:support-v4:26.1.0] /Users/nathanczh/.gradle/caches/transforms-2/files-2.1/3add587345b94788bd75b4b96bd3241e/support-v4-26.1.0/AndroidManifest.xml:28:13-35
 142    </application>
 143
 144</manifest>
