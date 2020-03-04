@@ -10,7 +10,6 @@ import {
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
-// import bottomImage from "../assets/loginPageBottom.png";
 import googleLogin from "../assets/googleIcon.png";
 import "../styles/Login.scss";
 import { userlogin_email_password } from "../controllers/user/login";
@@ -29,7 +28,6 @@ const Login: React.FC = () => {
     function successfulLogin() {
       setShowWrongCredentials(false);
       let url = window.location.href.split("/");
-
       url[3] = "home";
       window.location.href = url.join("/");
     }

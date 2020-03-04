@@ -7,8 +7,10 @@ import {
 } from "@ionic/react";
 import React, { useState } from "react";
 import "../styles/Todo.scss";
+import CheckAuth from "../helpers/CheckAuth";
 
 const Todo: React.FC = () => {
+  CheckAuth();
   const [tasks] = useState([]);
   const sampleTasks = [
     { title: "CIS 412 Sprint 1", tag: "#homework", color: "red" },

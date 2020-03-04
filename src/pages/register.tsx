@@ -9,7 +9,6 @@ import {
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
-// import bottomImage from "../assets/loginPageBottom.png";
 import "../styles/Register.scss";
 import { usersignup } from "../controllers/user/signup";
 
@@ -36,6 +35,15 @@ const Login: React.FC = () => {
     }
   }
 
+  function handleKeyDown(e: any) {
+    if (e.key === "Enter") {
+      handleSubmitSignUp(
+        (document.getElementById("email-field") as HTMLInputElement).value,
+        (document.getElementById("password-field") as HTMLInputElement).value
+      );
+    }
+  }
+
   return (
     <React.Fragment>
       <IonContent class="ion-padding">
@@ -50,6 +58,9 @@ const Login: React.FC = () => {
                 placeholder="Email"
                 id="email-field"
                 required
+                onKeyDown={e => {
+                  handleKeyDown(e);
+                }}
               ></IonInput>
             </IonItem>
             <IonItem className="input">
@@ -59,6 +70,9 @@ const Login: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 id="password-field"
                 required
+                onKeyDown={e => {
+                  handleKeyDown(e);
+                }}
               ></IonInput>
               <IonIcon
                 icon={passwordIcon}
