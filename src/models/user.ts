@@ -62,14 +62,15 @@ export class FirebaseUser{
 }
 
 
-export interface UserSettings {
-    work_start_time: Date,
-    work_stop_time: Date,
-    work_days:Weekdays[],
-    sleep_start:Date,
-    sleep_stop:Date,
-    overwork_limit:string
+export class UserSettings {
+    work_start_time!: Date;
+    work_stop_time!: Date;
+    work_days!:Weekdays[];
+    sleep_start!:Date;
+    sleep_stop!:Date;
+    overwork_limit!:string;
 }
+
 
 @Collection('user')
 export class User extends BaseModel<User>{
