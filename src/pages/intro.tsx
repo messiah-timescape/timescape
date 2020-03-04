@@ -16,17 +16,17 @@ const Intro: React.FC = () => {
             <IonContent className="ion-padding">
                 <IonSlides pager={true} options={slideOpts} id="slides">
                     <IonSlide>
-                        <img src={logo} />
+                        <img src={logo} alt=""/>
                         <h2>Welcome to TimeScape</h2>
                         <p>A personalized planner centered around the way you want to work</p>
                     </IonSlide>
                     <IonSlide>
-                        <img src={list} />
+                        <img src={list} alt=""/>
                         <h2>Plan Your Tasks</h2>
                         <p>Create your very own To-Do list to keep track of all the tasks you wish to complete</p>
                     </IonSlide>
                     <IonSlide>
-                        <img src={clock} />
+                        <img src={clock} alt=""/>
                         <h2>Track Your Work Habits</h2>
                         <p>Use TimeScape's built in clock to track the time you spend working throughout the day</p>
                     </IonSlide>
