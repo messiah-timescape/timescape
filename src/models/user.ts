@@ -1,9 +1,10 @@
 import firebase from "firebase";
-import { Collection, getRepository, BaseFirestoreRepository } from "fireorm";
+import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
 
 import Weekdays from "../utils/weekdays";
 import moment from "moment";
 import BaseModel from "./base_model";
+import { Task } from "./task";
 
 export enum UserProvider{
     Google = "Google",
@@ -88,12 +89,8 @@ export class User extends BaseModel<User>{
         sleep_stop:moment().hours(7).toDate(),
         overwork_limit: moment.duration(3, 'hours').toISOString()
     };
-
-
-
-    to_json():string {
-        return JSON.stringify(this);
-    }
+    @SubCollection(Task)
+    tasks?: ISubCollection<Task>;
 
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);
