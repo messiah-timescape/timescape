@@ -12,7 +12,9 @@ const Home: React.FC = () => {
   // let output;
 
   token.then(function(result) {
+    console.log("Checking user");
     if (result) {
+      console.log("User logged in", result)
       setCurrentUser(result.email);
     }
     // result ? setCurrentUser(result.email) : null;
