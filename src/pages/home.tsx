@@ -13,7 +13,9 @@ const Home: React.FC = () => {
   CheckAuth();
 
   token.then(function(result) {
+    console.log("Checking user");
     if (result) {
+      console.log("User logged in", result)
       setCurrentUser(result.email);
     }
   });
