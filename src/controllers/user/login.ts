@@ -13,9 +13,7 @@ export let userlogin_email_password = (email: string, password: string) => {
       if (data && data.user) {
         let user = FirebaseUser.create_from_firebase(data.user);
 
-        await user.user().then(user => {
-          CurrentUser.set_user(user);
-        });
+        await user.user()
         return user;
       } else {
         throw new Error("User not logged in");
@@ -41,7 +39,6 @@ export let userlogin_google_oauth = () => {
         let user = FirebaseUser.create_from_firebase(result.user);
         user.google_access_token = token;
         let create_user_status = await user.create_or_load_user();
-        await CurrentUser.set_user(create_user_status.user);
         return {
           user: user,
           new: create_user_status.new

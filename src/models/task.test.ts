@@ -30,7 +30,7 @@ describe('Creating Task', ()=> {
         });
         console.log(task.to_json());
         if(user) {
-            let new_task = await user.tasks?.create(task);
+            let new_task = await user.tasks!.create(task);
             if(new_task) {
                 return expect(new_task.name).toBe(task.name);
             } else {
@@ -40,7 +40,7 @@ describe('Creating Task', ()=> {
     });
 
     afterAll(()=> {
-        if(user) user.tasks?.delete("Complete Test");
+        if(user) user.tasks!.delete("Complete Test");
         firebase.auth().signOut();
     })
 });
