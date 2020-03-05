@@ -10,5 +10,5 @@ export class Task extends BaseModel<Task> {
     times!: Array<Moment> | null;
     tag_list!: Tag | null;
     Task!: Task | null;
-    completed: boolean = true;
+    completed!: boolean;
 }
