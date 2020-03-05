@@ -12,12 +12,22 @@ import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import googleLogin from "../assets/googleIcon.png";
 import "../styles/Login.scss";
-import { userlogin_email_password } from "../controllers/user/login";
+import { userlogin_email_password, userlogin_google_oauth } from "../controllers/user/login";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
   const [showWrongCredentials, setShowWrongCredentials] = useState(false);
+  
+  function google_login() {
+    userlogin_google_oauth().then(() => {
+      setShowWrongCredentials(false);
+      let url = window.location.href.split("/");
+
+      url[3] = "home";
+      window.location.href = url.join("/");
+    });
+  }
 
   function handleSubmit(username: string, password: string) {
     userlogin_email_password(username, password).then(
@@ -117,7 +127,9 @@ const Login: React.FC = () => {
               </IonButton>
             </form>
             <div className="alt-login">
-              <img id="googlePic" src={googleLogin} alt="google login icon" />
+              <img id="googlePic" src={googleLogin} alt="google login icon" onClick={() =>
+                  google_login()
+                }/>
               <p>
                 Don't have an account?
                 <br />

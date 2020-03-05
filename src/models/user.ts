@@ -39,12 +39,17 @@ export class FirebaseUser{
     }
 
     async user():Promise<User>{
-        return this.create_or_load_user();
+        return (await this.create_or_load_user()).user;
     }
 
-    async create_or_load_user():Promise<User> {
-        let user = await this.load_user();
-        return (user)?user:this.create_user();
+    async create_or_load_user():Promise<{user:User,new:boolean}> {
+        let org_user = await this.load_user();
+        
+        let user:User = (org_user)?org_user:await this.create_user();
+        return {
+            user: user,
+            new: !org_user
+        };
     }
 
     create_user():Promise<User> {
