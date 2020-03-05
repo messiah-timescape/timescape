@@ -31,17 +31,19 @@ export let userlogin_google_oauth = () => {
   return firebase
     .auth()
     .signInWithPopup(provider)
-    .then(result => {
+    .then(async result => {
+      console.log('HERE-1');
       if (
         result &&
         result.credential &&
-        result.credential instanceof firebase.auth.OAuthCredential &&
         result.user
       ) {
-        let token = result.credential.accessToken;
+        console.log('HERE-2');
+        let token = (result.credential as firebase.auth.OAuthCredential).accessToken;
         let user = FirebaseUser.create_from_firebase(result.user);
         user.google_access_token = token;
-        user.user().then(user => {
+        await user.user().then(user => {
+          console.log(user);
           CurrentUser.set_user(user);
         });
         return user;
