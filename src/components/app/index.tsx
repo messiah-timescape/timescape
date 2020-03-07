@@ -23,6 +23,7 @@ import Register from "../../pages/register";
 import AddTask from "../../pages/addTask";
 import Todo from "../../pages/todo";
 import Intro from "../../pages/intro";
+import Survey from "../../pages/survey"
 import init_app from "../../init_app";
 
 /* Core CSS required for Ionic components to work properly */
@@ -62,12 +63,14 @@ const App: React.FC = () => {
             <Route path="/addtask" component={AddTask} exact={true} />
             <Route path="/todo" component={Todo} exact={true} />
             <Route path="/intro" component={Intro} exact={true} />
+            <Route path="/survey" component={Survey} exact={true} />
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 
           {currentTabString !== "login" &&
           currentTabString !== "register" &&
           currentTabString !== "intro" &&
+          currentTabString !== "survey" &&
           currentTabString !== "addtask" ? (
             <IonTabBar slot="bottom">
               <IonTabButton tab="todo" href="/todo">
