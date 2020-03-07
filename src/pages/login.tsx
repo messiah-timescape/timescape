@@ -12,13 +12,16 @@ import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import googleLogin from "../assets/googleIcon.png";
 import "../styles/Login.scss";
-import { userlogin_email_password, userlogin_google_oauth } from "../controllers/user/login";
+import {
+  userlogin_email_password,
+  userlogin_google_oauth
+} from "../controllers/user/login";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
   const [showWrongCredentials, setShowWrongCredentials] = useState(false);
-  
+
   function google_login() {
     userlogin_google_oauth().then(() => {
       setShowWrongCredentials(false);
@@ -59,7 +62,6 @@ const Login: React.FC = () => {
   return (
     <React.Fragment>
       <img id="top-border" src={topImage} alt="login" />
-      {/* <img id="bot-border" src={bottomImage} /> */}
       <IonPage>
         <IonContent class="ion-padding" color="transparent">
           <div className="div-content">
@@ -127,9 +129,12 @@ const Login: React.FC = () => {
               </IonButton>
             </form>
             <div className="alt-login">
-              <img id="googlePic" src={googleLogin} alt="google login icon" onClick={() =>
-                  google_login()
-                }/>
+              <img
+                id="googlePic"
+                src={googleLogin}
+                alt="google login icon"
+                onClick={() => google_login()}
+              />
               <p>
                 Don't have an account?
                 <br />
