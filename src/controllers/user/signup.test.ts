@@ -57,7 +57,7 @@ describe('User Signup with Email and Password', ()=> {
         }
         let current_user = firebase.auth().currentUser;
         if(current_user) {
-            console.log("DELETING", current_user.email);
+            console.log("DELETED", current_user.email);
             await current_user.delete();
         }
 

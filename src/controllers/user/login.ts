@@ -13,9 +13,7 @@ export let userlogin_email_password = (email: string, password: string) => {
       if (data && data.user) {
         let user = FirebaseUser.create_from_firebase(data.user);
 
-        await user.user().then(user => {
-          CurrentUser.set_user(user);
-        });
+        await user.user()
         return user;
       } else {
         throw new Error("User not logged in");
@@ -32,21 +30,19 @@ export let userlogin_google_oauth = () => {
     .auth()
     .signInWithPopup(provider)
     .then(async result => {
-      console.log('HERE-1');
       if (
         result &&
         result.credential &&
         result.user
       ) {
-        console.log('HERE-2');
         let token = (result.credential as firebase.auth.OAuthCredential).accessToken;
         let user = FirebaseUser.create_from_firebase(result.user);
         user.google_access_token = token;
-        await user.user().then(user => {
-          console.log(user);
-          CurrentUser.set_user(user);
-        });
-        return user;
+        let create_user_status = await user.create_or_load_user();
+        return {
+          user: user,
+          new: create_user_status.new
+        };
       } else {
         throw new Error("User not logged in");
       }

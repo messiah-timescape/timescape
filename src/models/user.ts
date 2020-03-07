@@ -1,9 +1,10 @@
 import firebase from "firebase";
-import { Collection, getRepository, BaseFirestoreRepository } from "fireorm";
+import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
 
 import Weekdays from "../utils/weekdays";
 import moment from "moment";
 import BaseModel from "./base_model";
+import { Task } from "./task";
 
 export enum UserProvider{
     Google = "Google",
@@ -38,12 +39,17 @@ export class FirebaseUser{
     }
 
     async user():Promise<User>{
-        return this.create_or_load_user();
+        return (await this.create_or_load_user()).user;
     }
 
-    async create_or_load_user():Promise<User> {
-        let user = await this.load_user();
-        return (user)?user:this.create_user();
+    async create_or_load_user():Promise<{user:User,new:boolean}> {
+        let org_user = await this.load_user();
+        
+        let user:User = (org_user)?org_user:await this.create_user();
+        return {
+            user: user,
+            new: !org_user
+        };
     }
 
     create_user():Promise<User> {
@@ -89,12 +95,8 @@ export class User extends BaseModel<User>{
         sleep_stop:moment().hours(7).toDate(),
         overwork_limit: moment.duration(3, 'hours').toISOString()
     };
-
-
-
-    to_json():string {
-        return JSON.stringify(this);
-    }
+    @SubCollection(Task)
+    tasks?: ISubCollection<Task>;
 
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);
