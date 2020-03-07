@@ -5,13 +5,15 @@ import {
   IonCheckbox,
   IonItemSliding,
   IonItem,
-  IonItemOptions
+  IonItemOptions,
+  IonAlert
 } from "@ionic/react";
 import React, { useState } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 
 const Todo: React.FC = () => {
+  const [showDelete, setShowDelete] = useState(false);
   CheckAuth();
   const [tasks] = useState([]);
   const sampleTasks = [
@@ -54,7 +56,7 @@ const Todo: React.FC = () => {
             </button>
           </IonItemOptions>
           <IonItemOptions side="end">
-            <button className="delete-button">
+            <button className="delete-button" onClick={() => {setShowDelete(true)}}>
               <div className="delete-mask"></div>
             </button>
           </IonItemOptions>
@@ -86,9 +88,33 @@ const Todo: React.FC = () => {
             <h3 className="date">Tomorrow</h3>
             {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>}
           </div>
+
+          <IonAlert isOpen={showDelete} cssClass="delete-alert"
+            onDidDismiss={() => setShowDelete(false)}
+            message={'Are you sure you want to delete this task?'}
+            buttons={[
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                cssClass: 'cancel-button',
+                handler: () => {
+                  console.log('Confirm Cancel');
+                }
+              },
+              {
+                text: 'Delete',
+                role: 'confirm',
+                cssClass: 'delete-button',
+                handler: () => {
+                  console.log('Confirm Delete');
+                }
+              }
+            ]}
+          />
         </IonContent>
       </IonPage>
     </div>
+
   );
 };
 export default Todo;

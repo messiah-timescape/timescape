@@ -145,6 +145,15 @@ ion-item {
   }
 }
 
+.delete-alert {
+  .delete-button {
+    color: var(--ion-color-danger);
+  }
+  .cancel-button {
+    color: #000000;
+  }
+}
+
 // .ion-card-div {
 //   margin: 0;
 //   width: 89vw;
