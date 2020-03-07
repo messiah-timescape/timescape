@@ -3,7 +3,9 @@ import {
   IonPage,
   IonRouterLink,
   IonCheckbox,
-  IonCard
+  IonItemSliding,
+  IonItem,
+  IonItemOptions
 } from "@ionic/react";
 import React, { useState } from "react";
 import "../styles/Todo.scss";
@@ -31,22 +33,37 @@ const Todo: React.FC = () => {
       let tagClass = "tag " + task.color;
 
       temp.push(
-        <div className="task" key={task.title + task.tag}>
-          <div className="checkbox-div">
-            <IonCheckbox className="checkbox" />
-          </div>
-          <div>
-            <p>{task.title}</p>
-            <p className={tagClass}>{task.tag}</p>
-          </div>
-        </div>
+        <IonItemSliding key={task.title + task.tag}>
+          <IonItem>
+            <div className="task" key={task.title + task.tag + task.color}>
+              <div className="checkbox-div">
+                <IonCheckbox className="checkbox" />
+              </div>
+              <div>
+                <p>{task.title}</p>
+                <p className={tagClass}>{task.tag}</p>
+              </div>
+            </div>
+          </IonItem>
+          <IonItemOptions side="start">
+            <button className="add-button">
+              <div className="add-mask"></div>
+            </button>
+            <button className="edit-button">
+              <div className="edit-mask"></div>
+            </button>
+          </IonItemOptions>
+          <IonItemOptions side="end">
+            <button className="delete-button">
+              <div className="delete-mask"></div>
+            </button>
+          </IonItemOptions>
+        </IonItemSliding>
       );
     });
 
     return <React.Fragment>{temp}</React.Fragment>;
   };
-
-  //Get all tasks > Promise returns the list of items
 
   return (
     <div className="todo-parent-div">
@@ -56,20 +73,19 @@ const Todo: React.FC = () => {
             <h1 className="todo-header">To-Do</h1>
           </div>
         </div>
-        <div className="ion-card-div">
-          <IonCard>
-            <div className="angle-down"></div>
-          </IonCard>
-        </div>
 
-        <IonContent className="ion-padding">
+        <IonContent>
           <h3 className="date">Today</h3>
-          {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>}
-          <IonRouterLink routerLink="/addtask">
-            <button className="yellow-add-button">
-              <div className="add-icon"></div>
-            </button>
-          </IonRouterLink>
+          <div className="negative-z">
+            {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>}
+            <IonRouterLink routerLink="/addtask">
+              <button className="yellow-add-button">
+                <div className="add-icon"></div>
+              </button>
+            </IonRouterLink>
+            <h3 className="date">Tomorrow</h3>
+            {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>}
+          </div>
         </IonContent>
       </IonPage>
     </div>
