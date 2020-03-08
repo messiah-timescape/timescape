@@ -10,7 +10,7 @@ import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import "../styles/Register.scss";
-import googleLogin from "../assets/googleIcon.png";
+import googleLogin from "../assets/googleLogin.png";
 import { usersignup } from "../controllers/user/signup";
 import { userlogin_google_oauth } from "../controllers/user/login";
 
