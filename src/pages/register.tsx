@@ -9,14 +9,24 @@ import {
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
-// import bottomImage from "../assets/loginPageBottom.png";
 import "../styles/Register.scss";
+import googleLogin from "../assets/googleLogin.png";
 import { usersignup } from "../controllers/user/signup";
+import { userlogin_google_oauth } from "../controllers/user/login";
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
   const [showFailedLogin, setShowFailedLogin] = useState(false);
+
+  function google_login() {
+    userlogin_google_oauth().then(res => {
+      console.log(res.new);
+      // let url = window.location.href.split("/");
+      // url[3] = "home";
+      // window.location.href = url.join("/");
+    });
+  }
 
   function handleSubmitSignUp(email_input: string, password_input: string) {
     usersignup({ email: email_input, password: password_input }).then(
@@ -36,6 +46,15 @@ const Login: React.FC = () => {
     }
   }
 
+  function handleKeyDown(e: any) {
+    if (e.key === "Enter") {
+      handleSubmitSignUp(
+        (document.getElementById("email-field") as HTMLInputElement).value,
+        (document.getElementById("password-field") as HTMLInputElement).value
+      );
+    }
+  }
+
   return (
     <React.Fragment>
       <IonContent class="ion-padding">
@@ -50,6 +69,9 @@ const Login: React.FC = () => {
                 placeholder="Email"
                 id="email-field"
                 required
+                onKeyDown={e => {
+                  handleKeyDown(e);
+                }}
               ></IonInput>
             </IonItem>
             <IonItem className="input">
@@ -59,6 +81,9 @@ const Login: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 id="password-field"
                 required
+                onKeyDown={e => {
+                  handleKeyDown(e);
+                }}
               ></IonInput>
               <IonIcon
                 icon={passwordIcon}
@@ -98,6 +123,14 @@ const Login: React.FC = () => {
           </form>
 
           <div className="alt-register">
+            <div>
+              <img
+                id="googlePic"
+                src={googleLogin}
+                alt="google login icon"
+                onClick={() => google_login()}
+              />
+            </div>
             <p>
               Already have an account?
               <br />
@@ -111,4 +144,4 @@ const Login: React.FC = () => {
     </React.Fragment>
   );
 };
-export default Login;
+export default Register;

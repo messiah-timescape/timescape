@@ -1,12 +1,9 @@
-import Color from "../utils/color";
-
-class BaseFieldType<T> {
-
-}
+import moment, { Moment } from "moment";
 
 // export class ColorType extends BaseFieldType<string>{
     
 // }
+
 
 export enum TagColors {
     red = 0xf00,

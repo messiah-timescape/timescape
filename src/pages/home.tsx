@@ -1,23 +1,21 @@
-import { IonContent, IonPage, IonRouterLink } from "@ionic/react";
+import { IonContent, IonPage, IonRouterLink, IonButton } from "@ionic/react";
 import React, { useState } from "react";
 import homepageGraphic from "../assets/homepage-graphic.png";
 import "../styles/Home.scss";
 import user from "../controllers/user/index";
-
-// const Display = ({ out }) => <h3>Email: {out}</h3>
+import userlogout from "../controllers/user/logout";
+import CheckAuth from "../helpers/CheckAuth";
 
 const Home: React.FC = () => {
   const [currentUser, setCurrentUser] = useState();
   let token = user.get_user();
-  // let output;
+
+  CheckAuth();
 
   token.then(function(result) {
     if (result) {
       setCurrentUser(result.email);
     }
-    // result ? setCurrentUser(result.email) : null;
-    // console.log(result ? result.email : null);
-    // output = result ? result.email : null;
   });
 
   return (
@@ -32,7 +30,17 @@ const Home: React.FC = () => {
         </IonRouterLink>
 
         <h3>Email: {currentUser}</h3>
-        {/* <Display out={output}></Display> */}
+        <IonButton
+          onClick={() => {
+            userlogout().then(() => {
+              let url = window.location.href.split("/");
+              url[3] = "login";
+              window.location.href = url.join("/");
+            });
+          }}
+        >
+          Logout
+        </IonButton>
 
         <img
           src={homepageGraphic}

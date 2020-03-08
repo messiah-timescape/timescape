@@ -29,6 +29,7 @@
   border-radius: 10em;
   position: fixed;
   bottom: 1.5em;
+  z-index: 1000;
   right: 2em;
   outline: none;
 
@@ -41,16 +42,59 @@
   }
 }
 
+.delete-button {
+  background-color: var(--ion-color-danger);
+  .delete-mask {
+    height: 30px;
+    width: 30px;
+    mask: url("../assets/trash.svg") center no-repeat;
+    background-color: white;
+    mask-size: 30px;
+  }
+}
+
+.edit-button {
+  background-color: var(--ion-color-primary);
+  .edit-mask {
+    height: 30px;
+    width: 30px;
+    mask: url("../assets/pencil.svg") center no-repeat;
+    background-color: white;
+    mask-size: 30px;
+  }
+}
+
+.add-button {
+  background-color: var(--ion-color-secondary);
+  .add-mask {
+    height: 30px;
+    width: 30px;
+    mask: url("../assets/add-icon.svg") center no-repeat;
+    background-color: white;
+    mask-size: 30px;
+  }
+}
+
+ion-item {
+  background: white;
+  opacity: 1;
+}
+
 .task {
   display: flex;
   margin: 1em 0;
+
   p {
     margin: 0 0 10px 0;
   }
 
+  ion-reorder {
+    width: 100%;
+  }
+
   .checkbox-div {
     display: flex;
-
+    z-index: 999 !important;
     .checkbox {
       margin-right: 1em;
     }
@@ -58,6 +102,7 @@
 }
 
 .date {
+  margin-left: 0.7em;
   margin-bottom: 0;
 }
 
@@ -66,8 +111,6 @@
   text-align: center;
   border-radius: 20px;
   font-size: 12px;
-  /* padding: 0 16px; */
-  /* padding-right: 23px; */
   width: fit-content;
   padding: 3px 11px;
 }
@@ -90,7 +133,6 @@
 
 .header-div-parent {
   z-index: 10;
-  margin-bottom: 1em;
   .header-div {
     background-color: white;
 
@@ -103,30 +145,43 @@
   }
 }
 
-.ion-card-div {
-  ion-card {
-    margin: 0;
-    width: 89vw;
-    height: 9em;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
-    z-index: 3;
-    border-radius: 1em;
-    box-shadow: 0px 3px 3px 0px #0000001c;
+.delete-alert {
+  .delete-button {
+    color: var(--ion-color-danger);
   }
-
-  .angle-down {
-    mask: url("../assets/angle-down.svg") center no-repeat;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
-    background-color: #888888;
-    width: 24px;
-    height: 24px;
-    mask-size: 24px;
-    margin-bottom: 0.3em;
+  .cancel-button {
+    color: #000000;
   }
 }
+// .ion-card-div {
+//   margin: 0;
+//   width: 89vw;
+//   height: 9em;
+//   position: absolute;
+//   top: 0;
+//   left: 50%;
+//   transform: translate(-50%, 0);
+//   z-index: 3;
+//   border-radius: 1em;
+//   box-shadow: 0px 3px 3px 0px #0000001c;
+//   transition: 0.3s;
+//   ion-card {
+//   }
+//   ion-card:hover {
+//     // position: absolute;
+//     // top: 1000px;
+//   }
+
+//   .angle-down {
+//     mask: url("../assets/angle-down.svg") center no-repeat;
+//     position: absolute;
+//     bottom: 0;
+//     left: 50%;
+//     transform: translate(-50%, 0);
+//     background-color: #888888;
+//     width: 24px;
+//     height: 24px;
+//     mask-size: 24px;
+//     margin-bottom: 0.3em;
+//   }
+// }
