@@ -6,7 +6,13 @@ import {
   IonItemSliding,
   IonItem,
   IonItemOptions,
-  IonAlert
+  IonAlert, 
+  IonModal, 
+  IonInput, 
+  IonDatetime, 
+  IonSelectOption,
+  IonSelect, 
+  IonTextarea
 } from "@ionic/react";
 import React, { useState } from "react";
 import "../styles/Todo.scss";
@@ -14,6 +20,17 @@ import CheckAuth from "../helpers/CheckAuth";
 
 const Todo: React.FC = () => {
   const [showDelete, setShowDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalTag, setModalTag] = useState("");
+
+
+  function populateEdit(title: string, tag: string) {
+    setModalTitle(title);
+    setModalTag(tag);
+    setShowEdit(true);
+  }
+
   CheckAuth();
   const [tasks] = useState([]);
   const sampleTasks = [
@@ -51,7 +68,7 @@ const Todo: React.FC = () => {
             <button className="add-button">
               <div className="add-mask"></div>
             </button>
-            <button className="edit-button">
+            <button className="edit-button" onClick={() => {populateEdit(task.title, task.tag)}}>
               <div className="edit-mask"></div>
             </button>
           </IonItemOptions>
@@ -111,6 +128,49 @@ const Todo: React.FC = () => {
               }
             ]}
           />
+
+          <IonModal isOpen={showEdit} onDidDismiss={() => setShowEdit(false)} cssClass="edit-modal">
+            <IonContent className="ion-padding">
+              <p className="save-button" onClick={() => {setShowEdit(false)}}>save</p>
+              <IonItem className="input-item">
+                <IonInput 
+                  name="title" 
+                  value="Play videogames with Matt" 
+                  id="title-field" 
+                  required></IonInput>
+              </IonItem>
+
+              <IonItem className="input-item">
+                <IonSelect 
+                  name="tags"
+                  value={['school', 'hobbie']}
+                  id="tags-field" 
+                  multiple={true}>
+                  <IonSelectOption value="school">School</IonSelectOption>
+                  <IonSelectOption value="chore">Chore</IonSelectOption>
+                  <IonSelectOption value="work">Work</IonSelectOption>
+                  <IonSelectOption value="hobbie">Hobbie</IonSelectOption>
+                </IonSelect>
+            </IonItem>
+
+            <IonItem className="input-item">
+              <IonTextarea 
+                name="notes"
+                value="Don't read the notes section, I didn't take any notes."
+                rows={6}></IonTextarea>
+            </IonItem>
+
+            <IonItem className="input-item">
+              <IonDatetime 
+                name="time"
+                value="02 12 2020"
+                displayFormat="MM DD YYYY" 
+                id="time-field">
+                </IonDatetime>
+            </IonItem>
+
+            </IonContent>
+          </IonModal>
         </IonContent>
       </IonPage>
     </div>
