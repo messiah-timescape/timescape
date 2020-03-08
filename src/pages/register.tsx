@@ -22,9 +22,9 @@ const Register: React.FC = () => {
   function google_login() {
     userlogin_google_oauth().then(res => {
       console.log(res.new);
-      // let url = window.location.href.split("/");
-      // url[3] = "home";
-      // window.location.href = url.join("/");
+      let url = window.location.href.split("/");
+      url[3] = "survey";
+      window.location.href = url.join("/");
     });
   }
 

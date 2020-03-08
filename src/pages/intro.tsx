@@ -38,7 +38,7 @@ const Intro: React.FC = () => {
                     </IonSlide>
                 </IonSlides>
                 <div className="footer">
-                    <IonButton className="button" href="/register">Get Started</IonButton>
+                    <IonButton className="button-intro" href="/register">Get Started</IonButton>
                 </div>
             </IonContent>
         </React.Fragment>
