@@ -14,17 +14,14 @@ export let delete_task = async (task_id:string)=> {
     return curr_user!.tasks!.delete(task_id);
 }
 
-export let update_task = async (task_id:string, update_order?:number, update_name?:string,
-    update_notes?:string, update_deadline?:Date, update_tag?:Tag)=> {
+export let update_task = async (task_id:string, input_task:Partial<Task>)=> {
 
     let curr_user = await CurrentUser.get_loggedin();
     let task = await curr_user!.tasks!.findById(task_id);
-    let field_map:(string)[] = ["order", "name", "notes", "deadline", "tag_list"];
-    let fields:(string|number|Date|Tag|undefined)[] = [update_order, update_name, update_notes, update_deadline, update_tag];   
   
-    for(let index in fields) {
-        if(fields[index] !== undefined) {
-            task[field_map[index]] = fields[index];
+    for(let key in input_task) {
+        if(input_task[key] !== undefined) {
+            task[key] = input_task[key];
         }
     }
     return curr_user!.tasks!.update(task)

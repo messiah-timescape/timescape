@@ -11,25 +11,17 @@ describe('Testing Task CRUD', ()=> {
         init_app();
         await TestLoginActions.email_password();
     });
-    
-    let task_factory = ()=> {
-        let new_task = await create_task({
-            create_name: "New Test Task",
-            create_order: 3,
-        });
-        
-    }
 
+    let new_task:Task;
     it('creates task', async ()=> {
         let task_name = "Check off as complete";
         let task_order = 1;
         let task_deadline = moment().toDate();
-        let new_task:Task;
         try{
                 new_task = await create_task({
-                create_name: task_name,
-                create_order: task_order,
-                create_deadline: task_deadline
+                name: task_name,
+                order: task_order,
+                deadline: task_deadline
             });
         } catch(err) {
             throw err;
