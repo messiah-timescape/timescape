@@ -4,7 +4,7 @@ import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
 
 const Survey: React.FC = () => {
-    const [progressValue, setProgressValue] = useState(0);
+    const [progressValue, setProgressValue] = useState(0.25);
     const [modalNum, setModalNum] = useState(0);
     const days = [
         { val: "Monday", isChecked: false },
@@ -52,8 +52,10 @@ const Survey: React.FC = () => {
     function modal4 (wStart, wStop) {
         setWorkStart(wStart);
         setWorkStop(wStop);
-        next();
         //handleSubmit(interval, sleep, wake, workDays, workStart, workStop);
+        let url = window.location.href.split("/");
+            url[3] = "home";
+            window.location.href = url.join("/");
     }
 
     return (
@@ -188,7 +190,7 @@ const Survey: React.FC = () => {
                     </IonGrid>
                     <IonButton className="survey-nextButton" 
                     onClick={() =>
-                        modal2(
+                        modal4(
                             (document.getElementById("start-field") as HTMLInputElement).value, 
                             (document.getElementById("stop-field") as HTMLInputElement).value
                         )
