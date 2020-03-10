@@ -96,7 +96,7 @@ export class User extends BaseModel<User>{
         overwork_limit: moment.duration(3, 'hours').toISOString()
     };
     @SubCollection(Task)
-    tasks?: ISubCollection<Task>;
+    tasks!: ISubCollection<Task>;
 
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);

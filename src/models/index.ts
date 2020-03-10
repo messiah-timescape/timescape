@@ -2,6 +2,7 @@ import {FirebaseUser, User} from "./user";
 import BaseModel from "./base_model";
 import { TagColors } from "./field_types";
 import { Collection } from "fireorm";
+import {Task} from "./task"
 
 class GenericTag extends BaseModel<GenericTag>{
     name!: string;
@@ -16,4 +17,4 @@ class Tag extends GenericTag{
     
 }
 
-export {FirebaseUser, User, Tag};
+export {FirebaseUser, User, Tag, Task};

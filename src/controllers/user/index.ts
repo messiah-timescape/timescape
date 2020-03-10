@@ -21,14 +21,15 @@ class CurrentUser {
             });
         }
         return user_repo.whereEqualTo('user_id', curr_user.uid).findOne();
-            
-        // return Storage.get({key: USER_STORAGE_KEY}).then((user_obj:{value: string | null}) => {
-        //     if ( user_obj.value ) {
-        //         return User.create_from_json(user_obj.value);
-        //     } else {
-        //         throw new Error("No user");
-        //     }
-        // });
+    }
+
+    static async get_loggedin():Promise<User> {
+        let current_user = await this.get_user();
+        if ( current_user ) {
+            return current_user;
+        } else {
+            throw new Error("User not logged in");
+        }
     }
     
 }
