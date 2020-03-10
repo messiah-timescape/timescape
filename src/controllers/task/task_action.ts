@@ -2,47 +2,32 @@ import { Task } from "../../models/task";
 import { Tag } from "../../models";
 import CurrentUser from "../user";
 
-export let create_task = async (input_task:{
-        create_name:string,
-        create_order?:number,
-        create_notes?:string,
-        create_deadline?:Date,
-        create_tag?:Tag
-    })=> {
-    let curr_user = await CurrentUser.get_user();
-    let task = new Task ({
-        order: input_task.create_order,
-        name: input_task.create_name,
-        notes: (input_task.create_notes)?input_task.create_notes:'',
-        deadline: input_task.create_deadline,
-        // times: undefined,
-        // tag_list: input_task.create_tag,
-        // Task: undefined
-    });
+export let create_task = async (input_task:Partial<Task>)=> {
+    let curr_user = await CurrentUser.get_loggedin();
+    let task = new Task (input_task);
     
     return await curr_user!.tasks!.create(task);
 } 
 
 export let delete_task = async (task_id:string)=> {
-    let curr_user = await CurrentUser.get_user();
+    let curr_user = await CurrentUser.get_loggedin();
     return curr_user!.tasks!.delete(task_id);
 }
 
-export let update_task = async (task_id:string)=> {
-    // use '?' with optional parameters
-    // get fields that need to be updated
-    // save fields in array
-    // loop through array
-    // if (value != undefined) 
-    // append to update statment
+export let update_task = async (task_id:string, update_order?:number, update_name?:string,
+    update_notes?:string, update_deadline?:Date, update_tag?:Tag)=> {
 
-    //curr_user!.tasks!.update( <update statement> );
-    /* syntax of update statement:
-    .update({
-        "key": value,
-        "key1": value1
-    })
-    */
+    let curr_user = await CurrentUser.get_loggedin();
+    let task = await curr_user!.tasks!.findById(task_id);
+    let field_map:(string)[] = ["order", "name", "notes", "deadline", "tag_list"];
+    let fields:(string|number|Date|Tag|undefined)[] = [update_order, update_name, update_notes, update_deadline, update_tag];   
+  
+    for(let index in fields) {
+        if(fields[index] !== undefined) {
+            task[field_map[index]] = fields[index];
+        }
+    }
+    return curr_user!.tasks!.update(task)
 }
 
 export let complete_task = async (task_id:string)=> {
