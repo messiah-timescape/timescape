@@ -1,7 +1,7 @@
 import { Tag } from ".";
 import BaseModel from "./base_model";
-import { SubCollection, ISubCollection } from "fireorm";
-import moment, { Moment } from "moment";
+// import { SubCollection, ISubCollection } from "fireorm";
+import moment from "moment";
 
 export class Task extends BaseModel<Task> {
     constructor(init_fields?:Partial<Task>) {

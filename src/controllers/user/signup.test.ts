@@ -6,10 +6,6 @@ import CurrentUser from ".";
 import * as Chance from "chance";
 import { getRepository } from "fireorm";
 const chance = new Chance.Chance();
-// functions
-// 1 - sign the user up
-// 2 - persist a partial user?
-// make sure the user is FirebaseUser
 describe('User Signup with Email and Password', ()=> {
     beforeAll(()=> {
         init_app();
