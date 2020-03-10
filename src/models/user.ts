@@ -54,7 +54,7 @@ export class FirebaseUser{
 
     create_user():Promise<User> {
         let new_user = new User({
-            user_id: this.uid + '',
+            id: this.uid + '',
             email: this.email + '',
             display_name: this.display_name!
         });
@@ -63,7 +63,7 @@ export class FirebaseUser{
 
     load_user():Promise<User|null> {
         let user_repo = getRepository(User);
-        return user_repo.whereEqualTo('user_id', this.uid).findOne();
+        return user_repo.findById(this.uid);
     }
 }
 
@@ -83,8 +83,9 @@ export class User extends BaseModel<User>{
     constructor(init_fields?:Partial<User>) {
         super();
         Object.assign(this, init_fields);
+
     }
-    user_id!: string;
+    id!: string;
     email!: string;
     display_name!: string;
     settings: UserSettings = {

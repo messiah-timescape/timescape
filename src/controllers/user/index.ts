@@ -20,7 +20,7 @@ class CurrentUser {
             });
         }
         
-        return user_repo.whereEqualTo('user_id', curr_user.uid).findOne();
+        return user_repo.findById(curr_user.uid);
     }
 
     static async get_loggedin():Promise<User> {
