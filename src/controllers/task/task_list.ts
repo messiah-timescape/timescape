@@ -82,10 +82,10 @@ class TaskList {
 function task_sync(change_state:Function):Promise<TaskList> {
     return new Promise<TaskList>( async (resolve, reject) => {
         let task_list = await TaskList.create(change_state);
-        task_list.add_group((task:Task)=> {return moment(task.deadline).isSame(moment(), 'day')});
-        task_list.add_group((task:Task)=> {return moment(task.deadline).isSame(moment().add(1, 'day'), 'day')});
-        task_list.groups.push(new TaskGroup(100, (task:Task)=> {return task.completed}));
-        task_list.groups.push(new TaskGroup(101, (task:Task)=> {return true}));
+        task_list.add_group("Due today", (task:Task)=> {return moment(task.deadline).isSame(moment(), 'day')});
+        task_list.add_group("Due tomorrow", (task:Task)=> {return moment(task.deadline).isSame(moment().add(1, 'day'), 'day')});
+        task_list.groups.push(new TaskGroup(100, "Completed", (task:Task)=> {return task.completed}));
+        task_list.groups.push(new TaskGroup(101, "Others", (task:Task)=> {return true}));
         resolve(task_list);
     });
 };
