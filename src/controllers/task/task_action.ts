@@ -22,3 +22,27 @@ export let delete_task = async (task_id:string)=> {
     let curr_user = await CurrentUser.get_user();
     return curr_user!.tasks!.delete(task_id);
 }
+
+export let update_task = async (task_id:string)=> {
+    // use '?' with optional parameters
+    // get fields that need to be updated
+    // save fields in array
+    // loop through array
+    // if (value != undefined) 
+    // append to update statment
+
+    //curr_user!.tasks!.update( <update statement> );
+    /* syntax of update statement:
+    .update({
+        "key": value,
+        "key1": value1
+    })
+    */
+}
+
+export let complete_task = async (task_id:string)=> {
+    let curr_user = await CurrentUser.get_user();
+    let task = await curr_user!.tasks!.findById(task_id);
+    task.completed = true;
+    return await curr_user!.tasks!.update(task);
+}

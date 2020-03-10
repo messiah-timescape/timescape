@@ -2,7 +2,7 @@ import moment from "moment";
 import init_app from "../../init_app";
 import firebase from "firebase";
 import { Task } from "../../models/task";
-import { create_task, delete_task } from "./create_task";
+import { create_task, delete_task, complete_task } from "./task_action";
 import { TestLoginActions } from "../user/login.test";
 import CurrentUser from "../user";
 
@@ -14,7 +14,7 @@ describe('Testing Task CRUD', ()=> {
     
     let new_task:Task;
     it('creates task', async ()=> {
-        let task_name = "MAKE DELETE WORK";
+        let task_name = "Check off as complete";
         let task_order = 1;
         let task_notes = null;
         let task_deadline = moment().toDate();
@@ -27,8 +27,14 @@ describe('Testing Task CRUD', ()=> {
         }
         if(new_task != undefined)
             return expect(new_task.name).toBe(task_name);
-        else throw new Error("\n MESSAGE from create_task.test.ts: Task is undefined.\n");
+        else throw new Error("\nMESSAGE from create_task.test.ts: Task is undefined.\n");
     });
+
+    it('marks task as complete', async ()=>{
+        let task_complete = await complete_task(new_task.id);
+        console.log("\nMarking task complete.");
+        return expect(task_complete.completed).toBeTruthy();
+    }); 
 
     it('deletes the task', async ()=> {
         await delete_task(new_task.id);
