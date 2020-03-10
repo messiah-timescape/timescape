@@ -22,15 +22,31 @@
 }
 
 .alt-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  position: absolute;
   bottom: -14em;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0%);
 
-  p {
-    margin-top: 2em;
+  button {
+    outline: none;
+    display: flex;
+    align-items: center;
+    border-radius: 3em;
+    padding: 0 2em;
+    background: white;
+    box-shadow: 0px 1px 4px #0000001f;
+    p {
+      font-size: 1.3em;
+      margin-left: 1em;
+    }
+  }
+
+  #googlePic {
+    height: 2em;
   }
 }
 
@@ -60,10 +76,6 @@
   position: absolute;
   bottom: 0;
   right: 0;
-}
-
-#googlePic {
-  margin-bottom: 1.5em;
 }
 
 main {

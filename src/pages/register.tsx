@@ -10,7 +10,7 @@ import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import "../styles/Register.scss";
-import googleLogin from "../assets/googleLogin.png";
+import googleIcon from "../assets/googleIcon.png";
 import { usersignup } from "../controllers/user/signup";
 import { userlogin_google_oauth } from "../controllers/user/login";
 
@@ -123,14 +123,11 @@ const Register: React.FC = () => {
           </form>
 
           <div className="alt-register">
-            <div>
-              <img
-                id="googlePic"
-                src={googleLogin}
-                alt="google login icon"
-                onClick={() => google_login()}
-              />
-            </div>
+            <button onClick={() => google_login()}>
+              <img id="googlePic" src={googleIcon} alt="google login icon" />
+              <p>Register with Google</p>
+            </button>
+
             <p>
               Already have an account?
               <br />

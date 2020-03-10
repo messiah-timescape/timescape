@@ -10,7 +10,7 @@ import {
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
-import googleLogin from "../assets/googleLogin.png";
+import googleIcon from "../assets/googleIcon.png";
 import "../styles/Login.scss";
 import {
   userlogin_email_password,
@@ -129,12 +129,11 @@ const Login: React.FC = () => {
               </IonButton>
             </form>
             <div className="alt-login">
-              <img
-                id="googlePic"
-                src={googleLogin}
-                alt="google login icon"
-                onClick={() => google_login()}
-              />
+              <button onClick={() => google_login()}>
+                <img id="googlePic" src={googleIcon} alt="google login icon" />
+                <p>Login with Google</p>
+              </button>
+
               <p>
                 Don't have an account?
                 <br />
