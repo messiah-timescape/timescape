@@ -23,21 +23,21 @@ describe('Update Task', ()=>{
      * Test Start
     ************************************/
     it('updates order', async ()=>{
-        let task = await create_task({order:1});
+        let task = await create_task({order:1, name:"Changes order from 1 to 2"});
         console.log("Task id is ", task.id);
         task = await update_task(task.id, {order: 2});
         return expect(task.order).toBe(2);
     });
 
     it('updates name', async ()=>{
-        let task = await create_task({name: "Original Name"});
+        let task = await create_task({order: 1, name: "Original Name"});
         let update_name:string = "Name Updated"
         task = await update_task(task.id, {name: update_name});
         return expect(task.name).toBe(update_name);
     });
 
     it('updates notes (the description)', async ()=> {
-        let task = await create_task({name: "Test Update Notes"});
+        let task = await create_task({order: 1, name: "Test Update Notes"});
         let update_notes:string = "This task was updated by create_delete_task.test.ts";
         task = await update_task(task.id, {notes: update_notes});
         return expect(task.notes).toBe(update_notes);
