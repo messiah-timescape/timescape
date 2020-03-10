@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IonContent, IonButton, IonProgressBar, IonItem, IonInput, IonModal, IonLabel, IonGrid, IonCol, IonRow, IonCheckbox, IonList } from '@ionic/react';
 import "../styles/Survey.scss";
+import moment from 'moment';
 // import { store_survey } from "../controllers/user/survey";
 
 const Survey: React.FC = () => {
@@ -16,31 +17,57 @@ const Survey: React.FC = () => {
         { val: "Sunday", isChecked: false }
     ];
 
-    const [interval, setInterval] = useState(null);
+    const [interval, setInterval] = useState();
     const [sleep, setSleep] = useState();
     const [wake, setWake] = useState();
-    const [workDays, ] = useState(null);
-    const [workStart, setWorkStart] = useState(null);
-    const [workStop, setWorkStop] = useState(null);
+    const [workDays, ] = useState();
+    const [workStart, setWorkStart] = useState();
+    const [workStop, setWorkStop] = useState();
 
-    // function handleSubmit(interval, sleep, wake, workDays, workStart, workStop) {
+    // function surveySubmit(interval, sleep, wake, workDays, workStart, workStop) {
     //     store_survey(interval, sleep, wake, workDays, workStart, workStop);
     // }
 
-    function next() {
+    function next() { //all the animation stuff for the next menu
         setModalNum(modalNum + 1);
         setProgressValue(progressValue + 0.25);
-        console.log(interval, sleep, wake, workDays, workStart, workStop);
+        console.log(interval);
+        console.log(sleep);
+        console.log(wake);
+        console.log(workDays);
+        console.log(workStart);
+        console.log(workStop);
     }
 
-    function modal1 (h, m) {
-        setInterval(h + m);
+    function modal1 (h: string, m: string) { //gets user input
+        let hNum = +h; //converts hours input to an actual number
+        let mNum = +m; //converts minutes input to an actual number
+        setInterval(moment().hours(hNum).minutes(mNum)); //sets interval to hold a moment object
         next();
     }
 
-    function modal2 (s: String, w: String) {
-        setSleep(s);
-        setWake(w);
+    function modal2 (s: string, w: string) {
+        let sleepTime = 0; 
+        let wakeTime = 0;
+        for (let i = 0; i < s.length; i++) { //checks to see if the user said 'am' or 'pm' if 'pm' then 12 hours are added to input value
+            if (s[i] === 'p' || s[i] === 'P') {
+                sleepTime = 12;
+            }
+
+            if (w[i] === 'p' || w[i] === 'P') {
+                wakeTime = 12;
+            }
+        }
+
+        //removes am and pm from the input values
+        s.replace(/[aApPmM]/g, ''); 
+        w.replace(/[aApPmM]/g, '');
+
+        sleepTime += +s;
+        wakeTime += +w;
+
+        setSleep(moment().hours(sleepTime));
+        setWake(moment().hours(wakeTime));
         next();
     }
 
@@ -96,33 +123,27 @@ const Survey: React.FC = () => {
             </IonModal>
 
             <IonModal 
-            cssClass="survey-modal-2"
+            cssClass="survey-modal-1"
             isOpen={modalNum === 1}
             backdropDismiss={false} 
             showBackdrop={false} 
             keyboardClose={false}
             >
-                <IonContent className="ion-padding">
+                <IonContent>
                     <p className="modal-title">When do you normaly go to bed and when do you usually wake up?</p>
                     <IonGrid>
                         <IonRow>
-                            <IonCol size-lg="6" offset="2">
-                                <div className="modal-item">
-                                    <IonItem>
-                                        <IonLabel>Bedtime</IonLabel>
-                                        <IonInput id="bedtime-field" placeholder="11pm"></IonInput>
-                                    </IonItem>
-                                </div>
+                            <IonCol size-lg="4">
+                                <IonItem>
+                                    <IonLabel>Bedtime</IonLabel>
+                                    <IonInput id="bedtime-field" placeholder="11pm"></IonInput>
+                                </IonItem>
                             </IonCol>
-                        </IonRow>
-                        <IonRow>
-                            <IonCol size-lg="6" offset="2">
-                                <div className="modal-item">
-                                    <IonItem>
-                                        <IonLabel>Wake Up</IonLabel>
-                                        <IonInput id="wakeUp-field" placeholder="8am"></IonInput>
-                                    </IonItem> 
-                                </div>
+                            <IonCol size-lg="4">
+                                <IonItem>
+                                    <IonLabel>Wake Up</IonLabel>
+                                    <IonInput id="wakeUp-field" placeholder="8am"></IonInput>
+                                </IonItem> 
                             </IonCol>
                         </IonRow>
                     </IonGrid>
@@ -158,33 +179,29 @@ const Survey: React.FC = () => {
             </IonModal>
 
             <IonModal
-            cssClass="survey-modal-2"
+            cssClass="survey-modal-1"
             isOpen={modalNum === 3}
             backdropDismiss={false} 
             showBackdrop={false} 
             keyboardClose={false}
             >
-                <IonContent className="ion-padding">
-                    <p>What time of day do you usually start working and when do you stop?</p>
+                <IonContent>
+                    <p className="modal-title">What time of day do you usually start working and when do you stop?</p>
                     <IonGrid>
                         <IonRow>
-                            <IonCol size-lg="6" offset="2">
-                                <div className="modal-item">
-                                    <IonItem>
-                                        <IonLabel>Start</IonLabel>
-                                        <IonInput id="start-field" placeholder="12pm"></IonInput>
-                                    </IonItem>
-                                </div>
+                            <IonCol size-lg="4">
+                                <IonItem>
+                                    <IonLabel>Start</IonLabel>
+                                    <IonInput id="start-field" placeholder="12pm"></IonInput>
+                                </IonItem>
                             </IonCol>
                         </IonRow>
                         <IonRow>
-                            <IonCol size-lg="6" offset="2">
-                                <div className="modal-item">
-                                    <IonItem>
-                                        <IonLabel>Stop</IonLabel>
-                                        <IonInput id="stop-field" placeholder="9pm"></IonInput>
-                                    </IonItem> 
-                                </div>
+                            <IonCol size-lg="4">
+                                <IonItem>
+                                    <IonLabel>Stop</IonLabel>
+                                    <IonInput id="stop-field" placeholder="9pm"></IonInput>
+                                </IonItem> 
                             </IonCol>
                         </IonRow>
                     </IonGrid>
