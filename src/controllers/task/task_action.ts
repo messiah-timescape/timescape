@@ -5,33 +5,30 @@ export let create_task = async (input_task:Partial<Task>)=> {
     let curr_user = await CurrentUser.get_loggedin();
     let task = new Task (input_task);
     
-    return await curr_user!.tasks!.create(task);
+    return await curr_user.tasks!.create(task);
 } 
 
 export let delete_task = async (task_id:string)=> {
     let curr_user = await CurrentUser.get_loggedin();
-    return curr_user!.tasks!.delete(task_id);
+    return await curr_user.tasks!.delete(task_id);
 }
 
 export let update_task = async (task_id:string, input_task:Partial<Task>)=> {
-    console.log("Id pass is ", task_id);
     let curr_user = await CurrentUser.get_loggedin();
-    console.log("Current user is ", curr_user);
-    let task = await curr_user!.tasks!.findById(task_id);
-    console.log("Task is ", task);
-    if(task!=null) {
-        for(let key in input_task) {
-            if(input_task[key] !== undefined) {
-                task[key] = input_task[key];
-            }
+    let task = await curr_user.tasks!.findById(task_id);
+    console.log("User is ", curr_user, "\n\nAnd task is ", task);
+
+    for(let index in input_task) {
+        if(input_task[index] !== undefined) {
+            task![index] = input_task[index];
         }
     }
-    return curr_user!.tasks!.update(task)
+    return await curr_user.tasks!.update(task!)
 }
 
 export let complete_task = async (task_id: string) => {
-  let curr_user = await CurrentUser.get_user();
-  let task = await curr_user!.tasks!.findById(task_id);
+  let curr_user = await CurrentUser.get_loggedin();
+  let task = await curr_user.tasks!.findById(task_id);
   task.completed = true;
-  return await curr_user!.tasks!.update(task);
+  return await curr_user.tasks!.update(task);
 };

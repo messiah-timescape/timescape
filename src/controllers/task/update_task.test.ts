@@ -1,7 +1,7 @@
 import init_app from "../../init_app";
 import { TestLoginActions } from "../user/login.test";
 import firebase from "firebase";
-import { update_task, delete_task } from "./task_action";
+import { update_task, create_task, delete_task } from "./task_action";
 import CurrentUser from "../user";
 
 describe('Update Task', ()=>{
@@ -17,25 +17,29 @@ describe('Update Task', ()=>{
     // }
 
     // Id of task we want to update in these tests
-    let task_id = "yDhmq7jgnaFA9eogwekG"
+    // let task_id = "yDhmq7jgnaFA9eogwekG"
 
     /************************************
      * Test Start
     ************************************/
     it('updates order', async ()=>{
-        let task = await update_task(task_id, {order: 2});
+        let task = await create_task({order:1, name:"Changes order from 1 to 2"});
+        console.log("Task id is ", task.id);
+        task = await update_task(task.id, {order: 2});
         return expect(task.order).toBe(2);
     });
 
     it('updates name', async ()=>{
+        let task = await create_task({order: 1, name: "Original Name"});
         let update_name:string = "Name Updated"
-        let task = await update_task(task_id, {name: update_name});
+        task = await update_task(task.id, {name: update_name});
         return expect(task.name).toBe(update_name);
     });
 
     it('updates notes (the description)', async ()=> {
+        let task = await create_task({order: 1, name: "Test Update Notes"});
         let update_notes:string = "This task was updated by create_delete_task.test.ts";
-        let task = await update_task(task_id, {notes: update_notes});
+        task = await update_task(task.id, {notes: update_notes});
         return expect(task.notes).toBe(update_notes);
     });
 

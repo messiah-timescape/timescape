@@ -4,26 +4,32 @@ import init_app from "../../init_app";
 import firebase from "firebase";
 import Weekdays from "../../utils/weekdays";
 import { Moment } from "moment";
+import { UserSettings } from "../../models/user";
+import { TestLoginActions } from "./login.test";
+import CurrentUser from ".";
+import * as Chance from "chance";
+const chance = new Chance.Chance();
 
 describe('Store User Survey Data', ()=> {
-    beforeAll(()=> {
+    beforeAll(async ()=> {
         init_app();
+        await TestLoginActions.email_password();
     });
-    it('stores survey data', ()=> {
-        let work_limit:string = "PT5H";
-        let sleep_start:Moment = moment().hour(22);
-        let sleep_stop:Moment = moment().hour(8);
-        let work_days:Weekdays[] = new Array(1);
-        let work_start:Moment = moment().hour(8).minute(30);
-        let work_stop:Moment = moment().hour(11); 
-    
-        return store_survey(work_limit, sleep_start, sleep_stop,
-            work_days, work_start, work_stop)//.then(async ()=> {
-                // check each attribute
-                // if(attribute == expected) then var = true
-                // else err_msg = `The {$attribute} is not 
-                // if all true, return expect(var).toBeTruthy();
-            //});
+    it('stores survey data', async ()=> {
+        const h = chance.integer({min: 0, max: 23});
+        const m = chance.integer({min: 0, max: 59});
+        let settings:UserSettings = {
+            work_start_time: moment().hour(h).minute(m).toDate(),
+            work_stop_time: moment().hour(h).minute(m).toDate(),
+            sleep_start: moment().hour(h).minute(m).toDate(),
+            sleep_stop: moment().hour(h).minute(m).toDate(),
+            work_days: [Weekdays.Tuesday],
+            overwork_limit: "PT5H"
+        }
+
+        let user = await store_survey(settings);
+        let curr_user = await CurrentUser.get_loggedin();
+        return expect(curr_user.settings).toEqual(user.settings);
     });
     afterAll(()=>{
         firebase.auth().signOut();
