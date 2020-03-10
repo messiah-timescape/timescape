@@ -39,8 +39,8 @@ class TaskList {
     return task_list;
   }
 
-  add_group(...args) {
-    this.groups.push(new TaskGroup(this.groups.length, args[1], args[0]));
+  add_group(name: string, group_condition: (task) => boolean) {
+    this.groups.push(new TaskGroup(this.groups.length, name, group_condition));
   }
 
   by_groups() {
