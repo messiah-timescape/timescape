@@ -6,9 +6,11 @@ import moment from 'moment';
 
 
 class TaskGroup {
+    name:string;
     group_condition:((task) => boolean);
     tasks:Task[] = [];
-    constructor (index:number, group_condition:((task) => boolean)) {
+    constructor (index:number, name:string, group_condition:((task) => boolean)) {
+        this.name = name;
         this.group_condition = group_condition;
         this.index = index;
     }
@@ -37,7 +39,20 @@ class TaskList {
     }
 
     add_group(...args) {
-        this.groups.push(new TaskGroup(this.groups.length, args[0]));
+        this.groups.push(new TaskGroup(this.groups.length, args[1], args[0]));
+    }
+    
+    by_groups() {
+        this.tasks.forEach((task) => {
+            for (let i = 0; i < this.groups.length; i++) {
+                const group = this.groups[i];
+                if ( group.group_condition(task) ) {
+                    group.tasks.push(task);
+                    break;
+                }
+            }
+        });
+        return this.groups;
     }
     
 
@@ -61,18 +76,6 @@ class TaskList {
     constructor(current_user:User, update_fn:Function, initial_length = 100){//query:firebase.firestore.Query) {
         this.current_user = current_user;
         this.update_fn = update_fn;
-    }
-    
-    by_groups() {
-        this.tasks.forEach((task) => {
-            for (let i = 0; i < this.groups.length; i++) {
-                const group = this.groups[i];
-                if ( group.group_condition(task) ) {
-                    group.tasks.push(task);
-                    break;
-                }
-            }
-        });
     }
 }
 
