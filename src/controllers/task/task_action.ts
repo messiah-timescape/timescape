@@ -1,5 +1,4 @@
 import { Task } from "../../models/task";
-import { Tag } from "../../models";
 import CurrentUser from "../user";
 
 export let create_task = async (input_task:Partial<Task>)=> {
@@ -15,13 +14,16 @@ export let delete_task = async (task_id:string)=> {
 }
 
 export let update_task = async (task_id:string, input_task:Partial<Task>)=> {
-
+    console.log("Id pass is ", task_id);
     let curr_user = await CurrentUser.get_loggedin();
+    console.log("Current user is ", curr_user);
     let task = await curr_user!.tasks!.findById(task_id);
-  
-    for(let key in input_task) {
-        if(input_task[key] !== undefined) {
-            task[key] = input_task[key];
+    console.log("Task is ", task);
+    if(task!=null) {
+        for(let key in input_task) {
+            if(input_task[key] !== undefined) {
+                task[key] = input_task[key];
+            }
         }
     }
     return curr_user!.tasks!.update(task)
