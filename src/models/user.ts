@@ -63,6 +63,9 @@ export class FirebaseUser{
 
     load_user():Promise<User|null> {
         let user_repo = getRepository(User);
+        if (!this.uid) {
+            throw new Error("No user");
+        }
         return user_repo.findById(this.uid);
     }
 }
