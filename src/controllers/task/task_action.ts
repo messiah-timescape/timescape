@@ -11,7 +11,6 @@ export let create_task = async (input_task:{
     })=> {
     let curr_user = await CurrentUser.get_user();
     let task = new Task ({
-<<<<<<< HEAD
         order: input_task.create_order,
         name: input_task.create_name,
         notes: (input_task.create_notes)?input_task.create_notes:'',
@@ -19,15 +18,6 @@ export let create_task = async (input_task:{
         // times: undefined,
         // tag_list: input_task.create_tag,
         // Task: undefined
-=======
-        order: create_order,
-        name: create_name,
-        notes: (create_notes)?create_notes:"",
-        deadline: create_deadline,
-        times: null,
-        tag_list: create_tag,
-        Task: null
->>>>>>> 78cea8b8afd613b84c9741e62d805c6f1e3d9caf
     });
     
     return await curr_user!.tasks!.create(task);
