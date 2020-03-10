@@ -4,6 +4,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 const TEST_COLLECTION = 'test';
+const TEST_USERID = '074HsYTIkZIjoXuKhDso';
 
 class TestDbActions {
     db: firebase.firestore.Firestore;
@@ -18,6 +19,10 @@ class TestDbActions {
 
     list_test_docs() {
         return this.db.collection(TEST_COLLECTION).get();
+    }
+
+    list_test_user_doc() {
+        return this.db.collection('user').doc(TEST_USERID).get();
     }
 }
 
@@ -60,6 +65,13 @@ describe('with authentication', ()=>{
             });
         }).catch((err: firebase.FirebaseError) => {
             expect(err.code).toBeUndefined();
+        });
+    });
+    
+    it('cannot list other user documents', () =>{
+        expect.assertions(1);
+        return actions.list_test_user_doc().catch((err: firebase.FirebaseError) => {
+            expect(err.code).toBe('permission-denied');
         });
     });
 });
