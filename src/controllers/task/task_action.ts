@@ -10,9 +10,9 @@ export let create_task = async (create_name:string, create_order:number, create_
         name: create_name,
         notes: (create_notes)?create_notes:"",
         deadline: create_deadline,
-        times: undefined,
+        times: null,
         tag_list: create_tag,
-        Task: undefined
+        Task: null
     });
     
     return await curr_user!.tasks!.create(task);
