@@ -34,7 +34,7 @@ class TaskList {
             task_list.tasks.push(task);
         });
         task_list.stop_updates_fn = firebase.app().firestore().collection('user').doc(current_user.id)
-            .collection('tasks').onSnapshot(task_list.update);
+            .collection('tasks').onSnapshot(task_list.update());
         return task_list;
     }
 
@@ -55,22 +55,24 @@ class TaskList {
         return this.groups;
     }
     
-
-    update(query_snapshot:firebase.firestore.QuerySnapshot) {
-        let previous_task;
-        query_snapshot.docChanges().forEach(async change => {
-            await previous_task;
-            let task_id = change.doc.get('id');
-            previous_task = this.current_user.tasks.findById(task_id);
-            let new_task = await previous_task;
-            if ( change.type === 'removed' || change.type === 'modified') {
-                this.tasks.splice(change.oldIndex,1);
-            }
-            if ( change.type === 'added' || change.type === 'modified') {
-                this.tasks.splice(change.newIndex, 0, new_task);
-            }
-        });
-        this.update_fn(this.by_groups());
+    update() {
+        let that = this;
+        return (query_snapshot:firebase.firestore.QuerySnapshot) => {
+            let previous_task;
+            query_snapshot.docChanges().forEach(async change => {
+                await previous_task;
+                let task_id = change.doc.get('id');
+                previous_task = that.current_user.tasks.findById(task_id);
+                let new_task = await previous_task;
+                if ( change.type === 'removed' || change.type === 'modified') {
+                    that.tasks.splice(change.oldIndex,1);
+                }
+                if ( change.type === 'added' || change.type === 'modified') {
+                    that.tasks.splice(change.newIndex, 0, new_task);
+                }
+            });
+            that.update_fn(that.by_groups());
+        }
     }
 
     constructor(current_user:User, update_fn:Function, initial_length = 100){//query:firebase.firestore.Query) {
