@@ -12,13 +12,21 @@ describe('Testing Task CRUD', ()=> {
         await TestLoginActions.email_password();
     });
     
-    let new_task:Task;
+    let task_factory = ()=> {
+        let new_task = await create_task({
+            create_name: "New Test Task",
+            create_order: 3,
+        });
+        
+    }
+
     it('creates task', async ()=> {
         let task_name = "Check off as complete";
         let task_order = 1;
         let task_deadline = moment().toDate();
+        let new_task:Task;
         try{
-            new_task = await create_task({
+                new_task = await create_task({
                 create_name: task_name,
                 create_order: task_order,
                 create_deadline: task_deadline
