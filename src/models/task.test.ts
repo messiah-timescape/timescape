@@ -21,11 +21,11 @@ describe('Creating Task', ()=> {
         let task = new Task({
             order: 1,
             name: "Complete test",
-            notes: null,
+            notes: undefined,
             deadline: moment().toDate(),
-            times: null,
-            tag_list: null,
-            Task: null,
+            times: undefined,
+            tag_list: undefined,
+            Task: undefined,
             completed: true   
         });
         if(user) {
