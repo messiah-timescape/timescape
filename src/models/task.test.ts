@@ -3,16 +3,16 @@ import { Task } from "./task";
 import moment from "moment";
 import init_app from "../init_app";
 import firebase from "firebase";
-import { userlogin_email_password } from "../controllers/user/login";
 import { User } from ".";
-import CurrentUser from "../controllers/user";
+import { TestLoginActions } from "../controllers/user/login.test";
 
 // !WARNING: This test does NOT yet 
 // DELETE the task after its creation!
 
 describe('Creating Task', ()=> {
-    beforeAll(()=> {
+    beforeAll(async ()=> {
         init_app();
+        await TestLoginActions.email_password();
     });
 
     let user: User | null;
@@ -28,7 +28,6 @@ describe('Creating Task', ()=> {
             Task: null,
             completed: true   
         });
-        console.log(task.to_json());
         if(user) {
             let new_task = await user.tasks!.create(task);
             if(new_task) {

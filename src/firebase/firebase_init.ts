@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import check_testing from '../utils/check_testing';
 
 import wait_for_auth from '../utils/wait_auth';
 
@@ -34,13 +35,15 @@ export default class FirebaseInit{
     
         this.db = firebase.initializeApp(config, name);
         this.firestore = this.db.firestore();
-        this.firestore.enablePersistence().catch(function(err) {
-            if (err.code === 'failed-precondition') {
-                throw new Error('Multiple tabs open, close all others');
-            } else if (err.code === 'unimplemented' && process.env.JEST_WORKER_ID === undefined) {
-                throw new Error('I hate your browser');
-            }
-        });
+        if(!check_testing()) {
+            this.firestore.enablePersistence().catch(function(err) {
+                if (err.code === 'failed-precondition') {
+                    throw new Error('Multiple tabs open, close all others');
+                } else if (err.code === 'unimplemented' && process.env.JEST_WORKER_ID === undefined) {
+                    throw new Error('I hate your browser');
+                }
+            });
+        }
         if (auth_method) {
             this.authenticate(auth_method);
         }

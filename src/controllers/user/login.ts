@@ -1,7 +1,6 @@
 import { FirebaseError } from "firebase";
 import firebase from "firebase";
 import { FirebaseUser } from "../../models";
-import CurrentUser from ".";
 
 export let userlogin_email_password = (email: string, password: string) => {
   //frontend use

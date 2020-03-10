@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { IonSlides, IonSlide, IonContent, IonButton, IonProgressBar, IonItem, IonPicker, IonInput } from '@ionic/react';
+import { IonSlides, IonSlide, IonContent, IonProgressBar, IonItem, IonInput } from '@ionic/react';
 import "../styles/Survey.scss";
-import { store_survey } from "../controllers/user/survey";
+// import { store_survey } from "../controllers/user/survey";
 
 const Survey: React.FC = () => {
 
-    function handleSubmit(interval, sleep, wake, workDays, workStart, workStop) {
-        store_survey(interval, sleep, wake, workDays, workStart, workStop);
-    }
+    // function handleSubmit(interval, sleep, wake, workDays, workStart, workStop) {
+    //     store_survey(interval, sleep, wake, workDays, workStart, workStop);
+    // }
 
     const slideOpts = {
         initialSlide: 0,

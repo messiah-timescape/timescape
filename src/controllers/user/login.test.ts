@@ -20,22 +20,25 @@ export class TestLoginActions {
         return userlogin_google_oauth();
     }
 }
-
-
+let test_run = false;
 describe('User Login with Email and Password', ()=>{
     beforeAll(()=>{
         init_app();
     })
 
     it('must login user when email and password are right', ()=>{
-        expect.assertions(2);
-        return TestLoginActions.email_password().then(async (user:any)=>{
-            let current_user = await CurrentUser.get_user();
-            if(current_user){
-                expect(current_user.email).toBe(auth_user.email);
-            }
-            return expect(user.email).toBe(auth_user.email);
-        });
+
+        if ( !test_run ) {
+            test_run = true;
+            expect.assertions(2);
+            return TestLoginActions.email_password().then(async (user:any)=>{
+                let current_user = await CurrentUser.get_user();
+                if(current_user){
+                    expect(current_user.email).toBe(auth_user.email);
+                }
+                return expect(user.email).toBe(auth_user.email);
+            });
+        }
     });
 
     // it('must login user when oauth creds are right', ()=>{

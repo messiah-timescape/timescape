@@ -21,8 +21,8 @@ import CheckAuth from "../helpers/CheckAuth";
 const Todo: React.FC = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalTag, setModalTag] = useState("");
+  const [, setModalTitle] = useState("");
+  const [, setModalTag] = useState("");
 
 
   function populateEdit(title: string, tag: string) {

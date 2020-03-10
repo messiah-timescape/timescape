@@ -20,19 +20,17 @@ describe('Testing Task CRUD', ()=> {
         let task_deadline = moment().toDate();
         let task_tag = null;
         try{
-            console.log("CREATING", task_name);
             new_task = await create_task(task_name, task_order, task_notes, task_deadline, task_tag);
         } catch(err) {
             throw err;
         }
-        if(new_task != undefined)
+        if(new_task !== undefined)
             return expect(new_task.name).toBe(task_name);
         else throw new Error("\nMESSAGE from create_task.test.ts: Task is undefined.\n");
     });
 
     it('marks task as complete', async ()=>{
         let task_complete = await complete_task(new_task.id);
-        console.log("\nMarking task complete.");
         return expect(task_complete.completed).toBeTruthy();
     }); 
 

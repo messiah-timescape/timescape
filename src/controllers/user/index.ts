@@ -14,17 +14,18 @@ class CurrentUser {
         });
         
         let curr_user = firebase.auth().currentUser;
-        
         if (!curr_user) {
             return new Promise(resolve => {
                 resolve(null);
             });
         }
+        
         return user_repo.whereEqualTo('user_id', curr_user.uid).findOne();
     }
 
     static async get_loggedin():Promise<User> {
         let current_user = await this.get_user();
+        
         if ( current_user ) {
             return current_user;
         } else {

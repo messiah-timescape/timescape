@@ -1,4 +1,3 @@
-import { Moment} from "moment";
 import { Tag } from ".";
 import BaseModel from "./base_model";
 
@@ -9,10 +8,10 @@ export class Task extends BaseModel<Task> {
     }
     order!: number;
     name!: string;
-    notes!: string | null;
-    deadline!: Date | null; // I think Firestore allows you to use @ServerTimestamp 
-    times!: Array<Moment> | null;
-    tag_list!: Tag | null;
-    Task!: Task | null;
+    notes?: string;
+    deadline!: Date; // I think Firestore allows you to use @ServerTimestamp 
+    times?: Date[];
+    tag_list?: Tag;
+    Task!: Task;
     completed: boolean = false;
 }
