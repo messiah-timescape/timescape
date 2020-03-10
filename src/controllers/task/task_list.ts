@@ -71,7 +71,7 @@ class TaskList {
                     that.tasks.splice(change.newIndex, 0, new_task);
                 }
             });
-            that.update_fn(that.by_groups());
+            that.update_fn(that.by_groups.apply(that));
         }
     }
 
