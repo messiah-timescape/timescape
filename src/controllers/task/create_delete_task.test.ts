@@ -16,11 +16,13 @@ describe('Testing Task CRUD', ()=> {
     it('creates task', async ()=> {
         let task_name = "Check off as complete";
         let task_order = 1;
-        let task_notes = null;
         let task_deadline = moment().toDate();
-        let task_tag = null;
         try{
-            new_task = await create_task(task_name, task_order, task_notes, task_deadline, task_tag);
+            new_task = await create_task({
+                create_name: task_name,
+                create_order: task_order,
+                create_deadline: task_deadline
+            });
         } catch(err) {
             throw err;
         }

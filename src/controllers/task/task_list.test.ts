@@ -9,7 +9,6 @@ describe("Task List", ()=> {
     });
 
     it('should retrieve an initial list of users when called', async () => {
-        console.log("Run");
         let task_list = await task_sync(()=>{});
         expect(task_list.tasks.length).toBeGreaterThan(0);
         expect(task_list.groups.length).toBeGreaterThan(0);

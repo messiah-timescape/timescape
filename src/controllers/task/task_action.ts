@@ -2,17 +2,22 @@ import { Task } from "../../models/task";
 import { Tag } from "../../models";
 import CurrentUser from "../user";
 
-export let create_task = async (create_name:string, create_order:number, create_notes:string,
-    create_deadline:Date, create_tag:Tag)=> {
+export let create_task = async (input_task:{
+        create_name:string,
+        create_order?:number,
+        create_notes?:string,
+        create_deadline?:Date,
+        create_tag?:Tag
+    })=> {
     let curr_user = await CurrentUser.get_user();
     let task = new Task ({
-        order: create_order,
-        name: create_name,
-        notes: (create_notes)?create_notes:"",
-        deadline: create_deadline,
-        times: undefined,
-        tag_list: create_tag,
-        Task: undefined
+        order: input_task.create_order,
+        name: input_task.create_name,
+        notes: (input_task.create_notes)?input_task.create_notes:'',
+        deadline: input_task.create_deadline,
+        // times: undefined,
+        // tag_list: input_task.create_tag,
+        // Task: undefined
     });
     
     return await curr_user!.tasks!.create(task);

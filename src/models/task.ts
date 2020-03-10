@@ -8,10 +8,10 @@ export class Task extends BaseModel<Task> {
     }
     order!: number;
     name!: string;
-    notes?: string;
+    notes: string = '';
     deadline!: Date; // I think Firestore allows you to use @ServerTimestamp 
-    times?: Date[];
-    tag_list?: Tag;
-    Task!: Task;
+    times: Date[] = [];
+    tag_list: Tag[] = [];
+    // Task!: Task;
     completed: boolean = false;
 }
