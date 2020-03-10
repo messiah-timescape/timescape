@@ -25,7 +25,7 @@ const Todo: React.FC = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalTag, setModalTag] = useState("");
   const [toDeleteId, setToDeleteId] = useState(0);
-  const [tasks] = useState([]);
+  const [tasks, setTasks] = useState();
   const [sampleTasks, setSampleTasks] = useState([
     { title: "CIS 412 Sprint 1", id: 0, tag: "#homework", color: "red" },
     { title: "Have Ethan make coffee", id: 1, tag: "#fun", color: "blue" },
@@ -40,7 +40,9 @@ const Todo: React.FC = () => {
   ]);
 
   useEffect(() => {
-    task_sync(syncTasks).then(res => console.log(res));
+    CheckAuth();
+    task_sync(syncTasks).then(res => setTasks(res.tasks));
+    console.log(tasks);
   }, []);
 
   function syncTasks() {}
@@ -149,24 +151,24 @@ const Todo: React.FC = () => {
     );
   };
 
-  CheckAuth();
-
   const Task = () => {
     let temp: any = [];
 
-    sampleTasks.forEach(task => {
-      let tagClass = "tag " + task.color;
+    tasks.forEach(task => {
+      let tagClass = "tag ";
 
       temp.push(
-        <IonItemSliding key={task.title + task.tag}>
+        <IonItemSliding key={task.id}>
           <IonItem>
-            <div className="task" key={task.title + task.tag + task.color}>
+            <div className="task" key={task.id}>
               <div className="checkbox-div">
                 <IonCheckbox className="checkbox" />
               </div>
               <div>
-                <p>{task.title}</p>
-                <p className={tagClass}>{task.tag}</p>
+                <p>{task.name}</p>
+                <p className={tagClass}>
+                  {task.tag_list[0] ? task.tag_list[0] : undefined}
+                </p>
               </div>
             </div>
           </IonItem>
@@ -213,7 +215,7 @@ const Todo: React.FC = () => {
         <IonContent>
           <h3 className="date">Today</h3>
           <div className="negative-z">
-            {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>}
+            {tasks ? <Task /> : <React.Fragment></React.Fragment>}
             <IonRouterLink routerLink="/addtask">
               <button className="yellow-add-button">
                 <div className="add-icon"></div>
