@@ -1,4 +1,3 @@
-import moment from "moment";
 import init_app from "../../init_app";
 import firebase from "firebase";
 import { Task } from "../../models/task";
@@ -11,36 +10,56 @@ describe('Testing Task CRUD', ()=> {
         init_app();
         await TestLoginActions.email_password();
     });
+    
+    let task_factory = async (init_task:Partial<Task>)=> {
+        let new_task = await create_task(init_task);
+        return new_task;
+    }
 
-    let new_task:Task;
+    let to_be_deleted:(string)[];
+
     it('creates task', async ()=> {
-        let task_name = "Check off as complete";
-        let task_order = 1;
-        let task_deadline = moment().toDate();
-        try{
-                new_task = await create_task({
-                name: task_name,
-                order: task_order,
-                deadline: task_deadline
-            });
-        } catch(err) {
-            throw err;
-        }
-        if(new_task !== undefined)
-            return expect(new_task.name).toBe(task_name);
-        else throw new Error("\nMESSAGE from create_task.test.ts: Task is undefined.\n");
+        let new_task:Partial<Task>;
+        let title = "Created New Task Test";
+        new_task = await task_factory({
+            name: title,
+            order: 1,
+            notes: "This was a task created by our test."
+        });
+        console.log(new_task.to_json);
+       
+        if(new_task.id!==undefined)
+            to_be_deleted.push(new_task.id);
+            console.log("From created: ", to_be_deleted.toString());
+        expect(new_task.name).toBe(title);
     });
 
     it('marks task as complete', async ()=>{
-        let task_complete = await complete_task(new_task.id);
+        let task = await task_factory({
+            name: "Completeing Task Test",
+            notes: "This task was created by our test."
+        });
+        let task_complete = await complete_task(task.id);
+        to_be_deleted.push(task_complete.id);
+        console.log("From completed: ", to_be_deleted.toString());
         return expect(task_complete.completed).toBeTruthy();
     }); 
 
     it('deletes the task', async ()=> {
-        await delete_task(new_task.id);
+        let task = await task_factory({
+            name: "Deleting Task Test",
+            notes: "This task was created by our test."
+        });
+        await delete_task(task.id);
         let curr_user = await CurrentUser.get_user();
-        let task = await curr_user!.tasks!.findById(new_task.id);
+        task = await curr_user!.tasks!.findById(task.id);
         return expect(task).toBe(null);
+    });
+
+    afterEach(async ()=> {
+        for(var value of to_be_deleted) {
+            await delete_task(value);
+        }
     });
 
     afterAll(async ()=> {
