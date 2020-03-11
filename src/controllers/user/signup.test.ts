@@ -25,7 +25,7 @@ describe('User Signup with Email and Password', ()=> {
     let uid:string | null;
     it('logs in new user', ()=> {
         expect.assertions(1);
-       return usersignup(new_user).then(async user=> {
+        return usersignup(new_user).then(async user=> {
             uid = (await user.user()).id;
             // compare logged in user to data of new user
             let current_user = await CurrentUser.get_user();
@@ -38,6 +38,7 @@ describe('User Signup with Email and Password', ()=> {
         expect.assertions(1);
         return usersignup(new_user).then(async (user_from_db)=> {
             if (user_from_db) {
+                uid = (await user_from_db.user()).id;
                 return expect(new_user.email).toBe(user_from_db.email);
             }            
         }).catch((err)=>{
