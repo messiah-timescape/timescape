@@ -27,6 +27,9 @@ const AddTask: React.FC = () => {
   function handleAdd() {
     create_task(task).then(res => {
       console.log(res);
+      let url = window.location.href.split("/");
+      url[3] = "todo";
+      window.location.href = url.join("/");
     });
   }
 

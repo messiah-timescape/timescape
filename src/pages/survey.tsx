@@ -51,7 +51,7 @@ const Survey: React.FC = () => {
     next();
   }
 
-  function modal2(s: String, w: String) {
+  function modal2(s, w) {
     setSleep(s);
     setWake(w);
     next();
@@ -59,6 +59,7 @@ const Survey: React.FC = () => {
 
   // function modal3 (...arg: string[]) {
   //     //to be determined, not functional yet
+  //work_days = [Weekdays.Monday];
   //     next();
   // }
 
