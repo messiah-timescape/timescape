@@ -18,6 +18,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
+import { update_task, delete_task, complete_task } from "../controllers/task/task_action";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
@@ -58,13 +59,13 @@ const Todo = () => {
     setShowEdit(true);
   }
 
-  function deleteTask() {
-    for (let index = 0; index < sampleTasks.length; index++) {
-      if (sampleTasks[index].id === toDeleteId) {
-        sampleTasks.splice(index, 1);
-      }
-    }
-  }
+  // function deleteTask() {
+  //   for (let index = 0; index < sampleTasks.length; index++) {
+  //     if (sampleTasks[index].id === toDeleteId) {
+  //       sampleTasks.splice(index, 1);
+  //     }
+  //   }
+  // }
 
   const EditModal = () => {
     return (
@@ -85,7 +86,7 @@ const Todo = () => {
           <IonItem className="input-item">
             <IonInput
               name="title"
-              value="Play videogames with Matt"
+              value={modalTitle}
               id="title-field"
               required
             ></IonInput>
@@ -148,7 +149,8 @@ const Todo = () => {
             cssClass: "delete-button",
             handler: () => {
               console.log("Confirm Delete", toDeleteId);
-              deleteTask();
+              delete_task(toDeleteId.toString());
+              //deleteTask();
             }
           }
         ]}
@@ -175,7 +177,10 @@ const Todo = () => {
               <IonItem>
                 <div className="task" key={task.id}>
                   <div className="checkbox-div">
-                    <IonCheckbox className="checkbox" />
+                    <IonCheckbox 
+                    className="checkbox" 
+                    onClick={() => complete_task(task.id)}
+                    />
                   </div>
                   <div>
                     <p>{task.name}</p>
