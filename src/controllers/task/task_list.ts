@@ -58,20 +58,19 @@ class TaskList {
 
   update() {
     let that = this;
-    return (query_snapshot: firebase.firestore.QuerySnapshot) => {
-      let previous_task;
-      query_snapshot.docChanges().forEach(async change => {
-        await previous_task;
+    return async (query_snapshot: firebase.firestore.QuerySnapshot) => {
+      let changes = query_snapshot.docChanges();
+      for( let i = 0; i < changes.length; i++) {
+        let change = changes[i];
         let task_id = change.doc.get("id");
-        previous_task = that.current_user.tasks.findById(task_id);
-        let new_task = await previous_task;
+        let new_task = await that.current_user.tasks.findById(task_id);
         if (change.type === "removed" || change.type === "modified") {
           that.tasks.splice(change.oldIndex, 1);
         }
         if (change.type === "added" || change.type === "modified") {
           that.tasks.splice(change.newIndex, 0, new_task);
         }
-      });
+      }
       that.update_fn(that.by_groups.apply(that));
     };
   }
