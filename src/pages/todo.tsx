@@ -18,38 +18,35 @@ import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
-import { update_task, delete_task, complete_task } from "../controllers/task/task_action";
+import { delete_task, complete_task } from "../controllers/task/task_action";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [modalTag, setModalTag] = useState("");
+  const [, setModalTag] = useState("");
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasks, setTasks] = useState();
-  const [tasksCode, setTasksCode] = useState();
-  const [sampleTasks, setSampleTasks] = useState([
-    { title: "CIS 412 Sprint 1", id: 0, tag: "#homework", color: "red" },
-    { title: "Have Ethan make coffee", id: 1, tag: "#fun", color: "blue" },
-    {
-      title:
-        "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-      id: 2,
-      tag: "#assignment",
-      color: "green"
-    },
-    { title: "Ethan Wong", id: 3, tag: "#timescape", color: "purple" }
-  ]);
+  // const [] = useState();
+  // const [] = useState([
+  //   { title: "CIS 412 Sprint 1", id: 0, tag: "#homework", color: "red" },
+  //   { title: "Have Ethan make coffee", id: 1, tag: "#fun", color: "blue" },
+  //   {
+  //     title:
+  //       "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
+  //     id: 2,
+  //     tag: "#assignment",
+  //     color: "green"
+  //   },
+  //   { title: "Ethan Wong", id: 3, tag: "#timescape", color: "purple" }
+  // ]);
 
   useEffect(() => {
     CheckAuth();
-    task_sync(syncTasks).then(res => {
-      setTasks(res.tasks);
-    });
+    task_sync(syncTasks);
   }, []);
 
   function syncTasks(taskList) {
-    console.log(taskList);
     setTasks(taskList);
   }
 

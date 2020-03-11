@@ -14,7 +14,7 @@ import { bookmark, clipboard, time } from "ionicons/icons";
 import "../styles/AddTask.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import { create_task } from "../controllers/task/task_action";
-import moment from "moment";
+// import moment from "moment";
 
 const AddTask: React.FC = () => {
   CheckAuth();

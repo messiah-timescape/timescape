@@ -16,8 +16,7 @@ export let delete_task = async (task_id:string)=> {
 export let update_task = async (task_id:string, input_task:Partial<Task>)=> {
     let curr_user = await CurrentUser.get_loggedin();
     let task = await curr_user.tasks!.findById(task_id);
-    console.log("User is ", curr_user, "\n\nAnd task is ", task);
-
+    
     for(let index in input_task) {
         if(input_task[index] !== undefined) {
             task![index] = input_task[index];
