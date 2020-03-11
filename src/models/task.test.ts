@@ -1,9 +1,6 @@
-import { getRepository } from "fireorm";
-import { Task } from "./task";
 import moment from "moment";
 import init_app from "../init_app";
 import firebase from "firebase";
-import { userlogin_email_password } from "../controllers/user/login";
 import { User } from ".";
 import CurrentUser from "../controllers/user";
 import { TestLoginActions } from "../controllers/user/login.test";
