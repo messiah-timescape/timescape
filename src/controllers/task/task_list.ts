@@ -24,11 +24,11 @@ class TaskList {
 
   static async create(change_state: Function, initial_length = 100) {
     let current_user = await CurrentUser.get_loggedin();
-    let initial_tasks = await current_user.tasks.limit(initial_length).find();
+    // let initial_tasks = await current_user.tasks.limit(initial_length).find();
     let task_list = new TaskList(current_user, change_state);
-    initial_tasks.forEach(task => {
-      task_list.tasks.push(task);
-    });
+    // initial_tasks.forEach(task => {
+    //   task_list.tasks.push(task);
+    // });
     task_list.stop_updates_fn = firebase
       .app()
       .firestore()
