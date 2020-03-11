@@ -60,7 +60,7 @@ class TaskList {
     let that = this;
     return async (query_snapshot: firebase.firestore.QuerySnapshot) => {
       let changes = query_snapshot.docChanges();
-      for( let i = 0; i < changes.length; i++) {
+      for (let i = 0; i < changes.length; i++) {
         let change = changes[i];
         let task_id = change.doc.get("id");
         let new_task = await that.current_user.tasks.findById(task_id);

@@ -19,13 +19,14 @@ import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
 
-const Todo: React.FC = () => {
+const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalTag, setModalTag] = useState("");
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasks, setTasks] = useState();
+  const [tasksCode, setTasksCode] = useState();
   const [sampleTasks, setSampleTasks] = useState([
     { title: "CIS 412 Sprint 1", id: 0, tag: "#homework", color: "red" },
     { title: "Have Ethan make coffee", id: 1, tag: "#fun", color: "blue" },
@@ -41,13 +42,17 @@ const Todo: React.FC = () => {
 
   useEffect(() => {
     CheckAuth();
-    task_sync(syncTasks).then(res => setTasks(res.tasks));
-    console.log(tasks);
+    task_sync(syncTasks).then(res => {
+      setTasks(res.tasks);
+    });
   }, []);
 
-  function syncTasks() {}
+  function syncTasks(taskList) {
+    console.log(taskList);
+    setTasks(taskList);
+  }
 
-  function populateEdit(title: string, tag: string) {
+  function populateEdit(title, tag) {
     setModalTitle(title);
     setModalTag(tag);
     setShowEdit(true);
@@ -151,56 +156,81 @@ const Todo: React.FC = () => {
     );
   };
 
-  const Task = () => {
+  const GenerateTasks = () => {
     let temp: any = [];
 
-    tasks.forEach(task => {
+    tasks.forEach(taskGroup => {
       let tagClass = "tag ";
 
       temp.push(
-        <IonItemSliding key={task.id}>
-          <IonItem>
-            <div className="task" key={task.id}>
-              <div className="checkbox-div">
-                <IonCheckbox className="checkbox" />
-              </div>
-              <div>
-                <p>{task.name}</p>
-                <p className={tagClass}>
-                  {task.tag_list[0] ? task.tag_list[0] : undefined}
-                </p>
-              </div>
-            </div>
-          </IonItem>
-          <IonItemOptions side="start">
-            <button className="add-button">
-              <div className="add-mask"></div>
-            </button>
-            <button
-              className="edit-button"
-              onClick={() => {
-                populateEdit(task.title, task.tag);
-              }}
-            >
-              <div className="edit-mask"></div>
-            </button>
-          </IonItemOptions>
-          <IonItemOptions side="end">
-            <button
-              className="delete-button"
-              onClick={() => {
-                setShowDelete(true);
-                setToDeleteId(task.id);
-              }}
-            >
-              <div className="delete-mask"></div>
-            </button>
-          </IonItemOptions>
-        </IonItemSliding>
+        <h3 className="date" key={taskGroup.index + "date"}>
+          {taskGroup.name}
+        </h3>
       );
+
+      if (taskGroup.tasks.length > 0) {
+        taskGroup.tasks.forEach(task => {
+          temp.push(
+            <IonItemSliding key={task.id + "tag"}>
+              <IonItem>
+                <div className="task" key={task.id}>
+                  <div className="checkbox-div">
+                    <IonCheckbox className="checkbox" />
+                  </div>
+                  <div>
+                    <p>{task.name}</p>
+                    <p className={tagClass}>
+                      {task.tag_list[0] ? task.tag_list[0] : undefined}
+                    </p>
+                  </div>
+                </div>
+              </IonItem>
+              <IonItemOptions side="start">
+                <button className="add-button">
+                  <div className="add-mask"></div>
+                </button>
+                <button
+                  className="edit-button"
+                  onClick={() => {
+                    populateEdit(task.title, task.tag);
+                  }}
+                >
+                  <div className="edit-mask"></div>
+                </button>
+              </IonItemOptions>
+              <IonItemOptions side="end">
+                <button
+                  className="delete-button"
+                  onClick={() => {
+                    setShowDelete(true);
+                    setToDeleteId(task.id);
+                  }}
+                >
+                  <div className="delete-mask"></div>
+                </button>
+              </IonItemOptions>
+            </IonItemSliding>
+          );
+        });
+      } else {
+        temp.push(
+          <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+            No tasks here!
+          </h4>
+        );
+      }
     });
 
-    return <React.Fragment>{temp}</React.Fragment>;
+    return (
+      <div className="negative-z">
+        {temp}
+        <IonRouterLink routerLink="/addtask">
+          <button className="yellow-add-button">
+            <div className="add-icon"></div>
+          </button>
+        </IonRouterLink>
+      </div>
+    );
   };
 
   return (
@@ -213,17 +243,7 @@ const Todo: React.FC = () => {
         </div>
 
         <IonContent>
-          <h3 className="date">Today</h3>
-          <div className="negative-z">
-            {tasks ? <Task /> : <React.Fragment></React.Fragment>}
-            <IonRouterLink routerLink="/addtask">
-              <button className="yellow-add-button">
-                <div className="add-icon"></div>
-              </button>
-            </IonRouterLink>
-            {/* <h3 className="date">Tomorrow</h3>
-            {tasks.length === 0 ? <Task /> : <React.Fragment></React.Fragment>} */}
-          </div>
+          {tasks ? <GenerateTasks /> : <React.Fragment></React.Fragment>}
 
           <DeleteModal />
           <EditModal />
