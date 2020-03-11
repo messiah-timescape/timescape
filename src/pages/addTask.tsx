@@ -13,13 +13,34 @@ import {
 import { bookmark, clipboard, time } from "ionicons/icons";
 import "../styles/AddTask.scss";
 import CheckAuth from "../helpers/CheckAuth";
+import { create_task } from "../controllers/task/task_action";
+import moment from "moment";
 
 const AddTask: React.FC = () => {
   CheckAuth();
+
+  let task = {
+    order: 1,
+    name: ""
+  };
+
+  function handleAdd() {
+    create_task(task).then(res => {
+      console.log(res);
+    });
+  }
+
   return (
     <IonPage>
       <IonContent className="ion-padding">
-        <p className="save-button">Save</p>
+        <p
+          className="save-button"
+          onClick={() => {
+            handleAdd();
+          }}
+        >
+          Save
+        </p>
 
         <form className="form-addTask">
           <IonItem className="input-item">
@@ -29,6 +50,9 @@ const AddTask: React.FC = () => {
               placeholder="Add Title"
               id="title-field"
               required
+              onIonChange={e => {
+                task.name = (e.target as HTMLInputElement).value;
+              }}
             ></IonInput>
           </IonItem>
 
