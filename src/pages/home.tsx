@@ -1,4 +1,4 @@
-import { IonContent, IonPage, IonRouterLink, IonButton } from "@ionic/react";
+import { IonContent, IonPage, IonButton } from "@ionic/react";
 import React, { useState } from "react";
 import homepageGraphic from "../assets/homepage-graphic.png";
 import "../styles/Home.scss";
@@ -14,7 +14,7 @@ const Home: React.FC = () => {
 
   token.then(function(result) {
     if (result) {
-      setCurrentUser(result.email);
+      setCurrentUser(result.display_name || result.email);
     }
   });
 
@@ -22,14 +22,8 @@ const Home: React.FC = () => {
     <IonPage>
       <IonContent className="ion-padding">
         <h1>Home</h1>
-        <IonRouterLink href="/login">
-          <h4>Login</h4>
-        </IonRouterLink>
-        <IonRouterLink href="/Register">
-          <h4>Register</h4>
-        </IonRouterLink>
 
-        <h3>Email: {currentUser}</h3>
+        <h3>Welcome, {currentUser}</h3>
         <IonButton
           onClick={() => {
             userlogout().then(() => {

@@ -21,7 +21,6 @@ const Register: React.FC = () => {
 
   function google_login() {
     userlogin_google_oauth().then(res => {
-      console.log(res.new);
       let url = window.location.href.split("/");
       url[3] = "survey";
       window.location.href = url.join("/");
@@ -37,7 +36,7 @@ const Register: React.FC = () => {
     function successfulRegister() {
       setShowFailedLogin(false);
       let url = window.location.href.split("/");
-      url[3] = "home";
+      url[3] = "survey";
       window.location.href = url.join("/");
     }
 

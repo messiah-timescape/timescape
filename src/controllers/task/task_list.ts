@@ -26,6 +26,7 @@ class TaskList {
     let current_user = await CurrentUser.get_loggedin();
     // let initial_tasks = await current_user.tasks.limit(initial_length).find();
     let task_list = new TaskList(current_user, change_state);
+    console.log("UPDATE")
     // initial_tasks.forEach(task => {
     //   task_list.tasks.push(task);
     // });
@@ -36,6 +37,7 @@ class TaskList {
       .doc(current_user.id)
       .collection("tasks")
       .onSnapshot(task_list.update());
+    // task_list.update_fn(task_list.by_groups());
     return task_list;
   }
 
@@ -44,6 +46,12 @@ class TaskList {
   }
 
   by_groups() {
+    
+    for (let i = 0; i < this.groups.length; i++) {
+      const group = this.groups[i];
+      group.tasks = [];
+    }
+    
     this.tasks.forEach(task => {
       for (let i = 0; i < this.groups.length; i++) {
         const group = this.groups[i];
@@ -59,19 +67,26 @@ class TaskList {
   update() {
     let that = this;
     return async (query_snapshot: firebase.firestore.QuerySnapshot) => {
+      
       let changes = query_snapshot.docChanges();
+      let promises:Promise<void>[] = [];
       for (let i = 0; i < changes.length; i++) {
         let change = changes[i];
         let task_id = change.doc.get("id");
-        let new_task = await that.current_user.tasks.findById(task_id);
+        let org_task = that.current_user.tasks[change.oldIndex];
         if (change.type === "removed" || change.type === "modified") {
           that.tasks.splice(change.oldIndex, 1);
         }
         if (change.type === "added" || change.type === "modified") {
-          that.tasks.splice(change.newIndex, 0, new_task);
+          that.tasks.splice(change.newIndex, 0, org_task);
+          promises.push(that.current_user.tasks.findById(task_id).then( new_task => {
+            that.tasks[change.newIndex] = new_task;
+          }));
         }
       }
-      that.update_fn(that.by_groups.apply(that));
+      Promise.all(promises).then( () => {
+        that.update_fn(that.by_groups.apply(that));
+      });
     };
   }
 
@@ -86,10 +101,10 @@ function task_sync(change_state: Function): Promise<TaskList> {
   return new Promise<TaskList>(async (resolve, reject) => {
     let task_list = await TaskList.create(change_state);
     task_list.add_group("Due today", (task: Task) => {
-      return moment(task.deadline).isSame(moment(), "day");
+      return task.deadline && moment(task.deadline).isSame(moment(), "day");
     });
     task_list.add_group("Due tomorrow", (task: Task) => {
-      return moment(task.deadline).isSame(moment().add(1, "day"), "day");
+      return task.deadline && moment(task.deadline).isSame(moment().add(1, "day"), "day");
     });
     task_list.groups.push(
       new TaskGroup(100, "Completed", (task: Task) => {

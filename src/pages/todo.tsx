@@ -47,6 +47,7 @@ const Todo = () => {
   }, []);
 
   function syncTasks(taskList) {
+    console.log("Setting", taskList)
     setTasks(taskList);
   }
 
@@ -158,6 +159,10 @@ const Todo = () => {
   const GenerateTasks = () => {
     let temp: any = [];
 
+    if ( !tasks ) {
+      return  <React.Fragment>False</React.Fragment>;
+    }
+
     tasks.forEach(taskGroup => {
       let tagClass = "tag ";
 
@@ -245,7 +250,7 @@ const Todo = () => {
         </div>
 
         <IonContent>
-          {tasks ? <GenerateTasks /> : <React.Fragment></React.Fragment>}
+          {tasks ? <GenerateTasks/> : <React.Fragment>Aww nothing there</React.Fragment>}
 
           <DeleteModal />
           <EditModal />
