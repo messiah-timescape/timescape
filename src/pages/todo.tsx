@@ -27,28 +27,17 @@ const Todo = () => {
   const [, setModalTag] = useState("");
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasks, setTasks] = useState();
-  // const [] = useState();
-  // const [] = useState([
-  //   { title: "CIS 412 Sprint 1", id: 0, tag: "#homework", color: "red" },
-  //   { title: "Have Ethan make coffee", id: 1, tag: "#fun", color: "blue" },
-  //   {
-  //     title:
-  //       "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-  //     id: 2,
-  //     tag: "#assignment",
-  //     color: "green"
-  //   },
-  //   { title: "Ethan Wong", id: 3, tag: "#timescape", color: "purple" }
-  // ]);
-
+  const [renderTasks, setRenderTasks] = useState(false);
   useEffect(() => {
     CheckAuth();
     task_sync(syncTasks);
   }, []);
 
   function syncTasks(taskList) {
-    console.log("Setting", taskList)
+    console.log("Setting", taskList);
     setTasks(taskList);
+    setRenderTasks(false);
+    setRenderTasks(true);
   }
 
   function populateEdit(title, tag) {
@@ -56,14 +45,6 @@ const Todo = () => {
     setModalTag(tag);
     setShowEdit(true);
   }
-
-  // function deleteTask() {
-  //   for (let index = 0; index < sampleTasks.length; index++) {
-  //     if (sampleTasks[index].id === toDeleteId) {
-  //       sampleTasks.splice(index, 1);
-  //     }
-  //   }
-  // }
 
   const EditModal = () => {
     return (
@@ -148,7 +129,6 @@ const Todo = () => {
             handler: () => {
               console.log("Confirm Delete", toDeleteId);
               delete_task(toDeleteId.toString());
-              //deleteTask();
             }
           }
         ]}
@@ -159,8 +139,8 @@ const Todo = () => {
   const GenerateTasks = () => {
     let temp: any = [];
 
-    if ( !tasks ) {
-      return  <React.Fragment>False</React.Fragment>;
+    if (!tasks) {
+      return <React.Fragment>False</React.Fragment>;
     }
 
     tasks.forEach(taskGroup => {
@@ -179,9 +159,10 @@ const Todo = () => {
               <IonItem>
                 <div className="task" key={task.id}>
                   <div className="checkbox-div">
-                    <IonCheckbox 
-                    className="checkbox" 
-                    onClick={() => complete_task(task.id)}
+                    <IonCheckbox
+                      className="checkbox"
+                      onClick={() => complete_task(task.id)}
+                      checked={task.completed}
                     />
                   </div>
                   <div>
@@ -250,7 +231,11 @@ const Todo = () => {
         </div>
 
         <IonContent>
-          {tasks ? <GenerateTasks/> : <React.Fragment>Aww nothing there</React.Fragment>}
+          {renderTasks ? (
+            <GenerateTasks />
+          ) : (
+            <React.Fragment>Aww nothing there</React.Fragment>
+          )}
 
           <DeleteModal />
           <EditModal />
