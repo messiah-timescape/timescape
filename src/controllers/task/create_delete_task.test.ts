@@ -16,9 +16,9 @@ describe('Testing Task CRUD', ()=> {
         let task:Task;
         let task_name = "Check off as complete";
         let task_order = 1;
-        let task_deadline = moment().toDate();
+        let task_deadline = moment();
         try{
-                task = await create_task({
+            task = await create_task({
                 name: task_name,
                 order: task_order,
                 deadline: task_deadline

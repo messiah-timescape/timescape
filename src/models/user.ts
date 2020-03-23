@@ -1,8 +1,8 @@
 import firebase from "firebase";
 import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
-
+import {Type, Transform} from "class-transformer"
 import Weekdays from "../utils/weekdays";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import BaseModel from "./base_model";
 import { Task } from "./task";
 
@@ -72,17 +72,39 @@ export class FirebaseUser{
 
 
 export class UserSettings {
-    work_start_time!: Date;
-    work_stop_time!: Date;
+    constructor(init_fields?:object) {
+        Object.assign(this, init_fields);
+    }
+    @Type(() => Date)
+    @Transform(value => moment(value), { toClassOnly: true })
+    @Transform(value => value.toDate(), { toPlainOnly: true })
+    work_start_time!: Moment;
+    
+    @Type(() => Date)
+    @Transform(value => moment(value), { toClassOnly: true })
+    @Transform(value => value.toDate(), { toPlainOnly: true })
+    work_stop_time!: Moment;
+    
     work_days!:Weekdays[];
-    sleep_start!:Date;
-    sleep_stop!:Date;
+    
+    @Type(() => Date)
+    @Transform(value => moment(value), { toClassOnly: true })
+    @Transform(value => value.toDate(), { toPlainOnly: true })
+    sleep_start!:Moment;
+    
+    @Type(() => Date)
+    @Transform(value => moment(value), { toClassOnly: true })
+    @Transform(value => value.toDate(), { toPlainOnly: true })
+    sleep_stop!:Moment;
+
+    @Type(() => Date)
+    @Transform(value => moment(value), { toClassOnly: true })
     overwork_limit!:string;
 }
 
 
 @Collection('user')
-export class User extends BaseModel<User>{
+export class User extends BaseModel{
     constructor(init_fields?:Partial<User>) {
         super();
         Object.assign(this, init_fields);
@@ -91,12 +113,14 @@ export class User extends BaseModel<User>{
     id!: string;
     email!: string;
     display_name!: string;
+
+    @Type(() => UserSettings)
     settings: UserSettings = {
-        work_start_time:moment().hours(8).toDate(),
-        work_stop_time: moment().hours(16).toDate(),
+        work_start_time:moment().hours(8),
+        work_stop_time: moment().hours(16),
         work_days:[Weekdays.Monday],
-        sleep_start:moment().hours(20).toDate(),
-        sleep_stop:moment().hours(7).toDate(),
+        sleep_start:moment().hours(20),
+        sleep_stop:moment().hours(7),
         overwork_limit: moment.duration(3, 'hours').toISOString()
     };
     @SubCollection(Task)
