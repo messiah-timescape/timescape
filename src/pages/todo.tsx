@@ -1,7 +1,6 @@
 import {
   IonContent,
   IonPage,
-  IonRouterLink,
   IonCheckbox,
   IonItemSliding,
   IonItem,
@@ -18,16 +17,16 @@ import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
-import { delete_task, complete_task } from "../controllers/task/task_action";
+import { delete_task, complete_task, create_task } from "../controllers/task/task_action";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [, setModalTag] = useState("");
+  const [currentEditTask, setCurrentEditTask] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasks, setTasks] = useState();
   const [renderTasks, setRenderTasks] = useState(false);
+
   useEffect(() => {
     CheckAuth();
     task_sync(syncTasks);
@@ -35,49 +34,61 @@ const Todo = () => {
 
   function syncTasks(taskList) {
     console.log("Setting", taskList);
+    console.log(taskList);
     setTasks(taskList);
     setRenderTasks(false);
     setRenderTasks(true);
   }
 
-  function populateEdit(title, tag) {
-    setModalTitle(title);
-    setModalTag(tag);
-    setShowEdit(true);
-  }
+  const AddEditModal = () => {
+    let task = {
+      order: 1,
+      name: "",
+      notes: ""
+    };
 
-  const EditModal = () => {
+    function handleAdd() {
+      create_task(task);
+    }
+
     return (
-      <IonModal
-        isOpen={showEdit}
-        onDidDismiss={() => setShowEdit(false)}
-        cssClass="edit-modal"
-      >
+      <IonModal isOpen={true} onDidDismiss={() => setShowEdit(false)} cssClass="edit-modal">
         <IonContent className="ion-padding">
-          <p
-            className="save-button"
-            onClick={() => {
-              setShowEdit(false);
-            }}
-          >
-            save
-          </p>
+          <div className="modal-buttons">
+            <p
+              className="cancel-button"
+              onClick={() => {
+                setShowEdit(false);
+              }}
+            >
+              Cancel
+            </p>
+            <p
+              className="save-button"
+              onClick={() => {
+                setShowEdit(false);
+                handleAdd();
+              }}
+            >
+              Save
+            </p>
+          </div>
+
           <IonItem className="input-item">
             <IonInput
               name="title"
-              value={modalTitle}
+              placeholder="Add Title"
+              value={currentEditTask ? currentEditTask.name : ""}
               id="title-field"
               required
+              onIonChange={e => {
+                task.name = (e.target as HTMLInputElement).value;
+              }}
             ></IonInput>
           </IonItem>
 
           <IonItem className="input-item">
-            <IonSelect
-              name="tags"
-              value={["school", "hobbie"]}
-              id="tags-field"
-              multiple={true}
-            >
+            <IonSelect name="tags" value={["school", "hobbie"]} id="tags-field" multiple={true}>
               <IonSelectOption value="school">School</IonSelectOption>
               <IonSelectOption value="chore">Chore</IonSelectOption>
               <IonSelectOption value="work">Work</IonSelectOption>
@@ -88,8 +99,12 @@ const Todo = () => {
           <IonItem className="input-item">
             <IonTextarea
               name="notes"
-              value="Don't read the notes section, I didn't take any notes."
+              value={currentEditTask ? currentEditTask.notes : ""}
+              placeholder="Add Note"
               rows={6}
+              onIonChange={e => {
+                task.notes = (e.target as HTMLInputElement).value;
+              }}
             ></IonTextarea>
           </IonItem>
 
@@ -167,9 +182,7 @@ const Todo = () => {
                   </div>
                   <div>
                     <p>{task.name}</p>
-                    <p className={tagClass}>
-                      {task.tag_list[0] ? task.tag_list[0] : undefined}
-                    </p>
+                    <p className={tagClass}>{task.tag_list[0] ? task.tag_list[0] : undefined}</p>
                   </div>
                 </div>
               </IonItem>
@@ -180,7 +193,8 @@ const Todo = () => {
                 <button
                   className="edit-button"
                   onClick={() => {
-                    populateEdit(task.title, task.tag);
+                    setCurrentEditTask(task);
+                    setShowEdit(true);
                   }}
                 >
                   <div className="edit-mask"></div>
@@ -212,11 +226,23 @@ const Todo = () => {
     return (
       <div className="negative-z">
         {temp}
-        <IonRouterLink routerLink="/addtask">
-          <button className="yellow-add-button">
-            <div className="add-icon"></div>
-          </button>
-        </IonRouterLink>
+        <button
+          className="yellow-add-button"
+          onClick={() => {
+            setShowEdit(true);
+          }}
+        >
+          <div className="add-icon"></div>
+        </button>
+      </div>
+    );
+  };
+
+  const LoadingScreen = () => {
+    return (
+      <div className="lds-ripple">
+        <div></div>
+        <div></div>
       </div>
     );
   };
@@ -231,14 +257,10 @@ const Todo = () => {
         </div>
 
         <IonContent>
-          {renderTasks ? (
-            <GenerateTasks />
-          ) : (
-            <React.Fragment>Aww nothing there</React.Fragment>
-          )}
+          {renderTasks ? <GenerateTasks /> : <LoadingScreen />}
 
           <DeleteModal />
-          <EditModal />
+          {showEdit ? <AddEditModal /> : <React.Fragment />}
         </IonContent>
       </IonPage>
     </div>
