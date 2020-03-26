@@ -1,6 +1,6 @@
 import { BaseFirestoreRepository, IEntity } from "fireorm";
-import moment from "moment";
 import { classToPlain } from "class-transformer";
+import { replace_undefined_by_null } from "../utils/replace_undefined_with_null";
 
 export default abstract class BaseModel {
     id: string = '';
@@ -24,13 +24,6 @@ export default abstract class BaseModel {
 
 
 export class BaseRepo<T extends IEntity> extends BaseFirestoreRepository<T> {
-    // _time_fields?: string[];
-    // get_time_fields = () : string[] => {
-    //     if (!this._time_fields){
-    //         this._time_fields = Object.keys(this);
-    //     }
-    //     return this._time_fields;
-    // }
 
     constructor(colName: string, collectionPath?: string) {
         super(colName, collectionPath);
@@ -43,7 +36,7 @@ export class BaseRepo<T extends IEntity> extends BaseFirestoreRepository<T> {
                     }
                 });
                 let firestore_obj = classToPlain(obj, {excludePrefixes: exclude_list});
-                
+                firestore_obj = replace_undefined_by_null(firestore_obj);
                 return firestore_obj;
             } else {
                 return {};

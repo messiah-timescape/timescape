@@ -1,9 +1,18 @@
-import { Tag } from ".";
+import { Tag } from "./tag";
 import BaseModel from "./base_model";
-// import { SubCollection, ISubCollection } from "fireorm";
 import moment, { Moment } from "moment";
-import { Collection } from "fireorm";
+import { Collection, ISubCollection, SubCollection } from "fireorm";
+import { date_field } from "./field_types";
 
+
+export class WorkPeriod extends BaseModel {
+
+    @date_field
+    start_datetime!: Moment;
+
+    @date_field
+    end_datetime!: Moment;
+}
 
 @Collection('task')
 export class Task extends BaseModel {
@@ -14,13 +23,17 @@ export class Task extends BaseModel {
     order!: number;
     name!: string;
     notes: string = '';
+
+    @date_field
     deadline: Moment = moment().add(1, 'day'); // a day from now
     // array of start and end times
-    times: Date[] = [];
-    tag_list: Tag[] = [];
-    // @SubCollection(Task)
-    // subtasks: ISubCollection<Task>;
-    // tasks!:Task;
+    
+    @SubCollection(WorkPeriod)
+    work_periods!: ISubCollection<WorkPeriod>;
+
+    @SubCollection(Tag)
+    tag_list!: ISubCollection<Tag>;
+    
     completed: boolean = false;
 }
 

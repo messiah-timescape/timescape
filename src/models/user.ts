@@ -1,10 +1,11 @@
 import firebase from "firebase";
 import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
-import {Type, Transform} from "class-transformer"
+import {Type} from "class-transformer"
 import Weekdays from "../utils/weekdays";
-import moment, { Moment } from "moment";
+import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
 import { Task } from "./task";
+import { date_field, duration_field } from "./field_types";
 
 export enum UserProvider{
     Google = "Google",
@@ -75,31 +76,23 @@ export class UserSettings {
     constructor(init_fields?:object) {
         Object.assign(this, init_fields);
     }
-    @Type(() => Date)
-    @Transform(value => moment(value), { toClassOnly: true })
-    @Transform(value => value.toDate(), { toPlainOnly: true })
+    
+    @date_field
     work_start_time!: Moment;
     
-    @Type(() => Date)
-    @Transform(value => moment(value), { toClassOnly: true })
-    @Transform(value => value.toDate(), { toPlainOnly: true })
+    @date_field
     work_stop_time!: Moment;
     
     work_days!:Weekdays[];
-    
-    @Type(() => Date)
-    @Transform(value => moment(value), { toClassOnly: true })
-    @Transform(value => value.toDate(), { toPlainOnly: true })
+
+    @date_field
     sleep_start!:Moment;
     
-    @Type(() => Date)
-    @Transform(value => moment(value), { toClassOnly: true })
-    @Transform(value => value.toDate(), { toPlainOnly: true })
+    @date_field
     sleep_stop!:Moment;
 
-    @Type(() => Date)
-    @Transform(value => moment(value), { toClassOnly: true })
-    overwork_limit!:string;
+    @duration_field
+    overwork_limit!:Duration;
 }
 
 
@@ -121,7 +114,7 @@ export class User extends BaseModel{
         work_days:[Weekdays.Monday],
         sleep_start:moment().hours(20),
         sleep_stop:moment().hours(7),
-        overwork_limit: moment.duration(3, 'hours').toISOString()
+        overwork_limit: moment.duration(3, 'hours')
     };
     @SubCollection(Task)
     tasks!: ISubCollection<Task>;

@@ -1,22 +1,9 @@
 import {FirebaseUser, User} from "./user";
-import BaseModel, {BaseRepo} from "./base_model";
-import { TagColors } from "./field_types";
-import { Collection, CustomRepository } from "fireorm";
-import {Task} from "./task"
+import {BaseRepo} from "./base_model";
+import { CustomRepository } from "fireorm";
+import {Task} from "./task";
+import {Tag} from "./tag";
 import { getMetadataStorage } from "fireorm/lib/src/MetadataStorage";
-
-class GenericTag extends BaseModel{
-    name!: string;
-    color!: TagColors;
-}
-
-
-
-
-@Collection('tag')
-class Tag extends GenericTag{
-    
-}
 
 let models = getMetadataStorage().collections;
 function apply_custom_repo( ) {

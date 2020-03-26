@@ -54,7 +54,7 @@ class TaskList {
     this.tasks.forEach(task => {
       for (let i = 0; i < this.groups.length; i++) {
         const group = this.groups[i];
-        if (group.group_condition(task)) {
+        if (task && group.group_condition(task)) {
           group.tasks.push(task);
           break;
         }

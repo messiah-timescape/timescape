@@ -23,7 +23,7 @@ describe('Store User Survey Data', ()=> {
             sleep_start: moment().hour(h).minute(m),
             sleep_stop: moment().hour(h).minute(m),
             work_days: [Weekdays.Tuesday],
-            overwork_limit: "PT5H"
+            overwork_limit: moment.duration(8, "hours")
         });
 
         let user = await store_survey(settings);

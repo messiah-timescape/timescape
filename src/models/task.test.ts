@@ -21,7 +21,7 @@ describe('Creating Task', ()=> {
             order:1,
             name: task_name,
             notes: "This is to test the working model of Task.",
-            deadline: moment().add(1, 'day').toDate(),
+            deadline: moment().add(1, 'day'),
             completed: true
         });
         if(new_task) {
