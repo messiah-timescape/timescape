@@ -12,6 +12,7 @@ function apply_custom_repo( ) {
         type Model = typeof ex_model;
 
         @CustomRepository(models[i].entity)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class ModelRepo extends BaseRepo<Model> {}
         
     }
