@@ -1,7 +1,9 @@
+import {firestore} from "firebase";
+
 import { Tag } from "./tag";
 import BaseModel from "./base_model";
 import moment, { Moment } from "moment";
-import { Collection, ISubCollection, SubCollection } from "fireorm";
+import { Collection, ISubCollection, SubCollection, Type } from "fireorm";
 import { date_field } from "./field_types";
 
 
@@ -31,8 +33,8 @@ export class Task extends BaseModel {
     @SubCollection(WorkPeriod)
     work_periods!: ISubCollection<WorkPeriod>;
 
-    @SubCollection(Tag)
-    tag_list!: ISubCollection<Tag>;
+    @Type(() => firestore.DocumentReference)
+    tag?: firestore.DocumentReference;
     
     completed: boolean = false;
 }
