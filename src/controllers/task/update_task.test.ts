@@ -1,7 +1,7 @@
 import init_app from "../../init_app";
 import { TestLoginActions } from "../user/login.test";
 import firebase from "firebase";
-import { update_task, create_task} from "./task_action";
+import { update_task, create_task} from "./task_actions";
 
 describe('Update Task', ()=>{
     beforeAll(async ()=> {

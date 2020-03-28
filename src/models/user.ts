@@ -6,6 +6,7 @@ import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
 import { Task } from "./task";
 import { date_field, duration_field } from "./field_types";
+import { Tag } from "./tag";
 
 export enum UserProvider{
     Google = "Google",
@@ -118,6 +119,9 @@ export class User extends BaseModel{
     };
     @SubCollection(Task)
     tasks!: ISubCollection<Task>;
+
+    @SubCollection(Tag)
+    tags!: ISubCollection<Tag>;
 
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);

@@ -4,7 +4,7 @@ import firebase from "firebase";
 import { User } from ".";
 import CurrentUser from "../controllers/user";
 import { TestLoginActions } from "../controllers/user/login.test";
-import { create_task } from "../controllers/task/task_action";
+import { create_task } from "../controllers/task/task_actions";
 
 describe('Creating Task', ()=> {
     beforeAll(async ()=> {
