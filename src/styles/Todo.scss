@@ -71,6 +71,9 @@
   z-index: 1000;
   right: 2em;
   outline: none;
+  @-moz-document url-prefix() {
+    bottom: 5.5em;
+  }
 
   .add-icon {
     width: 100%;
@@ -89,12 +92,13 @@
     padding-right: 1.5em;
     margin: 10px 0;
     color: var(--ion-color-primary);
+    cursor: pointer;
   }
 
   .cancel-button {
     padding-right: 1.5em;
     margin: 10px 0;
-    color: var(--ion-color-danger);
+    cursor: pointer;
   }
 }
 
