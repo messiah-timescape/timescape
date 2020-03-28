@@ -1,5 +1,5 @@
 import moment from "moment";
-import { store_survey } from "./survey";
+import { store_survey, get_survey } from "./survey";
 import init_app from "../../init_app";
 import firebase from "firebase";
 import Weekdays from "../../utils/weekdays";
@@ -25,13 +25,19 @@ describe('Store User Survey Data', ()=> {
             work_days: [Weekdays.Tuesday],
             overwork_limit: moment.duration(8, "hours")
         });
-
         let user = await store_survey(settings);
         let curr_user = await CurrentUser.get_loggedin();
         expect(user.settings).toBeInstanceOf(UserSettings);
         expect(curr_user.settings.work_start_time.isSame(user.settings.work_start_time)).toBeTruthy();
         done();
     });
+
+    it('retrieves settings from user', async done=>{
+        let settings:UserSettings = await get_survey();
+        expect(settings).toBeInstanceOf(UserSettings);
+        done();
+    });
+
     afterAll(()=>{
         firebase.auth().signOut();
     });
