@@ -5,16 +5,18 @@ export let forgot_password = (email:string)=> {
     console.log("Before we try anything.");
     var auth = firebase.auth();
     // are we getting anything from firebase.auth()?
-    console.log(auth.languageCode);
-    auth.sendPasswordResetEmail(email).then(()=>{
+    // console.log(auth.sendPasswordResetEmail);
+    return auth.sendPasswordResetEmail(email).then(()=>{
         // email sent
         console.log("Email sent.");
+        return true;
     }).catch((error)=> {
         // an error occurred.
         let errorCode = error.code;
         let errorMessage = error.message;
         console.log(errorCode);
         console.log(errorMessage);
+        return false;
     });
 
     console.log("After we try everything.");
