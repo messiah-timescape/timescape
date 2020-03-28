@@ -131,4 +131,11 @@ export class User extends BaseModel{
 
     @Exclude()
     firebase_user?:RealFirebaseUser;
+
+    @Exclude()
+    async has_google() : Promise<boolean> {
+        return firebase.app().auth().fetchSignInMethodsForEmail(this.email).then(methods =>{
+            return 'google.com' in methods;
+        });
+    }
 }
