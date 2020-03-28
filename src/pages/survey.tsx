@@ -28,14 +28,14 @@ const Survey: React.FC = () => {
     { val: "Friday", isChecked: false },
     { val: "Saturday", isChecked: false },
     { val: "Sunday", isChecked: false }
-  ];
+];
 
-  const [interval, setInterval] = useState(null);
+  const [interval, setInterval] = useState();
   const [sleep, setSleep] = useState();
   const [wake, setWake] = useState();
-  const [workDays] = useState(null);
-  const [workStart, setWorkStart] = useState(null);
-  const [workStop, setWorkStop] = useState(null);
+  const [workDays, ] = useState();
+  const [workStart, setWorkStart] = useState();
+  const [workStop, setWorkStop] = useState();
 
   function handleSubmit(interval, sleep, wake, workDays, workStart, workStop) {
       store_survey({
@@ -48,10 +48,16 @@ const Survey: React.FC = () => {
       });
   }
 
-  function next() {
+  function next() { //all the animation stuff for the next menu
     setModalNum(modalNum + 1);
     setProgressValue(progressValue + 0.2);
-  }
+    console.log(interval);
+    console.log(sleep);
+    console.log(wake);
+    console.log(workDays);
+    console.log(workStart);
+    console.log(workStop);
+}
 
   function modal1(h, m) {
     setInterval(h + m);
