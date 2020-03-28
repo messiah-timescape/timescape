@@ -15,6 +15,7 @@ import {
 } from "@ionic/react";
 import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
+import { userlink_google } from "../controllers/user/link_google";
 // import { store_survey } from "../controllers/user/survey";
 
 const Survey: React.FC = () => {
@@ -92,7 +93,9 @@ const Survey: React.FC = () => {
   //------------Dummy function for Nathan----------------//
   function syncAccounts() {
     console.log("Hello from you friendly neighborhood programmer!");
-    //toHome(); //Call this once the sync returns successful and the user will be brought to the dashboard
+    userlink_google().then(() => {
+      toHome();
+    });
   }
 
   return (

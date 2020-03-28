@@ -1,12 +1,13 @@
 import firebase from "firebase";
 import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
-import {Type} from "class-transformer"
+import {Type, Exclude} from "class-transformer"
 import Weekdays from "../utils/weekdays";
 import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
 import { Task } from "./task";
 import { date_field, duration_field } from "./field_types";
 import { Tag } from "./tag";
+import {User as RealFirebaseUser} from "firebase";
 
 export enum UserProvider{
     Google = "Google",
@@ -126,5 +127,15 @@ export class User extends BaseModel{
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);
         return new User(user_obj);
+    }
+
+    @Exclude()
+    firebase_user?:RealFirebaseUser;
+
+    @Exclude()
+    async has_google() : Promise<boolean> {
+        return firebase.app().auth().fetchSignInMethodsForEmail(this.email).then(methods =>{
+            return 'google.com' in methods;
+        });
     }
 }
