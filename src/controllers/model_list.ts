@@ -41,6 +41,7 @@ export class CollectionList<Model> {
       for (let i = 0; i < changes.length; i++) {
         let change = changes[i];
         let model_id = change.doc.get("id");
+
         let org_model = that.current_user[this.collection_name][change.oldIndex];
         if (change.type === "removed" || change.type === "modified") {
           that.model_array.splice(change.oldIndex, 1);
@@ -53,10 +54,11 @@ export class CollectionList<Model> {
         }
       }
       Promise.all(promises).then( () => {
+        let list = that.model_array;
         if (that.post_update_hook){
-          that.post_update_hook.apply(that);
+          list = that.post_update_hook.apply(that);
         }
-        that.update_fn();
+        that.update_fn(list);
       });
     };
   }

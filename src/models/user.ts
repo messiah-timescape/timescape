@@ -121,7 +121,7 @@ export class User extends BaseModel{
     tasks!: ISubCollection<Task>;
 
     @SubCollection(Tag)
-    tag_list!: ISubCollection<Tag>;
+    tags!: ISubCollection<Tag>;
 
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);

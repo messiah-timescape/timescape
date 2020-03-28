@@ -11,6 +11,7 @@ export default abstract class BaseModel {
 
     fill_fields(init_fields?:Partial<this>) {
         Object.assign(this, init_fields);
+        return this;
     }
 
     // static create(init_fields:Partial<T>) {

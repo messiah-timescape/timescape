@@ -17,7 +17,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
-import { delete_task, complete_task, create_task } from "../controllers/task/task_action";
+import { delete_task, complete_task, create_task } from "../controllers/task/task_actions";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);

@@ -1,6 +1,6 @@
 import { Task } from "../../models";
 import moment from "moment";
-import { CollectionList } from "../list_class";
+import { CollectionList } from "../model_list";
 
 class TaskGroup {
   name: string;
@@ -26,6 +26,7 @@ class TaskList extends CollectionList<Task>{
     this.groups.push(new TaskGroup(this.groups.length, name, group_condition));
   }
 
+  post_update_hook = this.by_groups;
   by_groups() {
     
     for (let i = 0; i < this.groups.length; i++) {

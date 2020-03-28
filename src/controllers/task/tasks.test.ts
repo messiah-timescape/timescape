@@ -1,17 +1,29 @@
+import task_sync from "./task_list";
 import moment from "moment";
 import init_app from "../../init_app";
 import firebase from "firebase";
 import { Task } from "../../models/task";
-import { create_task, delete_task, complete_task } from "./task_action";
+import { create_task, delete_task, complete_task } from "./task_actions";
 import { TestLoginActions } from "../user/login.test";
 import CurrentUser from "../user";
 
-describe('Testing Task CRUD', ()=> {
-    beforeAll(async ()=> {
+describe("Task List", ()=> {
+    beforeAll(async () => {
         init_app();
-        await TestLoginActions.email_password();
+        return await TestLoginActions.email_password();
     });
-    
+
+    it('should retrieve an initial list of tasks when called', async done => {
+        expect.assertions(2);
+        let task_list = await task_sync(()=>{
+            expect(task_list.tasks.length).toBeGreaterThan(0);
+            expect(task_list.groups.length).toBeGreaterThan(0);
+
+            done();
+        });
+        
+    });
+
     it('creates task', async ()=> {
         let task:Task;
         let task_name = "Check off as complete";
@@ -54,5 +66,4 @@ describe('Testing Task CRUD', ()=> {
         await delete_task(created_task!.id);
         firebase.auth().signOut();
     })
-
 });
