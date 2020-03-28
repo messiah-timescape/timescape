@@ -117,7 +117,7 @@ const Register: React.FC = () => {
             </IonButton>
 
             <IonRouterLink href="/login">
-              <p className="link-text">Cancel</p>
+              <p>Cancel</p>
             </IonRouterLink>
           </form>
 
@@ -130,7 +130,7 @@ const Register: React.FC = () => {
             <p>
               Already have an account?
               <br />
-              <IonRouterLink href="/login" className="link-text">
+              <IonRouterLink href="/login">
                 Login
               </IonRouterLink>
             </p>

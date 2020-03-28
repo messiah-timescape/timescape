@@ -88,7 +88,7 @@ const Todo = () => {
           </IonItem>
 
           <IonItem className="input-item">
-            <IonSelect name="tags" value={["school", "hobbie"]} id="tags-field" multiple={true}>
+            <IonSelect name="tags" id="tags-field" multiple={false} placeholder="Add Tag"> {/*change multiple to true to allow user to choose more than one tag */}
               <IonSelectOption value="school">School</IonSelectOption>
               <IonSelectOption value="chore">Chore</IonSelectOption>
               <IonSelectOption value="work">Work</IonSelectOption>
@@ -109,11 +109,13 @@ const Todo = () => {
           </IonItem>
 
           <IonItem className="input-item">
+            <p>Due:</p>
             <IonDatetime
               name="time"
-              value="02 12 2020"
               displayFormat="MM DD YYYY"
               id="time-field"
+              placeholder="Add Due Date"
+              slot="end"
             ></IonDatetime>
           </IonItem>
         </IonContent>
