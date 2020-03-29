@@ -48,8 +48,8 @@ describe("Task List", ()=> {
         let task = await create_task({order:1, name: "Testing Completed"});
         task = await complete_task(task.id);
         return expect(task.completed).toBeTruthy();
-    }); 
-
+    });
+    
     it('deletes the task', async ()=> {
         let task = await create_task({order: 1, name: "Testing Deleted"});
         await delete_task(task.id);
