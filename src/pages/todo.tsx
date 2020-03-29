@@ -17,7 +17,13 @@ import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
-import { delete_task, complete_task, create_task } from "../controllers/task/task_actions";
+import {
+  delete_task,
+  complete_task,
+  create_task,
+  update_task
+} from "../controllers/task/task_actions";
+import moment from "moment";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
@@ -33,8 +39,6 @@ const Todo = () => {
   }, []);
 
   function syncTasks(taskList) {
-    console.log("Setting", taskList);
-    console.log(taskList);
     setTasks(taskList);
     setRenderTasks(false);
     setRenderTasks(true);
@@ -44,11 +48,20 @@ const Todo = () => {
     let task = {
       order: 1,
       name: "",
-      notes: ""
+      notes: "",
+      deadline: moment()
     };
 
     function handleAdd() {
       create_task(task);
+      setCurrentEditTask(null);
+    }
+
+    function handleEdit() {
+      if (task.name.length > 0) {
+        update_task(currentEditTask.id, task);
+      }
+      setCurrentEditTask(null);
     }
 
     return (
@@ -67,7 +80,7 @@ const Todo = () => {
               className="save-button"
               onClick={() => {
                 setShowEdit(false);
-                handleAdd();
+                currentEditTask ? handleEdit() : handleAdd();
               }}
             >
               Save
@@ -92,7 +105,7 @@ const Todo = () => {
               <IonSelectOption value="school">School</IonSelectOption>
               <IonSelectOption value="chore">Chore</IonSelectOption>
               <IonSelectOption value="work">Work</IonSelectOption>
-              <IonSelectOption value="hobbie">Hobbie</IonSelectOption>
+              <IonSelectOption value="hobbie">Hobby</IonSelectOption>
             </IonSelect>
           </IonItem>
 
@@ -111,9 +124,19 @@ const Todo = () => {
           <IonItem className="input-item">
             <IonDatetime
               name="time"
-              value="02 12 2020"
+              value={
+                currentEditTask
+                  ? `${currentEditTask.deadline.get("month") + 1} ${currentEditTask.deadline.get(
+                      "date"
+                    )} ${currentEditTask.deadline.get("year")}`
+                  : "02 12 2020"
+              }
               displayFormat="MM DD YYYY"
               id="time-field"
+              onIonBlur={e => {
+                let date = (e.target as HTMLInputElement).value.split("T")[0].split("-");
+                task.deadline = moment(`${date[1]}/${date[2]}/${date[0]}`, "MM/DD/YYYY");
+              }}
             ></IonDatetime>
           </IonItem>
         </IonContent>
@@ -159,8 +182,6 @@ const Todo = () => {
     }
 
     tasks.forEach(taskGroup => {
-      let tagClass = "tag ";
-
       temp.push(
         <h3 className="date" key={taskGroup.index + "date"}>
           {taskGroup.name}
@@ -169,6 +190,23 @@ const Todo = () => {
 
       if (taskGroup.tasks.length > 0) {
         taskGroup.tasks.forEach(task => {
+          let tagClass = "";
+
+          switch (task.tag) {
+            case "School":
+              tagClass = "tag red";
+              break;
+            case "Chore":
+              tagClass = "tag blue";
+              break;
+            case "Work":
+              tagClass = "tag green";
+              break;
+            case "Hobby":
+              tagClass = "tag purple";
+              break;
+          }
+
           temp.push(
             <IonItemSliding key={task.id + "tag"}>
               <IonItem>
@@ -182,7 +220,7 @@ const Todo = () => {
                   </div>
                   <div>
                     <p>{task.name}</p>
-                    <p className={tagClass}>{task.tag_list[0] ? task.tag_list[0] : undefined}</p>
+                    <p className={tagClass}>{task.tag ? task.tag : undefined}</p>
                   </div>
                 </div>
               </IonItem>
