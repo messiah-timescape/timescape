@@ -6,13 +6,11 @@ beforeAll(async ()=> {
 });
 
 it('runs the function', done => {
-    let email = "lw1298@messiah.edu";
+    let email = "bshs16leannenw@gmail.com";
     expect.assertions(1);
-    let test = ()=>{
-        console.log("hey");  
+    let test = ()=>{  
         expect(true).toBeTruthy();
         done();
     }
     return forgot_password(email).then(test);
-    console.log("After function call");
 })
