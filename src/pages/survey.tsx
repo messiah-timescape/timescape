@@ -16,7 +16,7 @@ import {
 import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
 import { userlink_google } from "../controllers/user/link_google";
-import user from "../controllers/user/index"
+//import user from "../controllers/user/index"
 import moment from "moment";
 import Weekdays from "../utils/weekdays";
 
