@@ -71,6 +71,9 @@
   z-index: 1000;
   right: 2em;
   outline: none;
+  @-moz-document url-prefix() {
+    bottom: 5.5em;
+  }
 
   .add-icon {
     width: 100%;

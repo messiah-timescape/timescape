@@ -110,7 +110,9 @@ const Login: React.FC = () => {
                 <p></p>
               )}
 
-              <p className="link-text">Forgot Password?</p>
+              <p>
+                <IonRouterLink>Forgot Password?</IonRouterLink>
+              </p>
 
               <IonButton
                 className="button"
@@ -137,7 +139,7 @@ const Login: React.FC = () => {
               <p>
                 Don't have an account?
                 <br />
-                <IonRouterLink href="/register" className="link-text">
+                <IonRouterLink href="/register">
                   Sign Up
                 </IonRouterLink>
               </p>

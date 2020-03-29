@@ -15,6 +15,7 @@ import {
 } from "@ionic/react";
 import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
+import { userlink_google } from "../controllers/user/link_google";
 // import { store_survey } from "../controllers/user/survey";
 
 const Survey: React.FC = () => {
@@ -50,7 +51,7 @@ const Survey: React.FC = () => {
 
   function next() {
     setModalNum(modalNum + 1);
-    setProgressValue(progressValue + 0.25);
+    setProgressValue(progressValue + 0.2);
   }
 
   function modal1(h, m) {
@@ -73,10 +74,22 @@ const Survey: React.FC = () => {
   function modal4(wStart, wStop) {
     setWorkStart(wStart);
     setWorkStop(wStop);
-    handleSubmit(interval, sleep, wake, workDays, workStart, workStop);
+    //handleSubmit(interval, sleep, wake, workDays, workStart, workStop);
+    next();
+  }
+
+  function toHome() { //Sends the user the the dashboard
     let url = window.location.href.split("/");
     url[3] = "home";
     window.location.href = url.join("/");
+  }
+
+  //------------Dummy function for Nathan----------------//
+  function syncAccounts() {
+    console.log("Hello from you friendly neighborhood programmer!");
+    userlink_google().then(() => {
+      toHome();
+    });
   }
 
   return (
@@ -242,6 +255,30 @@ const Survey: React.FC = () => {
           >
             Next
           </IonButton>
+        </IonContent>
+      </IonModal>
+
+      <IonModal 
+      cssClass="google-modal"
+      isOpen={ modalNum === 4 }
+      backdropDismiss={false}
+      showBackdrop={false}
+      keyboardClose={false}
+      >
+        <IonContent className="ion-padding">
+          <h3>Sync your new account with Google for extra features!</h3>
+          <p>You can always do this at any time from your settings.</p>
+
+          <IonGrid>
+            <IonRow>
+              <IonCol size="3" offset="3">
+                <p className="link-text" onClick={() => toHome()}>Skip</p>
+              </IonCol>
+              <IonCol size="3">
+                <p className="link-text" onClick={() => syncAccounts()}>Sync</p>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
         </IonContent>
       </IonModal>
 

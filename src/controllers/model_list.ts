@@ -37,10 +37,24 @@ export class CollectionList<Model> {
     return async (query_snapshot: firebase.firestore.QuerySnapshot) => {
       
       let changes = query_snapshot.docChanges();
+      //TODO: Make sure the other one works
+      let preindex = true; //changes.length > 10;
       let promises:Promise<void>[] = [];
+      
+      let find_model:(id:string) => Model;
+      if ( preindex ) {
+        let indexed_models = {};
+        await (await that.current_user[this.collection_name].find()).forEach( (model) => {
+          indexed_models[model.id] = model;
+        });
+        find_model = (id) => indexed_models[id];
+      } else {
+        find_model = await that.current_user[this.collection_name].findById;
+      }
+
       for (let i = 0; i < changes.length; i++) {
         let change = changes[i];
-        let model_id = change.doc.get("id");
+        let model_id = change.doc.id;
 
         let org_model = that.current_user[this.collection_name][change.oldIndex];
         if (change.type === "removed" || change.type === "modified") {
@@ -48,18 +62,15 @@ export class CollectionList<Model> {
         }
         if (change.type === "added" || change.type === "modified") {
           that.model_array.splice(change.newIndex, 0, org_model);
-          promises.push(that.current_user[this.collection_name].findById(model_id).then( new_task => {
-            that.model_array[change.newIndex] = new_task;
-          }));
+          
+          that.model_array[change.newIndex] =  await find_model(model_id);
         }
       }
-      Promise.all(promises).then( () => {
-        let list = that.model_array;
-        if (that.post_update_hook){
-          list = that.post_update_hook.apply(that);
-        }
-        that.update_fn(list);
-      });
+      let list = that.model_array;
+      if (that.post_update_hook){
+        list = that.post_update_hook.apply(that);
+      }
+      that.update_fn(list);
     };
   }
 }

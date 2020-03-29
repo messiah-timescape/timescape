@@ -47,9 +47,9 @@ const Todo = () => {
   const AddEditModal = () => {
     let task = {
       order: 1,
-      name: "",
-      notes: "",
-      deadline: moment()
+      name: currentEditTask ? currentEditTask.name : "",
+      notes: currentEditTask ? currentEditTask.notes : "",
+      deadline: currentEditTask ? currentEditTask.deadline : moment()
     };
 
     function handleAdd() {
@@ -58,6 +58,8 @@ const Todo = () => {
     }
 
     function handleEdit() {
+      console.log(task, "handle edit");
+
       if (task.name.length > 0) {
         update_task(currentEditTask.id, task);
       }
@@ -101,7 +103,9 @@ const Todo = () => {
           </IonItem>
 
           <IonItem className="input-item">
-            <IonSelect name="tags" value={["school", "hobbie"]} id="tags-field" multiple={true}>
+            <IonSelect name="tags" id="tags-field" multiple={false} placeholder="Add Tag">
+              {" "}
+              {/*change multiple to true to allow user to choose more than one tag */}
               <IonSelectOption value="school">School</IonSelectOption>
               <IonSelectOption value="chore">Chore</IonSelectOption>
               <IonSelectOption value="work">Work</IonSelectOption>
@@ -122,6 +126,7 @@ const Todo = () => {
           </IonItem>
 
           <IonItem className="input-item">
+            <p>Due:</p>
             <IonDatetime
               name="time"
               value={
@@ -136,7 +141,10 @@ const Todo = () => {
               onIonBlur={e => {
                 let date = (e.target as HTMLInputElement).value.split("T")[0].split("-");
                 task.deadline = moment(`${date[1]}/${date[2]}/${date[0]}`, "MM/DD/YYYY");
+                console.log(task.deadline);
               }}
+              placeholder="Add Due Date"
+              slot="end"
             ></IonDatetime>
           </IonItem>
         </IonContent>
