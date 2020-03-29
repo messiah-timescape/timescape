@@ -58,8 +58,6 @@ const Todo = () => {
     }
 
     function handleEdit() {
-      console.log(task, "handle edit");
-
       if (task.name.length > 0) {
         update_task(currentEditTask.id, task);
       }
@@ -141,7 +139,6 @@ const Todo = () => {
               onIonBlur={e => {
                 let date = (e.target as HTMLInputElement).value.split("T")[0].split("-");
                 task.deadline = moment(`${date[1]}/${date[2]}/${date[0]}`, "MM/DD/YYYY");
-                console.log(task.deadline);
               }}
               placeholder="Add Due Date"
               slot="end"
