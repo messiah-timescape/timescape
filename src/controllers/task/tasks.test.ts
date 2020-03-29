@@ -29,11 +29,13 @@ describe("Task List", ()=> {
         let task_name = "Check off as complete";
         let task_order = 1;
         let task_deadline = moment();
+        let task_tag = await (await (CurrentUser.get_loggedin())).tags.findOne()
         try{
             task = await create_task({
                 name: task_name,
                 order: task_order,
-                deadline: task_deadline
+                deadline: task_deadline,
+                tag: (task_tag)?task_tag:undefined
             });
         } catch(err) {
             throw err;

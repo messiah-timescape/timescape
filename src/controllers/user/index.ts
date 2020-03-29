@@ -21,6 +21,7 @@ class CurrentUser {
         }
         
         return user_repo.findById(curr_user.uid).then((user)=> {
+            user.set_default_tags();
             if (curr_user)
                 user.firebase_user = curr_user;
             return user;

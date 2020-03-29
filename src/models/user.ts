@@ -5,7 +5,7 @@ import Weekdays from "../utils/weekdays";
 import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
 import { Task } from "./task";
-import { date_field, duration_field } from "./field_types";
+import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
 
@@ -103,7 +103,6 @@ export class User extends BaseModel{
     constructor(init_fields?:Partial<User>) {
         super();
         Object.assign(this, init_fields);
-
     }
     id!: string;
     email!: string;
@@ -136,6 +135,24 @@ export class User extends BaseModel{
     async has_google() : Promise<boolean> {
         return firebase.app().auth().fetchSignInMethodsForEmail(this.email).then(methods =>{
             return 'google.com' in methods;
+        });
+    }
+
+    @Exclude()
+    set_default_tags() {
+        this.tags.find().then((tag_list) => {
+            if ( tag_list.length === 0 ) {
+                console.log("Setting default tags", tag_list);
+                let default_tags = {
+                     "School": TagColors.blue,
+                     "Chores": TagColors.green, 
+                     "Work": TagColors.red,
+                     "Hobbies": TagColors.blue
+                };
+                for ( let tag in default_tags) {
+                    this.tags.create(new Tag().fill_fields({name:tag, color: default_tags[tag]}));
+                }
+            }
         });
     }
 }
