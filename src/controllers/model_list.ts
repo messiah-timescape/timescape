@@ -39,7 +39,6 @@ export class CollectionList<Model> {
       let changes = query_snapshot.docChanges();
       //TODO: Make sure the other one works
       let preindex = true; //changes.length > 10;
-      let promises:Promise<void>[] = [];
       
       let find_model:(id:string) => Model;
       if ( preindex ) {
