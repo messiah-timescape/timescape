@@ -35,7 +35,8 @@ describe('Manipulate Settings', ()=> {
         let user = await update_settings(settings);
         let curr_user = await CurrentUser.get_loggedin();
         expect(user.settings).toBeInstanceOf(UserSettings);
-        expect(curr_user.settings.work_start_time.isSame(user.settings.work_start_time)).toBeTruthy();
+        expect(curr_user.settings.work_start_time.hour()).toEqual(user.settings.work_start_time.hour());
+        expect(curr_user.settings.work_start_time.minute()).toEqual(user.settings.work_start_time.minute());
         done();
     });
 
