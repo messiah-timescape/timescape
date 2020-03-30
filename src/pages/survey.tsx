@@ -15,7 +15,7 @@ import {
 } from "@ionic/react";
 import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
-import { userlink_google } from "../controllers/user/link_google";
+import { userlink_google, user_hasgoogle } from "../controllers/user/link_google";
 //import user from "../controllers/user/index"
 import moment from "moment";
 import Weekdays from "../utils/weekdays";
@@ -92,10 +92,17 @@ function modal2 (s: string, w: string) {
     setWorkStart(workStart.add(start, "hours"));
     setWorkStop(workStop.add(stop, "hours"));
     handleSubmit(interval, sleep, wake, workDays, workStart, workStop);
-    // user.has_google().then(
-    //   //code
-    // );
-    next();
+    
+    //TODO: Add visual indicator to show that somethign is being processed in the background
+    //      and that the next page is being loaded
+    console.log("Clicked", "NEEDS TO BE CHANGED")
+    user_hasgoogle().then((has_google:boolean) => {
+      if ( has_google ) {
+        toHome();
+      } else {
+        next();
+      }
+    });
   }
 
   function toHome() { //Sends the user the the dashboard
