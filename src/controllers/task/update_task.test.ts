@@ -1,8 +1,7 @@
 import init_app from "../../init_app";
 import { TestLoginActions } from "../user/login.test";
 import firebase from "firebase";
-import { update_task, create_task, delete_task } from "./task_action";
-import CurrentUser from "../user";
+import { update_task, create_task} from "./task_actions";
 
 describe('Update Task', ()=>{
     beforeAll(async ()=> {
@@ -24,7 +23,6 @@ describe('Update Task', ()=>{
     ************************************/
     it('updates order', async ()=>{
         let task = await create_task({order:1, name:"Changes order from 1 to 2"});
-        console.log("Task id is ", task.id);
         task = await update_task(task.id, {order: 2});
         return expect(task.order).toBe(2);
     });

@@ -15,7 +15,10 @@ import {
 } from "@ionic/react";
 import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
-// import { store_survey } from "../controllers/user/survey";
+import { userlink_google, user_hasgoogle } from "../controllers/user/link_google";
+//import user from "../controllers/user/index"
+import moment from "moment";
+import Weekdays from "../utils/weekdays";
 
 const Survey: React.FC = () => {
   const [progressValue, setProgressValue] = useState(0.25);
@@ -28,14 +31,14 @@ const Survey: React.FC = () => {
     { val: "Friday", isChecked: false },
     { val: "Saturday", isChecked: false },
     { val: "Sunday", isChecked: false }
-  ];
+];
 
-  const [interval, setInterval] = useState(null);
-  const [sleep, setSleep] = useState();
-  const [wake, setWake] = useState();
-  const [workDays] = useState(null);
-  const [workStart, setWorkStart] = useState(null);
-  const [workStop, setWorkStop] = useState(null);
+  const [interval, setInterval] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
+  const [sleep, setSleep] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
+  const [wake, setWake] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
+  const [workDays, setWorkDays] = useState([""]);
+  const [workStart, setWorkStart] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
+  const [workStop, setWorkStop] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
 
   function handleSubmit(interval, sleep, wake, workDays, workStart, workStop) {
       store_survey({
@@ -48,35 +51,70 @@ const Survey: React.FC = () => {
       });
   }
 
-  function next() {
+  function next() { //all the animation stuff for the next menu
     setModalNum(modalNum + 1);
-    setProgressValue(progressValue + 0.25);
-  }
+    setProgressValue(progressValue + 0.2);
 
-  function modal1(h, m) {
-    setInterval(h + m);
+
+    console.log(interval, "overwork_limit");
+    console.log(sleep, "sleep_start");
+    console.log(wake, "sleep_stop");
+    console.log(workDays, "work_days");
+    console.log(workStart, "work_start_time");
+    console.log(workStop, "work_stop_time");
+    console.log("-----------------------------------------------");
+}
+
+function modal1 (h: string, m: string) { //gets user input
+  let hNum = +h; //converts hours input to an actual number
+  let mNum = +m; //converts minutes input to an actual number
+  setInterval(interval.add(hNum, "hours").add(mNum, "minutes"));
+  next();
+}
+
+function modal2 (s: string, w: string) {
+  let sleepTime = +s;
+  let wakeTime = +w;
+  setSleep(sleep.add(sleepTime, "hours"));
+  setWake(wake.add(wakeTime, "hours"));
+  next();
+}
+
+  function modal3 (...arg: boolean[]) {
+    setWorkDays([...workDays].concat(Weekdays.Monday, Weekdays.Tuesday));
+    setWorkDays(workDays.splice(1));
     next();
   }
-
-  function modal2(s, w) {
-    setSleep(s);
-    setWake(w);
-    next();
-  }
-
-  // function modal3 (...arg: string[]) {
-  //     //to be determined, not functional yet
-  //work_days = [Weekdays.Monday];
-  //     next();
-  // }
 
   function modal4(wStart, wStop) {
-    setWorkStart(wStart);
-    setWorkStop(wStop);
+    let start = +wStart;
+    let stop = +wStop;
+    setWorkStart(workStart.add(start, "hours"));
+    setWorkStop(workStop.add(stop, "hours"));
     handleSubmit(interval, sleep, wake, workDays, workStart, workStop);
+    
+    //TODO: Add visual indicator to show that somethign is being processed in the background
+    //      and that the next page is being loaded
+    console.log("Clicked", "NEEDS TO BE CHANGED")
+    user_hasgoogle().then((has_google:boolean) => {
+      if ( has_google ) {
+        toHome();
+      } else {
+        next();
+      }
+    });
+  }
+
+  function toHome() { //Sends the user the the dashboard
     let url = window.location.href.split("/");
     url[3] = "home";
     window.location.href = url.join("/");
+  }
+
+  function syncAccounts() {
+    userlink_google().then(() => {
+      toHome();
+    });
   }
 
   return (
@@ -142,7 +180,7 @@ const Survey: React.FC = () => {
                 <div className="modal-item">
                   <IonItem>
                     <IonLabel>Bedtime</IonLabel>
-                    <IonInput id="bedtime-field" placeholder="11pm"></IonInput>
+                    <IonInput id="bedtime-field" placeholder="11"></IonInput>
                   </IonItem>
                 </div>
               </IonCol>
@@ -152,7 +190,7 @@ const Survey: React.FC = () => {
                 <div className="modal-item">
                   <IonItem>
                     <IonLabel>Wake Up</IonLabel>
-                    <IonInput id="wakeUp-field" placeholder="8am"></IonInput>
+                    <IonInput id="wakeUp-field" placeholder="8"></IonInput>
                   </IonItem>
                 </div>
               </IonCol>
@@ -187,11 +225,15 @@ const Survey: React.FC = () => {
           {days.map(({ val, isChecked }) => (
             <IonItem key={val}>
               <IonLabel>{val}</IonLabel>
-              <IonCheckbox slot="end" value={val} checked={isChecked} />
+              <IonCheckbox slot="end" id={val} value={val} checked={isChecked} />
             </IonItem>
           ))}
         </IonList>
-        <IonButton className="survey-nextButton" onClick={() => next()}>
+        <IonButton className="survey-nextButton" onClick={() => 
+          modal3(
+            (document.getElementById("Monday") as HTMLInputElement).checked
+          )
+        }>
           Next
         </IonButton>
       </IonModal>
@@ -213,7 +255,7 @@ const Survey: React.FC = () => {
                 <div className="modal-item">
                   <IonItem>
                     <IonLabel>Start</IonLabel>
-                    <IonInput id="start-field" placeholder="12pm"></IonInput>
+                    <IonInput id="start-field" placeholder="12"></IonInput>
                   </IonItem>
                 </div>
               </IonCol>
@@ -223,7 +265,7 @@ const Survey: React.FC = () => {
                 <div className="modal-item">
                   <IonItem>
                     <IonLabel>Stop</IonLabel>
-                    <IonInput id="stop-field" placeholder="9pm"></IonInput>
+                    <IonInput id="stop-field" placeholder="9"></IonInput>
                   </IonItem>
                 </div>
               </IonCol>
@@ -242,6 +284,30 @@ const Survey: React.FC = () => {
           >
             Next
           </IonButton>
+        </IonContent>
+      </IonModal>
+
+      <IonModal 
+      cssClass="google-modal"
+      isOpen={ modalNum === 4 }
+      backdropDismiss={false}
+      showBackdrop={false}
+      keyboardClose={false}
+      >
+        <IonContent className="ion-padding">
+          <h3>Sync your new account with Google for extra features!</h3>
+          <p>You can always do this at any time from your settings.</p>
+
+          <IonGrid>
+            <IonRow>
+              <IonCol size="3" offset="3">
+                <p className="link-text" onClick={() => toHome()}>Skip</p>
+              </IonCol>
+              <IonCol size="3">
+                <p className="link-text" onClick={() => syncAccounts()}>Sync</p>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
         </IonContent>
       </IonModal>
 

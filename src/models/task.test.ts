@@ -4,7 +4,7 @@ import firebase from "firebase";
 import { User } from ".";
 import CurrentUser from "../controllers/user";
 import { TestLoginActions } from "../controllers/user/login.test";
-import { create_task } from "../controllers/task/task_action";
+import { create_task } from "../controllers/task/task_actions";
 
 describe('Creating Task', ()=> {
     beforeAll(async ()=> {
@@ -21,7 +21,7 @@ describe('Creating Task', ()=> {
             order:1,
             name: task_name,
             notes: "This is to test the working model of Task.",
-            deadline: moment().add(1, 'day').toDate(),
+            deadline: moment().add(1, 'day'),
             completed: true
         });
         if(new_task) {

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { store_survey } from "./survey";
+import { update_settings, get_settings } from "./settings";
 import init_app from "../../init_app";
 import firebase from "firebase";
 import Weekdays from "../../utils/weekdays";
@@ -9,13 +9,19 @@ import CurrentUser from ".";
 import * as Chance from "chance";
 const chance = new Chance.Chance();
 
-describe('Store User Survey Data', ()=> {
+describe('Manipulate Settings', ()=> {
     beforeAll(async ()=> {
         init_app();
         await TestLoginActions.email_password();
     });
     
-    it('stores survey data', async done=> {
+    it('retrieves settings from user', async done=>{
+        let settings:UserSettings = await get_settings();
+        expect(settings).toBeInstanceOf(UserSettings);
+        done();
+    });
+
+    it('updates the user\'s settings', async done=> {
         const h = chance.integer({min: 0, max: 23});
         const m = chance.integer({min: 0, max: 59});
         let settings:UserSettings = new UserSettings ({
@@ -23,13 +29,14 @@ describe('Store User Survey Data', ()=> {
             work_stop_time: moment().hour(h).minute(m),
             sleep_start: moment().hour(h).minute(m),
             sleep_stop: moment().hour(h).minute(m),
-            work_days: [Weekdays.Tuesday, Weekdays.Wednesday],
+            work_days: [Weekdays.Tuesday],
             overwork_limit: moment.duration(8, "hours")
         });
-        let user = await store_survey(settings);
+        let user = await update_settings(settings);
         let curr_user = await CurrentUser.get_loggedin();
         expect(user.settings).toBeInstanceOf(UserSettings);
-        expect(curr_user.settings.work_start_time.isSame(user.settings.work_start_time)).toBeTruthy();
+        expect(curr_user.settings.work_start_time.hour()).toEqual(user.settings.work_start_time.hour());
+        expect(curr_user.settings.work_start_time.minute()).toEqual(user.settings.work_start_time.minute());
         done();
     });
 

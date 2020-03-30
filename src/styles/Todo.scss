@@ -22,6 +22,45 @@
   }
 }
 
+.lds-ripple {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid var(--ion-color-primary);
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+
+@keyframes lds-ripple {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 72px;
+    height: 72px;
+    opacity: 0;
+  }
+}
+
 .yellow-add-button {
   background-color: var(--ion-color-primary);
   height: 50px;
@@ -32,6 +71,9 @@
   z-index: 1000;
   right: 2em;
   outline: none;
+  @-moz-document url-prefix() {
+    bottom: 5.5em;
+  }
 
   .add-icon {
     width: 100%;
@@ -39,6 +81,25 @@
     background-color: #ffffff;
     mask: url("../assets/add-icon.svg") no-repeat center;
     mask-size: 100%;
+  }
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+
+  .save-button {
+    padding-right: 1.5em;
+    margin: 10px 0;
+    color: var(--ion-color-primary);
+    cursor: pointer;
+  }
+
+  .cancel-button {
+    padding-right: 1.5em;
+    margin: 10px 0;
+    color: var(--ion-color-danger);
+    cursor: pointer;
   }
 }
 

@@ -1,9 +1,25 @@
-import { Tag } from ".";
-import BaseModel from "./base_model";
-// import { SubCollection, ISubCollection } from "fireorm";
-import moment from "moment";
+import {firestore} from "firebase";
 
-export class Task extends BaseModel<Task> {
+import { Tag } from "./tag";
+import BaseModel from "./base_model";
+import moment, { Moment } from "moment";
+import { Collection, ISubCollection, SubCollection, Type } from "fireorm";
+import { date_field } from "./field_types";
+import { Transform } from "class-transformer";
+import CurrentUser from "../controllers/user";
+
+
+export class WorkPeriod extends BaseModel {
+
+    @date_field
+    start_datetime!: Moment;
+
+    @date_field
+    end_datetime!: Moment;
+}
+
+@Collection('task')
+export class Task extends BaseModel {
     constructor(init_fields?:Partial<Task>) {
         super();
         Object.assign(this, init_fields);
@@ -11,13 +27,19 @@ export class Task extends BaseModel<Task> {
     order!: number;
     name!: string;
     notes: string = '';
-    deadline: Date = moment().add(1, 'day').toDate(); // a day from now
+
+    @date_field
+    deadline: Moment = moment().add(1, 'day'); // a day from now
     // array of start and end times
-    times: Date[] = [];
-    tag_list: Tag[] = [];
-    // @SubCollection(Task)
-    // subtasks: ISubCollection<Task>;
-    // tasks!:Task;
+    
+    @SubCollection(WorkPeriod)
+    work_periods!: ISubCollection<WorkPeriod>;
+
+    @Type(() => firestore.DocumentReference)
+    @Transform((value) => (value)?CurrentUser.get_loggedin().then(user => user.tags.findById(value)):null, { toClassOnly: true })
+    @Transform((value:Tag) => (value)?value.id:null, { toPlainOnly: true })
+    tag?: Tag;
+    
     completed: boolean = false;
 }
 

@@ -80,3 +80,20 @@ ion-progress-bar {
     }
 }
 
+.google-modal {
+    div {
+        box-shadow: none !important;
+        text-align: center;
+    }
+
+    p {
+        opacity: 50%;
+    }
+
+    .link-text {
+        opacity: 100%;
+        color: var( --ion-color-secondary);
+        cursor: pointer;
+    }
+}
+

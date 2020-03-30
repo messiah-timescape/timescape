@@ -17,10 +17,6 @@
   }
 }
 
-.link-text {
-  color: var(--color-secondary);
-}
-
 .alt-login {
   display: flex;
   flex-direction: column;
@@ -80,4 +76,8 @@
 
 main {
   background: transparent !important;
+}
+
+ion-router-link {
+  color: var(--ion-color-secondary);
 }

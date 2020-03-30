@@ -1,12 +1,23 @@
-import moment, { Moment } from "moment";
+import moment, {Duration} from "moment";
 
-// export class ColorType extends BaseFieldType<string>{
+import { Type, Transform } from "class-transformer";
+
+export function date_field(target: any, propertyKey: string) {
     
-// }
+    Type(() => Date)(target, propertyKey);
+    Transform(value => moment(value), { toClassOnly: true })(target, propertyKey);
+    Transform(value => value.toDate(), { toPlainOnly: true })(target, propertyKey);
+}
 
+export function duration_field(target: any, propertyKey: string) {
+    Type(() => String)(target, propertyKey);
+    Transform(value => moment.duration(value), { toClassOnly: true })(target, propertyKey);
+    Transform((value:Duration) => value.toISOString(), { toPlainOnly: true })(target, propertyKey);
+}
 
 export enum TagColors {
     red = 0xf00,
     green = 0x0f0,
     blue = 0x00f
 }
+

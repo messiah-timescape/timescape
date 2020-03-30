@@ -1,10 +1,13 @@
 import firebase from "firebase";
 import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
-
+import {Type, Exclude} from "class-transformer"
 import Weekdays from "../utils/weekdays";
-import moment from "moment";
+import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
 import { Task } from "./task";
+import { date_field, duration_field, TagColors } from "./field_types";
+import { Tag } from "./tag";
+import {User as RealFirebaseUser} from "firebase";
 
 export enum UserProvider{
     Google = "Google",
@@ -72,38 +75,84 @@ export class FirebaseUser{
 
 
 export class UserSettings {
-    work_start_time!: Date;
-    work_stop_time!: Date;
+    constructor(init_fields?:object) {
+        Object.assign(this, init_fields);
+    }
+    
+    @date_field
+    work_start_time!: Moment;
+    
+    @date_field
+    work_stop_time!: Moment;
+    
     work_days!:Weekdays[];
-    sleep_start!:Date;
-    sleep_stop!:Date;
-    overwork_limit!:string;
+
+    @date_field
+    sleep_start!:Moment;
+    
+    @date_field
+    sleep_stop!:Moment;
+
+    @duration_field
+    overwork_limit!:Duration;
 }
 
 
 @Collection('user')
-export class User extends BaseModel<User>{
+export class User extends BaseModel{
     constructor(init_fields?:Partial<User>) {
         super();
         Object.assign(this, init_fields);
-
     }
     id!: string;
     email!: string;
     display_name!: string;
+
+    @Type(() => UserSettings)
     settings: UserSettings = {
-        work_start_time:moment().hours(8).toDate(),
-        work_stop_time: moment().hours(16).toDate(),
+        work_start_time:moment().hours(8),
+        work_stop_time: moment().hours(16),
         work_days:[Weekdays.Monday],
-        sleep_start:moment().hours(20).toDate(),
-        sleep_stop:moment().hours(7).toDate(),
-        overwork_limit: moment.duration(3, 'hours').toISOString()
+        sleep_start:moment().hours(20),
+        sleep_stop:moment().hours(7),
+        overwork_limit: moment.duration(3, 'hours')
     };
     @SubCollection(Task)
     tasks!: ISubCollection<Task>;
 
+    @SubCollection(Tag)
+    tags!: ISubCollection<Tag>;
+
     static create_from_json(json_str:string): User {
         let user_obj = JSON.parse(json_str);
         return new User(user_obj);
+    }
+
+    @Exclude()
+    firebase_user?:RealFirebaseUser;
+
+    @Exclude()
+    async has_google() : Promise<boolean> {
+        return firebase.app().auth().fetchSignInMethodsForEmail(this.email).then(methods =>{
+            return 'google.com' in methods;
+        });
+    }
+
+    @Exclude()
+    set_default_tags() {
+        this.tags.find().then((tag_list) => {
+            if ( tag_list.length === 0 ) {
+                console.log("Setting default tags", tag_list);
+                let default_tags = {
+                     "School": TagColors.blue,
+                     "Chores": TagColors.green, 
+                     "Work": TagColors.red,
+                     "Hobbies": TagColors.blue
+                };
+                for ( let tag in default_tags) {
+                    this.tags.create(new Tag().fill_fields({name:tag, color: default_tags[tag]}));
+                }
+            }
+        });
     }
 }

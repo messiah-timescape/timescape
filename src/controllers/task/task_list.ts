@@ -1,7 +1,6 @@
-import firebase from "firebase/app";
-import { Task, User } from "../../models";
-import CurrentUser from "../user";
+import { Task } from "../../models";
 import moment from "moment";
+import { CollectionList } from "../model_list";
 
 class TaskGroup {
   name: string;
@@ -15,36 +14,19 @@ class TaskGroup {
   index: number;
 }
 
-class TaskList {
-  update_fn: Function;
-  stop_updates_fn?: Function;
-  current_user: User;
-  tasks: Task[] = [];
+class TaskList extends CollectionList<Task>{
   groups: TaskGroup[] = [];
-
-  static async create(change_state: Function, initial_length = 100) {
-    let current_user = await CurrentUser.get_loggedin();
-    // let initial_tasks = await current_user.tasks.limit(initial_length).find();
-    let task_list = new TaskList(current_user, change_state);
-    console.log("UPDATE")
-    // initial_tasks.forEach(task => {
-    //   task_list.tasks.push(task);
-    // });
-    task_list.stop_updates_fn = firebase
-      .app()
-      .firestore()
-      .collection("user")
-      .doc(current_user.id)
-      .collection("tasks")
-      .onSnapshot(task_list.update());
-    // task_list.update_fn(task_list.by_groups());
-    return task_list;
+  tasks = this.model_array;
+  static async create(change_state: Function,  initial_length?):Promise<TaskList> {
+    let list = super._create<Task,TaskList>(TaskList, "tasks", change_state, initial_length);
+    return list;
   }
 
   add_group(name: string, group_condition: (task) => boolean) {
     this.groups.push(new TaskGroup(this.groups.length, name, group_condition));
   }
 
+  post_update_hook = this.by_groups;
   by_groups() {
     
     for (let i = 0; i < this.groups.length; i++) {
@@ -52,48 +34,16 @@ class TaskList {
       group.tasks = [];
     }
     
-    this.tasks.forEach(task => {
+    this.model_array.forEach(task => {
       for (let i = 0; i < this.groups.length; i++) {
         const group = this.groups[i];
-        if (group.group_condition(task)) {
+        if (task && group.group_condition(task)) {
           group.tasks.push(task);
           break;
         }
       }
     });
     return this.groups;
-  }
-
-  update() {
-    let that = this;
-    return async (query_snapshot: firebase.firestore.QuerySnapshot) => {
-      
-      let changes = query_snapshot.docChanges();
-      let promises:Promise<void>[] = [];
-      for (let i = 0; i < changes.length; i++) {
-        let change = changes[i];
-        let task_id = change.doc.get("id");
-        let org_task = that.current_user.tasks[change.oldIndex];
-        if (change.type === "removed" || change.type === "modified") {
-          that.tasks.splice(change.oldIndex, 1);
-        }
-        if (change.type === "added" || change.type === "modified") {
-          that.tasks.splice(change.newIndex, 0, org_task);
-          promises.push(that.current_user.tasks.findById(task_id).then( new_task => {
-            that.tasks[change.newIndex] = new_task;
-          }));
-        }
-      }
-      Promise.all(promises).then( () => {
-        that.update_fn(that.by_groups.apply(that));
-      });
-    };
-  }
-
-  constructor(current_user: User, update_fn: Function, initial_length = 100) {
-    //query:firebase.firestore.Query) {
-    this.current_user = current_user;
-    this.update_fn = update_fn;
   }
 }
 
@@ -116,6 +66,7 @@ function task_sync(change_state: Function): Promise<TaskList> {
         return true;
       })
     );
+    
     resolve(task_list);
   });
 }
