@@ -34,13 +34,20 @@ describe('User Signup with Email and Password', ()=> {
             }
        }); 
     });
-    it('creates the new user in db', ()=> {
-        expect.assertions(1);
+    it('creates the new user in db', done=> {
+        expect.assertions(3);
         return usersignup(new_user).then(async (user_from_db)=> {
             if (user_from_db) {
-                uid = (await user_from_db.user()).id;
-                return expect(new_user.email).toBe(user_from_db.email);
-            }            
+                let user = await user_from_db.user();
+                uid = user.id;
+                expect(new_user.email).toBe(user_from_db.email);
+                let tags = await user.tags.find();
+                expect(tags.length).toBeGreaterThan(0);
+                expect(tags.length).toBeLessThan(6);
+                done();
+            } else {
+                done();
+            } 
         }).catch((err)=>{
             throw err;
         });
