@@ -49,6 +49,7 @@ export class FirebaseUser{
         let org_user = await this.load_user();
         
         let user:User = (org_user)?org_user:await this.create_user();
+        user.set_default_tags();
         return {
             user: user,
             new: !org_user
