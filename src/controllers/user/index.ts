@@ -7,13 +7,17 @@ class CurrentUser {
     static async get_user():Promise<User | null> {
         let user_repo = getRepository(User);
 
-        await new Promise(resolve => {
-            firebase.auth().onAuthStateChanged(user => {
-                resolve(null);
-            });
-        });
-        
         let curr_user = firebase.auth().currentUser;
+        if ( !curr_user ){
+            await new Promise(resolve => {
+                firebase.auth().onAuthStateChanged(user => {
+                    resolve(null);
+                });
+            });
+        }
+        
+        curr_user = firebase.auth().currentUser;
+        
         if (curr_user === null) {
             return new Promise(resolve => {
                 resolve(null);
@@ -21,8 +25,7 @@ class CurrentUser {
         }
         
         return user_repo.findById(curr_user.uid).then((user)=> {
-            user.set_default_tags();
-            if (curr_user)
+            if (user && curr_user)
                 user.firebase_user = curr_user;
             return user;
         });
