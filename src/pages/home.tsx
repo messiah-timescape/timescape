@@ -36,11 +36,7 @@ const Home: React.FC = () => {
           Logout
         </IonButton>
 
-        <img
-          src={homepageGraphic}
-          className="homepage-graphic"
-          alt="home page graphic"
-        />
+        <img src={homepageGraphic} className="homepage-graphic" alt="home page graphic" />
       </IonContent>
     </IonPage>
   );

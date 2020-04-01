@@ -24,13 +24,15 @@ import {
   update_task
 } from "../controllers/task/task_actions";
 import moment from "moment";
+import { Tag } from "../models/tag";
+import { TagColors } from "../models/field_types";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [currentEditTask, setCurrentEditTask] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
-  const [tasks, setTasks] = useState();
+  const [tasksHTML, setTasksHTML] = useState();
   const [renderTasks, setRenderTasks] = useState(false);
 
   useEffect(() => {
@@ -39,8 +41,7 @@ const Todo = () => {
   }, []);
 
   function syncTasks(taskList) {
-    setTasks(taskList);
-    setRenderTasks(false);
+    GenerateTasks(taskList);
     setRenderTasks(true);
   }
 
@@ -49,7 +50,8 @@ const Todo = () => {
       order: 1,
       name: currentEditTask ? currentEditTask.name : "",
       notes: currentEditTask ? currentEditTask.notes : "",
-      deadline: currentEditTask ? currentEditTask.deadline : moment()
+      deadline: currentEditTask ? currentEditTask.deadline : moment(),
+      tag: currentEditTask ? currentEditTask.tag : new Tag()
     };
 
     function handleAdd() {
@@ -101,8 +103,30 @@ const Todo = () => {
           </IonItem>
 
           <IonItem className="input-item">
-            <IonSelect name="tags" id="tags-field" multiple={false} placeholder="Add Tag">
-              {" "}
+            <IonSelect
+              name="tags"
+              id="tags-field"
+              multiple={false}
+              placeholder="Add Tag"
+              onBlur={e => {
+                let tag = new Tag();
+                tag.name = e.target.value;
+
+                switch (tag.name) {
+                  case "school":
+                    tag.color = TagColors.red;
+                    break;
+                  case "chore":
+                    tag.color = TagColors.blue;
+                    break;
+                  case "work":
+                    tag.color = TagColors.green;
+                    break;
+                }
+
+                task.tag = tag;
+              }}
+            >
               {/*change multiple to true to allow user to choose more than one tag */}
               <IonSelectOption value="school">School</IonSelectOption>
               <IonSelectOption value="chore">Chore</IonSelectOption>
@@ -179,7 +203,7 @@ const Todo = () => {
     );
   };
 
-  const GenerateTasks = () => {
+  const GenerateTasks = tasks => {
     let temp: any = [];
 
     if (!tasks) {
@@ -266,7 +290,7 @@ const Todo = () => {
       }
     });
 
-    return (
+    setTasksHTML(
       <div className="negative-z">
         {temp}
         <button
@@ -300,7 +324,7 @@ const Todo = () => {
         </div>
 
         <IonContent>
-          {renderTasks ? <GenerateTasks /> : <LoadingScreen />}
+          {renderTasks ? tasksHTML : <LoadingScreen />}
 
           <DeleteModal />
           {showEdit ? <AddEditModal /> : <React.Fragment />}
