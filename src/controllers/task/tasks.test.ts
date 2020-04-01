@@ -21,7 +21,6 @@ describe("Task List", ()=> {
 
             done();
         });
-        
     });
 
     it('creates task', async ()=> {
@@ -41,7 +40,9 @@ describe("Task List", ()=> {
             throw err;
         }
         if(task !== undefined) {
-            return expect(task.name).toBe(task_name);
+            expect(task.name).toBe(task_name);
+            if ( task.tag )
+                expect(task.tag.id).toBe(task_tag!.id);
         }
         else throw new Error("\nMESSAGE from create_task.test.ts: Task is undefined.\n");
     });
