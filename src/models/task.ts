@@ -4,7 +4,7 @@ import { Tag } from "./tag";
 import BaseModel from "./base_model";
 import moment, { Moment } from "moment";
 import { Collection, ISubCollection, SubCollection, Type } from "fireorm";
-import { date_field } from "./field_types";
+import { date_field, usermodel_field } from "./field_types";
 import { Transform } from "class-transformer";
 import CurrentUser from "../controllers/user";
 
@@ -35,9 +35,7 @@ export class Task extends BaseModel {
     @SubCollection(WorkPeriod)
     work_periods!: ISubCollection<WorkPeriod>;
 
-    @Type(() => firestore.DocumentReference)
-    @Transform((value) => (value)?CurrentUser.get_loggedin().then(user => user.tags.findById(value)):null, { toClassOnly: true })
-    @Transform((value:Tag) => (value)?value.id:null, { toPlainOnly: true })
+    @usermodel_field
     tag?: Tag;
     
     completed: boolean = false;

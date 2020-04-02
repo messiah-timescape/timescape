@@ -1,3 +1,10 @@
+import moment, { Moment } from "moment";
+import CurrentUser from "../controllers/user";
+import { Exclude, Expose } from "class-transformer";
+import { Task } from ".";
+import { usermodel_field } from "./field_types";
+
+@Exclude()
 export class Timer {
     // seconds 
     // minutes
@@ -16,6 +23,14 @@ export class Timer {
 
     // counter?
 
+    @Expose()
+    timer_start?:Moment;
+    
+    @Expose()
+    @usermodel_field
+    current_task?:Task;
+
+    
     start() {
         // create a timestamp
     }
@@ -42,6 +57,8 @@ export class Timer {
         // returns bool for whether or not the timer has been reset
     }
 
-
+    link_state(set_state_fn:Function, current_state?:moment.Duration) { // Links timer to the UI
+        // if 
+    }
     
 }
