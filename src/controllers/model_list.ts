@@ -59,13 +59,13 @@ export class CollectionList<Model> {
     return query;
   }
 
-  add_page() {
-    if (this.initial_page_length && this.page_length) {
-      this.page_length += this.initial_page_length;
-      this.first_call_after_page_added = true;
-      this.setup_snapshots();
-    }
-  }
+  // add_page() {
+  //   if (this.initial_page_length && this.page_length) {
+  //     this.page_length += this.initial_page_length;
+  //     this.first_call_after_page_added = true;
+  //     this.setup_snapshots();
+  //   }
+  // }
 
   next_page() {
     if (this.initial_page_length) {
