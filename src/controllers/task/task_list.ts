@@ -17,9 +17,17 @@ class TaskGroup {
 class TaskList extends CollectionList<Task>{
   groups: TaskGroup[] = [];
   tasks = this.model_array;
-  static async create(change_state: Function,  initial_length?):Promise<TaskList> {
-    let list = super._create<Task,TaskList>(TaskList, "tasks", change_state, initial_length);
-    return list;
+
+  static async create(change_state: Function, page_length?):Promise<TaskList> {
+    return super._create<Task,TaskList>(TaskList, "tasks", change_state, page_length).then(list => {
+      return list;
+    });
+  }
+  
+  construct_query() {
+    return super.construct_query()
+      .orderBy('completed', 'desc')
+      .orderBy('deadline')
   }
 
   add_group(name: string, group_condition: (task) => boolean) {
@@ -34,9 +42,10 @@ class TaskList extends CollectionList<Task>{
       group.tasks = [];
     }
     
+    let ordered_groups = [...this.groups].sort((a,b) => a.index - b.index);
     this.model_array.forEach(task => {
-      for (let i = 0; i < this.groups.length; i++) {
-        const group = this.groups[i];
+      for (let i = 0; i < ordered_groups.length; i++) {
+        const group = ordered_groups[i];
         if (task && group.group_condition(task)) {
           group.tasks.push(task);
           break;
@@ -47,9 +56,9 @@ class TaskList extends CollectionList<Task>{
   }
 }
 
-function task_sync(change_state: Function): Promise<TaskList> {
+function task_sync(change_state: Function, page_length?:number): Promise<TaskList> {
   return new Promise<TaskList>(async (resolve, reject) => {
-    let task_list = await TaskList.create(change_state);
+    let task_list = await TaskList.create(change_state, page_length);
     task_list.add_group("Due today", (task: Task) => {
       return task.deadline && moment(task.deadline).isSame(moment(), "day");
     });
@@ -57,13 +66,13 @@ function task_sync(change_state: Function): Promise<TaskList> {
       return task.deadline && moment(task.deadline).isSame(moment().add(1, "day"), "day");
     });
     task_list.groups.push(
-      new TaskGroup(100, "Completed", (task: Task) => {
-        return task.completed;
+      new TaskGroup(101, "Due Later", (task: Task) => {
+        return true;
       })
     );
     task_list.groups.push(
-      new TaskGroup(101, "Others", (task: Task) => {
-        return true;
+      new TaskGroup(100, "Completed", (task: Task) => {
+        return task.completed;
       })
     );
     

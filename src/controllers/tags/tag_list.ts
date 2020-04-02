@@ -3,8 +3,8 @@ import { Tag } from "../../models";
 
 class TagList extends CollectionList<Tag>{
   tags = this.model_array;
-  static async create(change_state: Function,  initial_length?):Promise<TagList> {
-    let list = super._create<Tag,TagList>(TagList, "tags", change_state, initial_length);
+  static async create(change_state: Function,  page_length?):Promise<TagList> {
+    let list = super._create<Tag,TagList>(TagList, "tags", change_state);
     return list;
   }
 }
