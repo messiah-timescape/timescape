@@ -16,8 +16,9 @@ export function duration_field(target: any, propertyKey: string) {
 }
 
 export enum TagColors {
-    red = 0xf00,
-    green = 0x0f0,
-    blue = 0x00f
+    red = 'red',
+    green = 'green',
+    blue = 'blue',
+    purple = 'purple'
 }
 
