@@ -26,7 +26,7 @@ describe('User Login with Email and Password', ()=>{
         init_app();
     })
 
-    it('must login user when email and password are right', ()=>{
+    it('must login user when email and password are right', done =>{
 
         if ( !test_run ) {
             test_run = true;
@@ -36,8 +36,11 @@ describe('User Login with Email and Password', ()=>{
                 if(current_user){
                     expect(current_user.email).toBe(auth_user.email);
                 }
-                return expect(user.email).toBe(auth_user.email);
+                expect(user.email).toBe(auth_user.email);
+                done();
             });
+        } else {
+            done();
         }
     });
 

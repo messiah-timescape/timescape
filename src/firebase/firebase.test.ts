@@ -84,17 +84,17 @@ describe('without authentication', () => {
         actions = new TestDbActions(db.firestore);
     });
 
-    it('cannot create document', () =>{
-        expect.assertions(1);
+    it('cannot create document', done =>{
         return actions.create_test_doc().catch((err:firebase.FirebaseError) => {
             expect(err.code).toBe('permission-denied');
+            done();
         });
     });
     
-    it('cannot list test documents', () =>{
-        expect.assertions(1);
+    it('cannot list test documents', done =>{
         return actions.list_test_docs().catch((err: firebase.FirebaseError) => {
             expect(err.code).toBe('permission-denied');
+            done();
         });
     });
 });
