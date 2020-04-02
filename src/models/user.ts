@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection } from "fireorm";
+import { Collection, getRepository, BaseFirestoreRepository, SubCollection, ISubCollection, createBatch } from "fireorm";
 import {Type, Exclude} from "class-transformer"
 import Weekdays from "../utils/weekdays";
 import moment, { Moment, Duration } from "moment";
@@ -142,17 +142,19 @@ export class User extends BaseModel{
     @Exclude()
     set_default_tags() {
         this.tags.find().then((tag_list) => {
-            if ( tag_list.length === 0 ) {
+            if ( tag_list.length === 0) {
                 console.log("Setting default tags", tag_list);
                 let default_tags = {
                      "School": TagColors.blue,
                      "Chores": TagColors.green, 
                      "Work": TagColors.red,
-                     "Hobbies": TagColors.blue
+                     "Hobbies": TagColors.purple
                 };
-                for ( let tag in default_tags) {
-                    this.tags.create(new Tag().fill_fields({name:tag, color: default_tags[tag]}));
-                }
+                this.tags.runTransaction( async tran => {
+                    for ( let tag in default_tags) {
+                        tran.create(new Tag().fill_fields({name:tag, color: default_tags[tag]}));
+                    }
+                });
             }
         });
     }
