@@ -1,21 +1,17 @@
-import {firestore} from "firebase";
-
 import { Tag } from "./tag";
 import BaseModel from "./base_model";
 import moment, { Moment } from "moment";
-import { Collection, ISubCollection, SubCollection, Type } from "fireorm";
-import { date_field } from "./field_types";
-import { Transform } from "class-transformer";
-import CurrentUser from "../controllers/user";
+import { Collection, ISubCollection, SubCollection } from "fireorm";
+import { date_field, usermodel_field } from "./field_types";
 
 
-export class WorkPeriod extends BaseModel {
+export class Period extends BaseModel {
 
     @date_field
-    start_datetime!: Moment;
+    start!: Moment;
 
     @date_field
-    end_datetime!: Moment;
+    end!: Moment;
 }
 
 @Collection('task')
@@ -31,13 +27,14 @@ export class Task extends BaseModel {
     @date_field
     deadline: Moment = moment().add(1, 'day'); // a day from now
     // array of start and end times
-    
-    @SubCollection(WorkPeriod)
-    work_periods!: ISubCollection<WorkPeriod>;
 
-    @Type(() => firestore.DocumentReference)
-    @Transform((value) => (value)?CurrentUser.get_loggedin().then(user => user.tags.findById(value)):null, { toClassOnly: true })
-    @Transform((value:Tag) => (value)?value.id:null, { toPlainOnly: true })
+    @SubCollection(Period)
+    work_periods!: ISubCollection<Period>;
+
+    @SubCollection(Period)
+    break_periods!: ISubCollection<Period>;
+
+    @usermodel_field
     tag?: Tag;
     
     completed: boolean = false;
