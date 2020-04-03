@@ -1,5 +1,4 @@
 import moment, { Moment } from "moment";
-import CurrentUser from "../controllers/user";
 import { Exclude, Expose } from "class-transformer";
 import { Task } from ".";
 import { usermodel_field } from "./field_types";
@@ -25,40 +24,50 @@ export class Timer {
 
     @Expose()
     timer_start?:Moment;
+    @Expose()
+    break_start?:Moment;
     
     @Expose()
     @usermodel_field
     current_task?:Task;
-
     
-    start() {
-        // create a timestamp
+    is_started() {
+        return this.timer_start !== undefined;
     }
 
-    // this will make a "stop time"
+    is_onbreak() {
+        return this.break_start !== undefined;
+    }
+    
+    start() {
+        if ( !this.current_task ) {
+            throw new Error("Must have current task");
+        }
+        this.timer_start = moment();
+    }
+
     pause() {
-        // creates a timestamp
+        if ( !this.timer_start ) {
+            throw new Error("Must have started timer");
+        }
+        this.break_start = moment();
     }
 
     // this will make a "stop time" but also push to database
     stop() {
-        // create a timestamp
+        
     }
 
     reset() {
         // clears the timer and starts again from 0
     }
 
-    saveTime() {
-        // saves timed interval to db as WorkPeriod
+    save_time() {
+        
     }
 
     isReset() {
         // returns bool for whether or not the timer has been reset
-    }
-
-    link_state(set_state_fn:Function, current_state?:moment.Duration) { // Links timer to the UI
-        // if 
     }
     
 }

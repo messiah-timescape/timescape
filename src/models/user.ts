@@ -8,6 +8,7 @@ import { Task } from "./task";
 import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
+import { Timer } from "./timer";
 
 export enum UserProvider{
     Google = "Google",
@@ -118,6 +119,11 @@ export class User extends BaseModel{
         sleep_stop:moment().hours(7),
         overwork_limit: moment.duration(3, 'hours')
     };
+
+
+    @Type(() => UserSettings)
+    timer: Timer = new Timer();
+    
     @SubCollection(Task)
     tasks!: ISubCollection<Task>;
 
