@@ -1,8 +1,9 @@
-import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonIcon, IonModal, IonAvatar } from "@ionic/react";
+import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonModal, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge } from "@ionic/react";
 import React, { useState } from "react";
 import breakIcon from "../assets/breakIcon.png";
 import stopIcon from "../assets/stopIcon.png";
 import resumeIcon from "../assets/resumeIcon.png";
+import taskCompleteIcon from "../assets/taskCompleteIcon.png";
 import "../styles/Home.scss";
 import user from "../controllers/user/index";
 import userlogout from "../controllers/user/logout";
@@ -11,6 +12,7 @@ import CheckAuth from "../helpers/CheckAuth";
 const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [completeTask, showCompleteTask] = useState(false);
 
   function toggleTimer() {
     setTimerView(!timerView);
@@ -32,6 +34,14 @@ const Home: React.FC = () => {
     } else {
       console.log("Timer resumed");
     }
+  }
+
+  function complete() {
+    showCompleteTask(true);
+    toggleTimer();
+    setTimeout(() => {
+      showCompleteTask(false);
+    }, 2000);
   }
 
   const [currentUser, setCurrentUser] = useState();
@@ -78,6 +88,8 @@ const Home: React.FC = () => {
       <IonModal 
         isOpen={timerView}
         showBackdrop={false}
+        cssClass="timer-modal"
+        backdropDismiss={false}
        >
         <IonGrid className="timer-grid">
           <IonRow>
@@ -100,6 +112,29 @@ const Home: React.FC = () => {
             </IonCol>
           </IonRow>
         </IonGrid>
+        
+        <div className="current-task-section">
+          <p id="current-task-section-head"><strong>Task in Progress</strong></p>
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>Task Title</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <IonBadge color="secondary">#chore</IonBadge>
+            </IonCardContent>
+          </IonCard>
+          <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>Complete Task</IonButton>
+        </div>
+      </IonModal>
+
+      <IonModal
+        isOpen={completeTask}
+        showBackdrop={false}
+        cssClass="complete-task-modal"
+        backdropDismiss={false}
+      >
+        <img src={taskCompleteIcon} />
+        <h2>Task Complete!</h2>
       </IonModal>
     </IonPage>
   );
