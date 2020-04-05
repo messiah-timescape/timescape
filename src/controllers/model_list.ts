@@ -1,6 +1,7 @@
 import firebase, { firestore } from "firebase/app";
 import { User } from "../models";
 import CurrentUser from "./user";
+import { promises } from "dns";
 
 export class CollectionList<Model> {
   update_fn: Function;
@@ -82,6 +83,7 @@ export class CollectionList<Model> {
     }
   }
 
+  promises_toawait:Promise<any>[] = [];
   update() {
     let that = this;
     return async (query_snapshot: firebase.firestore.QuerySnapshot) => {
@@ -123,6 +125,7 @@ export class CollectionList<Model> {
       if (that.post_update_hook){
         list = that.post_update_hook.apply(that);
       }
+      await Promise.all(this.promises_toawait);
       that.update_fn(list);
     };
   }
