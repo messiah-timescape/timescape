@@ -1,7 +1,6 @@
-import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol } from "@ionic/react";
+import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonIcon, IonModal, IonAvatar } from "@ionic/react";
 import React, { useState } from "react";
-// import homepageGraphic from "../assets/homepage-graphic.png";
-import pauseIcon from "../assets/pauseIcon.png";
+import breakIcon from "../assets/breakIcon.png";
 import stopIcon from "../assets/stopIcon.png";
 import resumeIcon from "../assets/resumeIcon.png";
 import "../styles/Home.scss";
@@ -49,9 +48,12 @@ const Home: React.FC = () => {
   return (
     <IonPage>
       <IonContent className="ion-padding">
-        <h1>Home</h1>
+        <div className="header">
+          <h2>Hi {currentUser}</h2>
+          <p>How's your day going?</p>
+        </div>
+        {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
-        <h3>Welcome, {currentUser}</h3>
         <IonButton
           onClick={() => {
             userlogout().then(() => {
@@ -68,43 +70,37 @@ const Home: React.FC = () => {
           id="start-timer"
           expand="block"
           size="large"
-          hidden= {timerView}
           onClick={() => toggleTimer()}
           
         >Start Working</IonButton>
 
-        <IonGrid hidden={!timerView}>
+      </IonContent>
+      <IonModal 
+        isOpen={timerView}
+        showBackdrop={false}
+       >
+        <IonGrid className="timer-grid">
           <IonRow>
             <IonCol offset="2">
-              <p id="timer-numbers">00 : 00 : 00</p>
+              <span className="big-numbers"><strong>00 01</strong></span> <span className="small-numbers">25</span>
             </IonCol> 
           </IonRow>
           <IonRow>
-            <IonCol size="5" offset="1">
-              <div 
-              className="active-timer-button" 
-              id="stop-timer"
-              onClick={() => toggleTimer()}
-              >
+            <IonCol size="4" offset="2">
+              <div className="timer-icons" onClick={() => toggleTimer()}>
                 <img src={stopIcon} />
-                <p>Stop Working</p>
+                <p id="yellow">Stop Working</p>
               </div>
             </IonCol>
             <IonCol size="5">
-              <div 
-              className="active-timer-button" 
-              id="pause-timer"
-              onClick={() => pauseTimer()}
-              >
-                <img src={paused ? resumeIcon : pauseIcon} />
-                <p>{paused ? "Continue Working" : "Take a Break"}</p>
+              <div className="timer-icons" onClick={() => pauseTimer()}>
+                <img src={paused ? resumeIcon : breakIcon}></img>
+                  <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
               </div>
             </IonCol>
           </IonRow>
         </IonGrid>
-
-        {/* <img src={homepageGraphic} className="homepage-graphic" alt="home page graphic" /> */}
-      </IonContent>
+      </IonModal>
     </IonPage>
   );
 };
