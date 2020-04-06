@@ -15,6 +15,12 @@ const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
   const [completeTask, showCompleteTask] = useState(false);
+  //const [time, updateTime] = useState(moment({hour: 0, minute: 0, seconds: 0}));
+  const [seconds, updateSeconds] = useState(0);
+  const [minutes, updateMinutes] = useState(0);
+  const [hours, updateHours] = useState(0);
+
+  console.log("hi");
 
   let timer_controller = get_controller().then( async ctrl => {
     if(ctrl.timer.current_task)
@@ -31,8 +37,16 @@ const Home: React.FC = () => {
       console.log("We have task: ", await ctrl.timer.current_task)
     }
     
+    ctrl.link_state(duration => {
+      updateSeconds(duration.seconds());
+      updateMinutes(duration.minutes());
+      updateHours(duration.hours());
+    
+    });
+
     return ctrl;
   } );
+
   function toggleTimer() {
     setTimerView(!timerView);
     if (!timerView) {
@@ -80,7 +94,7 @@ const Home: React.FC = () => {
     }, 2000);
   }
 
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState(String);
   let token = user.get_user();
 
   CheckAuth();
@@ -130,7 +144,19 @@ const Home: React.FC = () => {
         <IonGrid className="timer-grid">
           <IonRow>
             <IonCol offset="2">
-              <span className="big-numbers"><strong>00 01</strong></span> <span className="small-numbers">25</span>
+              <IonGrid>
+                <IonRow>
+                  <IonCol size="3" offset="1">
+                    <strong className="big-numbers">{hours}</strong>
+                  </IonCol>
+                  <IonCol size="3">
+                    <strong className="big-numbers">{minutes}</strong>
+                  </IonCol>
+                  <IonCol size="3"className="small-numbers" >
+                    <span>{seconds}</span>
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
             </IonCol> 
           </IonRow>
           <IonRow>
