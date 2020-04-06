@@ -249,7 +249,7 @@ const Todo = () => {
                   </div>
                   <div>
                     <p>{task.name}</p>
-                    <p className={tagClass}>{task.tag ? task.tag : undefined}</p>
+                    <p className={tagClass}>{task.tag.model ? task.tag.model.name : undefined}</p>
                   </div>
                 </div>
               </IonItem>

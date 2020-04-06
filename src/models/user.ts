@@ -121,7 +121,7 @@ export class User extends BaseModel{
     };
 
 
-    @Type(() => UserSettings)
+    @Type(() => Timer)
     timer: Timer = new Timer();
     
     @SubCollection(Task)

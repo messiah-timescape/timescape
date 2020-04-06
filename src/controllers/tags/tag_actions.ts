@@ -18,7 +18,7 @@ export let update_tag = async (tag_id:string, input_tag:Partial<Tag>)=> {
     let tag = await curr_user.tags!.findById(tag_id);
     
     for(let index in input_tag) {
-        if(input_tag[index] !== undefined) {
+        if(input_tag[index]) {
             tag[index] = input_tag[index];
         }
     }

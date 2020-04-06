@@ -1,10 +1,13 @@
 import moment, { Moment } from "moment";
 import { Exclude, Expose } from "class-transformer";
 import { Task } from ".";
-import { usermodel_field } from "./field_types";
+import { usermodel_field, date_field, UsermodelDto } from "./field_types";
+import BaseModel from "./base_model";
+import { Collection } from "fireorm";
 
 @Exclude()
-export class Timer {
+@Collection('timer')
+export class Timer extends BaseModel {
     // seconds 
     // minutes
     // hours
@@ -23,20 +26,22 @@ export class Timer {
     // counter?
 
     @Expose()
+    @date_field
     timer_start?:Moment;
     @Expose()
+    @date_field
     break_start?:Moment;
     
     @Expose()
-    @usermodel_field
-    current_task?:Task;
+    @usermodel_field('tasks')
+    current_task?:UsermodelDto<Task>;
     
     is_started() {
-        return this.timer_start !== undefined;
+        return !!this.timer_start;
     }
 
     is_onbreak() {
-        return this.break_start !== undefined;
+        return !!this.break_start;
     }
     
     start() {

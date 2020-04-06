@@ -1,14 +1,13 @@
 import moment, {Duration} from "moment";
 
 import { Type, Transform } from "class-transformer";
-import { firestore } from "firebase";
 import CurrentUser from "../controllers/user";
 
 export function date_field(target: any, propertyKey: string) {
     
     Type(() => Date)(target, propertyKey);
-    Transform(value => moment(value), { toClassOnly: true })(target, propertyKey);
-    Transform(value => value.toDate(), { toPlainOnly: true })(target, propertyKey);
+    Transform(value => (value)?moment(value):null, { toClassOnly: true })(target, propertyKey);
+    Transform(value => (value)?value.toDate():null, { toPlainOnly: true })(target, propertyKey);
 }
 
 export function duration_field(target: any, propertyKey: string) {
@@ -17,13 +16,52 @@ export function duration_field(target: any, propertyKey: string) {
     Transform((value:Duration) => value.toISOString(), { toPlainOnly: true })(target, propertyKey);
 }
 
-export function usermodel_field(target: any, propertyKey:string) {
-    Type(() => firestore.DocumentReference)(target, propertyKey);
-    Transform(
-        value => (value)?CurrentUser.get_loggedin().then(user => user.tags.findById(value)):null,
-        { toClassOnly: true }    
-    )(target, propertyKey);
-    Transform(value => (value)?value.id:null, { toPlainOnly: true })(target, propertyKey);
+export class UsermodelDto<T>{
+    model?: T;
+    promise: Promise<T>;
+    constructor(promise: Promise<T> | T) {
+        if (promise instanceof Promise) {
+            let that = this;
+            promise.then((model) => {
+                that.model = model;
+            });
+            this.promise = promise;
+        } else {
+            this.model = promise;
+            this.promise = new Promise<T>( resolve => resolve(promise) );
+        }
+    }
+}
+
+// export type UsermodelDto<T> = UsermodelDtoCls<T> | T
+
+export function usermodel_field(collection_name?:string){
+    return function (target: any, propertyKey:string) {
+        Type(() => String)(target, propertyKey);
+        
+        Transform(
+            async (value) => {
+                let prom = (value)?(CurrentUser.get_loggedin().then(
+                    user => user[collection_name || propertyKey].findById(value))
+                ).then((model) => {
+                    target[propertyKey] = model;
+                    return model;
+                }):null;
+                return prom;
+            },
+            { toClassOnly: true } 
+        )(target, propertyKey);
+        Transform(value => {
+            if (!value) {
+                return null;
+            }
+            if (value.model) {
+                return value.model.id;
+            } else {
+                throw new Error("Make sure to wait for " + target + "." + propertyKey + " to resolve first");
+            }
+        }, { toPlainOnly: true })(target, propertyKey);
+    }
 }
 
 export enum TagColors {

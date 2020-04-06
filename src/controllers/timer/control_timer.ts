@@ -5,6 +5,7 @@ import { User, Task } from "../../models";
 import { Period } from "../../models/task";
 import { complete_task } from "../task/task_actions";
 import moment from "moment";
+import { UsermodelDto } from "../../models/field_types";
 
 export async function get_controller() {
     return new TimerController((await CurrentUser.get_loggedin()));
@@ -24,21 +25,29 @@ class TimerController {
         let user_repo = getRepository(User);
         // Remove once currentUser is improved upon;
         this.user = (await CurrentUser.get_loggedin());
-        modifier();
+        this.timer = this.user.timer;
+        await modifier();
         this.user.timer = this.timer;
+        console.log("Timer", this.timer);
         return user_repo.update(this.user);
     }
 
     async start() {
-        return this.modify_timer( () => {
+        return this.modify_timer( async () => {
             if ( this.timer.is_onbreak() ){
-                this.timer.current_task!.break_periods.create(new Period().fill_fields({
+                let current_task = (await this.timer.current_task!.promise);
+                if (!current_task) {
+                    throw new Error("Current task not set");
+                }
+                current_task.break_periods.create(new Period().fill_fields({
                     start: this.timer.break_start,
                     end: moment()
                 }));
                 this.timer.break_start = undefined;
+                console.log("Break over!");
             } else {
                 this.timer.timer_start = moment();
+                console.log("Let's gooo!", this.timer.timer_start);
             }
         });
     }
@@ -46,34 +55,40 @@ class TimerController {
     async start_break() {
         return this.modify_timer( () => {
             this.timer.break_start = moment();
+            console.log("Break time!");
         });
     }
 
     async stop( unset_currenttask:boolean = false) {
-        return this.modify_timer( () => {
-            this.timer.current_task!.work_periods.create(new Period().fill_fields({
+        return this.modify_timer( async () => {
+            (await this.timer.current_task!.promise).work_periods.create(new Period().fill_fields({
                 start: this.timer.timer_start,
                 end: ( this.timer.is_onbreak() )?this.timer.break_start:moment()
-            }))
+            }));
             this.timer.timer_start = undefined;
             this.timer.break_start = undefined;
             if (unset_currenttask) {
                 this.timer.current_task = undefined;
             }
+            console.log("Alright we're done here");
         });
     }
 
 
     async set_current_task(task:Task) {
-        return this.modify_timer( () => {
-            this.timer.current_task = task;
+        return await this.modify_timer( async () => {
+            this.timer.current_task = new UsermodelDto<Task>(task);
+            console.log("So this is what you've been working on!");
         });
     }
 
     async complete_task() {
-        let current_task = this.timer.current_task;
+        let current_task = (await this.timer.current_task!).model;
+        if (!current_task){
+            throw new Error("No current task has been set");
+        }
         let promises:Promise<any>[] = [
-            complete_task( current_task!.id ),
+            complete_task( current_task.id ),
             (this.timer.is_started()) ? this.stop(true) : this.modify_timer(() => {
                 this.timer.current_task = undefined;
             })
@@ -84,27 +99,27 @@ class TimerController {
 
 
     start_button_enabled():boolean {
-        return this.timer.current_task!==undefined && (
-            this.timer.timer_start===undefined || this.timer.break_start!==undefined
-        );
+        return !!(this.timer.current_task && (
+            !this.timer.timer_start || this.timer.break_start
+        ));
     }
 
     stop_button_enabled():boolean {
-        return this.timer.timer_start!==undefined;
+        return !!this.timer.timer_start;
     }
 
     break_button_enabled():boolean {
-        return this.timer.current_task!==undefined && (
-            this.timer.timer_start!==undefined || this.timer.break_start===undefined
-        );
+        return !!(this.timer.current_task && (
+            this.timer.timer_start || !this.timer.break_start
+        ));
     }
 
     stop_break_button_enabled():boolean {
-        return this.timer.break_start!==undefined;
+        return !!this.timer.break_start;
     }
 
     get timer_value():moment.Duration{
-        if (this._timer_value === undefined) {
+        if (!this._timer_value) {
             this._timer_value = moment.duration(moment().diff(this.timer.timer_start));
         }
         return this._timer_value;

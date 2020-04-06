@@ -8,19 +8,45 @@ import "../styles/Home.scss";
 import user from "../controllers/user/index";
 import userlogout from "../controllers/user/logout";
 import CheckAuth from "../helpers/CheckAuth";
+import { get_controller } from "../controllers/timer/control_timer";
+import CurrentUser from "../controllers/user/index";
 
 const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
 
+  let timer_controller = get_controller().then( async ctrl => {
+    if (!(ctrl.timer.current_task && (await ctrl.timer.current_task.promise))) {
+      let rando_task = await ((await CurrentUser.get_loggedin()).tasks.findOne());
+      if ( rando_task ) {
+        console.log("Setting random task")
+        ctrl.set_current_task( rando_task );
+      } else {
+        console.log("Gonna need some tasks for this one to work");
+      }
+    } else {
+      console.log("We have task: ", await ctrl.timer.current_task)
+    }
+    
+    return ctrl;
+  } );
   function toggleTimer() {
     setTimerView(!timerView);
     if (!timerView) {
-      console.log("Timer switched on.");
+      timer_controller.then(( ctrl )=>{
+        ctrl.start();
+      });
     } else {
-      console.log("Timer switched off.");
       if (paused) {
+        timer_controller.then(( ctrl )=>{
+          ctrl.start();
+        });
         console.log("Timer Resumed");
+      } else {
+        console.log("Timer switched off.");
+        timer_controller.then(( ctrl )=>{
+          ctrl.stop();
+        });
       }
     }
     setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
@@ -30,8 +56,16 @@ const Home: React.FC = () => {
     setPaused(!paused);
     if (!paused) {
       console.log("Timer paused");
+
+      timer_controller.then(( ctrl )=>{
+        ctrl.start_break();
+      });
     } else {
       console.log("Timer resumed");
+
+      timer_controller.then(( ctrl )=>{
+        ctrl.start();
+      });
     }
   }
 

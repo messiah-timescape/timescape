@@ -1,8 +1,10 @@
 import {FirebaseUser, User} from "./user";
 import {BaseRepo} from "./base_model";
 import { CustomRepository } from "fireorm";
-import {Task} from "./task";
+import {Task, Period} from "./task";
 import {Tag} from "./tag";
+import {Timer} from "./timer";
+
 import { getMetadataStorage } from "fireorm/lib/src/MetadataStorage";
 
 let models = getMetadataStorage().collections;
@@ -20,4 +22,4 @@ function apply_custom_repo( ) {
 
 apply_custom_repo();
 
-export {FirebaseUser, User, Tag, Task};
+export {FirebaseUser, User, Tag, Task, Period, Timer};

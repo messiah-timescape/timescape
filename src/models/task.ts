@@ -2,9 +2,10 @@ import { Tag } from "./tag";
 import BaseModel from "./base_model";
 import moment, { Moment } from "moment";
 import { Collection, ISubCollection, SubCollection } from "fireorm";
-import { date_field, usermodel_field } from "./field_types";
+import { date_field, usermodel_field, UsermodelDto } from "./field_types";
 
 
+@Collection('period')
 export class Period extends BaseModel {
 
     @date_field
@@ -34,8 +35,8 @@ export class Task extends BaseModel {
     @SubCollection(Period)
     break_periods!: ISubCollection<Period>;
 
-    @usermodel_field
-    tag?: Tag;
+    @usermodel_field('tags')
+    tag?: UsermodelDto<Tag>;
     
     completed: boolean = false;
 }

@@ -1,7 +1,6 @@
 import firebase, { firestore } from "firebase/app";
 import { User } from "../models";
 import CurrentUser from "./user";
-import { promises } from "dns";
 
 export class CollectionList<Model> {
   update_fn: Function;

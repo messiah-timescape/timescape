@@ -26,23 +26,31 @@ export default abstract class BaseModel {
 
 export class BaseRepo<T extends IEntity> extends BaseFirestoreRepository<T> {
 
+    make_exclude_list() {
+        let exclude_list:string[] = [];
+        this.subColMetadata.forEach(scm => {
+            if (scm.propertyKey){
+                exclude_list.push(scm.propertyKey);
+            }
+        });
+        return exclude_list;
+    }
+
     constructor(colName: string, collectionPath?: string) {
         super(colName, collectionPath);
         this.toSerializableObject = (obj: T): Object => {
             if (obj) {
-                let exclude_list:string[] = [];
-                this.subColMetadata.forEach(scm => {
-                    if (scm.propertyKey){
-                        exclude_list.push(scm.propertyKey);
-                    }
-                });
-                let firestore_obj = classToPlain(obj, {excludePrefixes: exclude_list});
+                let firestore_obj = classToPlain(obj, {excludePrefixes: this.make_exclude_list()});
                 firestore_obj = replace_undefined_by_null(firestore_obj);
                 return firestore_obj;
             } else {
-                return {};
+                return obj;
             }
         }
+        // let old_extractTFromDocSnap = this.extractTFromDocSnap;
+        // this.extractTFromDocSnap = (doc: firestore.DocumentSnapshot): T => {
+        //     return old_extractTFromDocSnap(doc);
+        // }
 
     }
 }
