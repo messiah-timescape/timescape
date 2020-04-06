@@ -1,9 +1,9 @@
-import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol } from "@ionic/react";
+import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonModal, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge } from "@ionic/react";
 import React, { useState } from "react";
-// import homepageGraphic from "../assets/homepage-graphic.png";
-import pauseIcon from "../assets/pauseIcon.png";
+import breakIcon from "../assets/breakIcon.png";
 import stopIcon from "../assets/stopIcon.png";
 import resumeIcon from "../assets/resumeIcon.png";
+import taskCompleteIcon from "../assets/taskCompleteIcon.png";
 import "../styles/Home.scss";
 import user from "../controllers/user/index";
 import userlogout from "../controllers/user/logout";
@@ -14,6 +14,7 @@ import CurrentUser from "../controllers/user/index";
 const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [completeTask, showCompleteTask] = useState(false);
 
   let timer_controller = get_controller().then( async ctrl => {
     if(ctrl.timer.current_task)
@@ -71,6 +72,14 @@ const Home: React.FC = () => {
     }
   }
 
+  function complete() {
+    showCompleteTask(true);
+    toggleTimer();
+    setTimeout(() => {
+      showCompleteTask(false);
+    }, 2000);
+  }
+
   const [currentUser, setCurrentUser] = useState();
   let token = user.get_user();
 
@@ -84,10 +93,13 @@ const Home: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent className="ion-padding">
-        <h1>Home</h1>
+      <IonContent className="ion-padding" id="home-page">
+        <div className="header">
+          <h2>Hi {currentUser}</h2>
+          <p>How's your day going?</p>
+        </div>
+        {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
-        <h3>Welcome, {currentUser}</h3>
         <IonButton
           onClick={() => {
             userlogout().then(() => {
@@ -104,43 +116,62 @@ const Home: React.FC = () => {
           id="start-timer"
           expand="block"
           size="large"
-          hidden= {timerView}
           onClick={() => toggleTimer()}
           
         >Start Working</IonButton>
 
-        <IonGrid hidden={!timerView}>
+      </IonContent>
+      <IonModal 
+        isOpen={timerView}
+        showBackdrop={false}
+        cssClass="timer-modal"
+        backdropDismiss={false}
+       >
+        <IonGrid className="timer-grid">
           <IonRow>
             <IonCol offset="2">
-              <p id="timer-numbers">00 : 00 : 00</p>
+              <span className="big-numbers"><strong>00 01</strong></span> <span className="small-numbers">25</span>
             </IonCol> 
           </IonRow>
           <IonRow>
-            <IonCol size="5" offset="1">
-              <div 
-              className="active-timer-button" 
-              id="stop-timer"
-              onClick={() => toggleTimer()}
-              >
+            <IonCol size="4" offset="2">
+              <div className="timer-icons" onClick={() => toggleTimer()}>
                 <img src={stopIcon} />
-                <p>Stop Working</p>
+                <p id="yellow">Stop Working</p>
               </div>
             </IonCol>
             <IonCol size="5">
-              <div 
-              className="active-timer-button" 
-              id="pause-timer"
-              onClick={() => pauseTimer()}
-              >
-                <img src={paused ? resumeIcon : pauseIcon} />
-                <p>{paused ? "Continue Working" : "Take a Break"}</p>
+              <div className="timer-icons" onClick={() => pauseTimer()}>
+                <img src={paused ? resumeIcon : breakIcon}></img>
+                  <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
               </div>
             </IonCol>
           </IonRow>
         </IonGrid>
+        
+        <div className="current-task-section">
+          <p id="current-task-section-head"><strong>Task in Progress</strong></p>
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>Task Title</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <IonBadge color="secondary">#chore</IonBadge>
+            </IonCardContent>
+          </IonCard>
+          <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>Complete Task</IonButton>
+        </div>
+      </IonModal>
 
-        {/* <img src={homepageGraphic} className="homepage-graphic" alt="home page graphic" /> */}
-      </IonContent>
+      <IonModal
+        isOpen={completeTask}
+        showBackdrop={false}
+        cssClass="complete-task-modal"
+        backdropDismiss={false}
+      >
+        <img src={taskCompleteIcon} />
+        <h2>Task Complete!</h2>
+      </IonModal>
     </IonPage>
   );
 };
