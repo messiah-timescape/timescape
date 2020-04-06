@@ -91,7 +91,7 @@ const Home: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-padding" id="home-page">
         <div className="header">
           <h2>Hi {currentUser}</h2>
           <p>How's your day going?</p>
