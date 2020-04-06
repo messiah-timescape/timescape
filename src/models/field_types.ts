@@ -39,15 +39,12 @@ export function usermodel_field(collection_name?:string){
     return function (target: any, propertyKey:string) {
         Type(() => String)(target, propertyKey);
         
+        let prop = target[propertyKey];
         Transform(
-            async (value) => {
-                let prom = (value)?(CurrentUser.get_loggedin().then(
+            (value) => {
+                return (value)?(new UsermodelDto<typeof prop>(CurrentUser.get_loggedin().then(
                     user => user[collection_name || propertyKey].findById(value))
-                ).then((model) => {
-                    target[propertyKey] = model;
-                    return model;
-                }):null;
-                return prom;
+                )):null;
             },
             { toClassOnly: true } 
         )(target, propertyKey);
@@ -58,7 +55,8 @@ export function usermodel_field(collection_name?:string){
             if (value.model) {
                 return value.model.id;
             } else {
-                throw new Error("Make sure to wait for " + target + "." + propertyKey + " to resolve first");
+                console.error(value, target, propertyKey);
+                throw new Error("Make sure to wait for " + typeof target + "." + propertyKey + " to resolve first");
             }
         }, { toPlainOnly: true })(target, propertyKey);
     }

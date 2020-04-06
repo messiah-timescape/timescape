@@ -16,10 +16,12 @@ const Home: React.FC = () => {
   const [paused, setPaused] = useState(false);
 
   let timer_controller = get_controller().then( async ctrl => {
-    if (!(ctrl.timer.current_task && (await ctrl.timer.current_task.promise))) {
+    if(ctrl.timer.current_task)
+      console.log(ctrl.timer.current_task);
+    if (!(ctrl.timer.current_task && (ctrl.timer.current_task.model || await ctrl.timer.current_task.promise))) {
       let rando_task = await ((await CurrentUser.get_loggedin()).tasks.findOne());
       if ( rando_task ) {
-        console.log("Setting random task")
+        console.log("Settinsg random task")
         ctrl.set_current_task( rando_task );
       } else {
         console.log("Gonna need some tasks for this one to work");

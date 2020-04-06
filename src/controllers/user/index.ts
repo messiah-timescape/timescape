@@ -35,6 +35,12 @@ class CurrentUser {
         let current_user = await this.get_user();
         
         if ( current_user ) {
+            // if(current_user.timer.current_task && !current_user.timer.current_task.model ) {
+            //     console.log(current_user.timer.current_task);
+            //     await current_user.timer.current_task.promise.then(
+            //         task => console.log(task)
+            //     );
+            // }
             return current_user;
         } else {
             throw new Error("User not logged in");

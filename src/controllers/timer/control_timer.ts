@@ -26,9 +26,10 @@ class TimerController {
         // Remove once currentUser is improved upon;
         this.user = (await CurrentUser.get_loggedin());
         this.timer = this.user.timer;
+        if (this.timer.current_task)
+            await this.timer.current_task.promise;
         await modifier();
         this.user.timer = this.timer;
-        console.log("Timer", this.timer);
         return user_repo.update(this.user);
     }
 
