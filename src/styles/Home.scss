@@ -6,38 +6,128 @@
   z-index: -1;
 }
 
-.active-timer-button {
-  border-radius: 10px;
+.timer-icons {
   text-align: center;
-  color: #ffffff;
   img {
     margin-top: .75em;
     margin-bottom: -1em;
   }
+
+  #yellow {
+    color: var(--ion-color-primary);
+  }
+
+  #blue {
+    color: var(--ion-color-secondary);
+  }
 }
+
+.timer-grid {
+  width: 100%;
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.header {
+  p {
+    margin-top: -1.5em;
+  }
+}
+
+.big-numbers {
+  font-size: 4em;
+  padding-left: 0.2em;
+  
+}
+
+.small-numbers {
+  font-size: 2em;
+  padding-left: 0.3em;
+}
+
+.current-task-section {
+  position: absolute;
+  top: 37%;
+  left: 2.5%;
+  width: 95%
+}
+
+.timer-modal {
+  .modal-wrapper {
+    --height: 80%;
+    position: absolute;
+    bottom: 7%;
+  }
+}
+
+.complete-task-modal {
+  --background: var(--ion-color-success);
+  .modal-wrapper {
+    --height: 100%;
+    position: absolute;
+    bottom: 7%;
+  }
+
+  img {
+    width: 50%;
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+  h2 {
+    color: #FFFFFF;
+    position: absolute;
+    bottom: 40%;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+}
+
 
 main {
   background-color: transparent !important;
 }
 
-ion-grid {
-  width: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, 0);
+ion-content {
+  --background: url(../assets/homeBG.png) 50% 50% no-repeat;
 }
 
-ion-row {
-  height: 8em;
+ion-button {
+  --border-radius: 10px;
+  --box-shadow: none;
+}
+
+ion-card {
+  border-radius: 10px !important;
+  padding-left: 1em;
+}
+
+ion-badge {
+  margin-top: -1em;
+  border-radius: 25px;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-left: 0.7em;
+  padding-right: 1em;
+}
+
+#profile-pic {
+  font-size: 48px;
+  position: absolute;
+  right: 8%;
+  top: 5%;
 }
 
 #start-timer {
-  width: 90%;
+  width: 80%;
   position: absolute;
   bottom: 2%;
   left: 50%;
-
   transform: translate(-50.5%, 0);
 }
 
@@ -49,6 +139,18 @@ ion-row {
   background-color: var(--ion-color-secondary);
 }
 
-#timer-numbers {
-  font-size: 3em;
+#current-task-section-head {
+  padding-left: 1.5em;
+}
+
+#complete-task-button {
+  position: absolute;
+  width: 70%;
+  left: 50%;
+  transform: translate(-50%);
+  color: var(--ion-color-success);
+  --color-activated: var(--ion-color-success);
+  --border-radius: 25px;
+  --border-width: 1px;
+  --border-color: var(--ion-color-success);
 }
