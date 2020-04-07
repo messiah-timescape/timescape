@@ -17,6 +17,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
 import CheckAuth from "../helpers/CheckAuth";
 import task_sync from "../controllers/task/task_list";
+import tag_sync from "../controllers/tags/tag_list";
 import {
   delete_task,
   complete_task,
@@ -24,25 +25,31 @@ import {
   update_task
 } from "../controllers/task/task_actions";
 import moment from "moment";
-import { Tag } from "../models/tag";
-import { TagColors } from "../models/field_types";
+import Fade from "react-reveal/Fade";
+import { UsermodelDto } from "../models/field_types";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [currentEditTask, setCurrentEditTask] = useState();
+  const [currentEditTask, setCurrentEditTask]: [any, any] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
-  const [tasksHTML, setTasksHTML] = useState();
+  const [tasksHTML, setTasksHTML]: [any, any] = useState();
+  const [tags, setTags] = useState();
   const [renderTasks, setRenderTasks] = useState(false);
 
   useEffect(() => {
     CheckAuth();
     task_sync(syncTasks);
+    tag_sync(syncTags);
   }, []);
 
   function syncTasks(taskList) {
-    GenerateTasks(taskList);
+    setTasksHTML(GenerateTasks(taskList));
     setRenderTasks(true);
+  }
+
+  function syncTags(tagList) {
+    setTags(tagList);
   }
 
   const AddEditModal = () => {
@@ -51,7 +58,7 @@ const Todo = () => {
       name: currentEditTask ? currentEditTask.name : "",
       notes: currentEditTask ? currentEditTask.notes : "",
       deadline: currentEditTask ? currentEditTask.deadline : moment(),
-      tag: currentEditTask ? currentEditTask.tag : new Tag()
+      tag: currentEditTask ? currentEditTask.tag : null
     };
 
     function handleAdd() {
@@ -64,6 +71,32 @@ const Todo = () => {
         update_task(currentEditTask.id, task);
       }
       setCurrentEditTask(null);
+    }
+
+    function generateTagSelection() {
+      let temp: any = [];
+
+      if (tags) {
+        tags.forEach(tag => {
+          let selectBoolean = false;
+
+          if (currentEditTask) {
+            if (currentEditTask.tag) {
+              if (currentEditTask.tag.model.name === tag.name) {
+                selectBoolean = true;
+              }
+            }
+          }
+
+          temp.push(
+            <IonSelectOption value={tag} key={tag.id} selected={selectBoolean}>
+              {tag.name}
+            </IonSelectOption>
+          );
+        });
+      }
+
+      return temp;
     }
 
     return (
@@ -108,30 +141,11 @@ const Todo = () => {
               id="tags-field"
               multiple={false}
               placeholder="Add Tag"
-              onBlur={e => {
-                let tag = new Tag();
-                tag.name = e.target.value;
-
-                switch (tag.name) {
-                  case "school":
-                    tag.color = TagColors.red;
-                    break;
-                  case "chore":
-                    tag.color = TagColors.blue;
-                    break;
-                  case "work":
-                    tag.color = TagColors.green;
-                    break;
-                }
-
-                task.tag = tag;
+              onIonChange={e => {
+                task.tag = new UsermodelDto((e.target as HTMLInputElement).value);
               }}
             >
-              {/*change multiple to true to allow user to choose more than one tag */}
-              <IonSelectOption value="school">School</IonSelectOption>
-              <IonSelectOption value="chore">Chore</IonSelectOption>
-              <IonSelectOption value="work">Work</IonSelectOption>
-              <IonSelectOption value="hobbie">Hobby</IonSelectOption>
+              {generateTagSelection()}
             </IonSelect>
           </IonItem>
 
@@ -153,10 +167,10 @@ const Todo = () => {
               name="time"
               value={
                 currentEditTask
-                  ? `${currentEditTask.deadline.get("month") + 1} ${currentEditTask.deadline.get(
+                  ? `${task.deadline.get("month") + 1} ${task.deadline.get(
                       "date"
-                    )} ${currentEditTask.deadline.get("year")}`
-                  : "02 12 2020"
+                    )} ${task.deadline.get("year")}`
+                  : `${task.deadline.month() + 1} ${task.deadline.date()} ${task.deadline.year()}`
               }
               displayFormat="MM DD YYYY"
               id="time-field"
@@ -204,104 +218,91 @@ const Todo = () => {
   };
 
   const GenerateTasks = tasks => {
-    let temp: any = [];
+    return (
+      <>
+        <div className="negative-z">
+          <Fade>
+            {tasks.map(taskGroup => {
+              return (
+                <React.Fragment key={taskGroup.index + "frag"}>
+                  <h3 className="date" key={taskGroup.index + "date"}>
+                    {taskGroup.name}
+                  </h3>
 
-    if (!tasks) {
-      return <React.Fragment>False</React.Fragment>;
-    }
+                  {taskGroup.tasks.length > 0 ? (
+                    taskGroup.tasks.map(task => {
+                      return (
+                        <IonItemSliding key={task.id + "tag"}>
+                          <IonItem key={task.id + "item"}>
+                            <div className="task" key={task.id}>
+                              <div className="checkbox-div">
+                                <IonCheckbox
+                                  className="checkbox"
+                                  onClick={() => complete_task(task.id)}
+                                  checked={task.completed}
+                                />
+                              </div>
+                              <div key={task.id + "task"}>
+                                <p>{task.name}</p>
+                                {task.tag ? (
+                                  <p className={`tag ${task.tag.model.color}`}>
+                                    {task.tag.model.name}
+                                  </p>
+                                ) : (
+                                  undefined
+                                )}
+                              </div>
+                            </div>
+                          </IonItem>
+                          <IonItemOptions side="start" key={task.id + "slide"}>
+                            <button className="add-button">
+                              <div className="add-mask"></div>
+                            </button>
+                            <button
+                              className="edit-button"
+                              onClick={() => {
+                                setCurrentEditTask(task);
+                                setShowEdit(true);
+                              }}
+                            >
+                              <div className="edit-mask"></div>
+                            </button>
+                          </IonItemOptions>
+                          <IonItemOptions side="end" key={task.id + "slide end"}>
+                            <button
+                              className="delete-button"
+                              onClick={() => {
+                                setShowDelete(true);
+                                setToDeleteId(task.id);
+                              }}
+                            >
+                              <div className="delete-mask"></div>
+                            </button>
+                          </IonItemOptions>
+                        </IonItemSliding>
+                      );
+                    })
+                  ) : (
+                    <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+                      No tasks here!
+                    </h4>
+                  )}
+                </React.Fragment>
+              );
+            })}
 
-    tasks.forEach(taskGroup => {
-      temp.push(
-        <h3 className="date" key={taskGroup.index + "date"}>
-          {taskGroup.name}
-        </h3>
-      );
-
-      if (taskGroup.tasks.length > 0) {
-        taskGroup.tasks.forEach(task => {
-          let tagClass = "";
-
-          switch (task.tag) {
-            case "School":
-              tagClass = "tag red";
-              break;
-            case "Chore":
-              tagClass = "tag blue";
-              break;
-            case "Work":
-              tagClass = "tag green";
-              break;
-            case "Hobby":
-              tagClass = "tag purple";
-              break;
-          }
-
-          temp.push(
-            <IonItemSliding key={task.id + "tag"}>
-              <IonItem>
-                <div className="task" key={task.id}>
-                  <div className="checkbox-div">
-                    <IonCheckbox
-                      className="checkbox"
-                      onClick={() => complete_task(task.id)}
-                      checked={task.completed}
-                    />
-                  </div>
-                  <div>
-                    <p>{task.name}</p>
-                    <p className={tagClass}>{task.tag.model ? task.tag.model.name : undefined}</p>
-                  </div>
-                </div>
-              </IonItem>
-              <IonItemOptions side="start">
-                <button className="add-button">
-                  <div className="add-mask"></div>
-                </button>
-                <button
-                  className="edit-button"
-                  onClick={() => {
-                    setCurrentEditTask(task);
-                    setShowEdit(true);
-                  }}
-                >
-                  <div className="edit-mask"></div>
-                </button>
-              </IonItemOptions>
-              <IonItemOptions side="end">
-                <button
-                  className="delete-button"
-                  onClick={() => {
-                    setShowDelete(true);
-                    setToDeleteId(task.id);
-                  }}
-                >
-                  <div className="delete-mask"></div>
-                </button>
-              </IonItemOptions>
-            </IonItemSliding>
-          );
-        });
-      } else {
-        temp.push(
-          <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
-            No tasks here!
-          </h4>
-        );
-      }
-    });
-
-    setTasksHTML(
-      <div className="negative-z">
-        {temp}
-        <button
-          className="yellow-add-button"
-          onClick={() => {
-            setShowEdit(true);
-          }}
-        >
-          <div className="add-icon"></div>
-        </button>
-      </div>
+            <button
+              className="yellow-add-button"
+              onClick={() => {
+                setShowEdit(true);
+                setCurrentEditTask(undefined);
+              }}
+            >
+              <div className="add-icon"></div>
+            </button>
+          </Fade>
+        </div>
+      </>
     );
   };
 

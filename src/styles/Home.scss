@@ -9,7 +9,7 @@
 .timer-icons {
   text-align: center;
   img {
-    margin-top: .75em;
+    margin-top: 0.75em;
     margin-bottom: -1em;
   }
 
@@ -52,7 +52,7 @@
   position: absolute;
   top: 37%;
   left: 2.5%;
-  width: 95%
+  width: 95%;
 }
 
 .timer-modal {
@@ -72,7 +72,7 @@
   }
 
   img {
-    width: 50%;
+    width: 30%;
     position: absolute;
     bottom: 50%;
     left: 50%;
@@ -80,15 +80,13 @@
   }
 
   h2 {
-    color: #FFFFFF;
+    color: #ffffff;
     position: absolute;
     bottom: 40%;
     left: 50%;
     transform: translate(-50%);
   }
-
 }
-
 
 main {
   background-color: transparent !important;

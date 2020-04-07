@@ -1,4 +1,17 @@
-import { IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonModal, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge } from "@ionic/react";
+import {
+  IonContent,
+  IonPage,
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonModal,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonBadge
+} from "@ionic/react";
 import React, { useState } from "react";
 import breakIcon from "../assets/breakIcon.png";
 import stopIcon from "../assets/stopIcon.png";
@@ -22,46 +35,54 @@ const Home: React.FC = () => {
 
   console.log("hi");
 
-  let timer_controller = get_controller().then( async ctrl => {
-    if(ctrl.timer.current_task)
-      console.log(ctrl.timer.current_task);
-    if (!(ctrl.timer.current_task && (ctrl.timer.current_task.model || await ctrl.timer.current_task.promise))) {
-      let rando_task = await ((await CurrentUser.get_loggedin()).tasks.findOne());
-      if ( rando_task ) {
-        console.log("Settinsg random task")
-        ctrl.set_current_task( rando_task );
+  let timer_controller = get_controller().then(async ctrl => {
+    if (ctrl.timer.current_task) console.log(ctrl.timer.current_task);
+    if (
+      !(
+        ctrl.timer.current_task &&
+        (ctrl.timer.current_task.model || (await ctrl.timer.current_task.promise))
+      )
+    ) {
+      let rando_task = await (await CurrentUser.get_loggedin()).tasks.findOne();
+      if (rando_task) {
+        console.log("Settinsg random task");
+        ctrl.set_current_task(rando_task);
       } else {
         console.log("Gonna need some tasks for this one to work");
       }
     } else {
-      console.log("We have task: ", await ctrl.timer.current_task)
+      console.log("We have task: ", await ctrl.timer.current_task);
     }
-    
+
     ctrl.link_state(duration => {
-      updateSeconds(duration.seconds());
-      updateMinutes(duration.minutes());
-      updateHours(duration.hours());
-    
+      // syncTime(duration);
     });
 
     return ctrl;
-  } );
+  });
+
+  function syncTime(duration) {
+    console.log(duration.seconds());
+    updateSeconds(duration.seconds());
+    updateMinutes(duration.minutes());
+    updateHours(duration.hours());
+  }
 
   function toggleTimer() {
     setTimerView(!timerView);
     if (!timerView) {
-      timer_controller.then(( ctrl )=>{
+      timer_controller.then(ctrl => {
         ctrl.start();
       });
     } else {
       if (paused) {
-        timer_controller.then(( ctrl )=>{
+        timer_controller.then(ctrl => {
           ctrl.start();
         });
         console.log("Timer Resumed");
       } else {
         console.log("Timer switched off.");
-        timer_controller.then(( ctrl )=>{
+        timer_controller.then(ctrl => {
           ctrl.stop();
         });
       }
@@ -74,13 +95,13 @@ const Home: React.FC = () => {
     if (!paused) {
       console.log("Timer paused");
 
-      timer_controller.then(( ctrl )=>{
+      timer_controller.then(ctrl => {
         ctrl.start_break();
       });
     } else {
       console.log("Timer resumed");
 
-      timer_controller.then(( ctrl )=>{
+      timer_controller.then(ctrl => {
         ctrl.start();
       });
     }
@@ -126,21 +147,16 @@ const Home: React.FC = () => {
           Logout
         </IonButton>
 
-        <IonButton
-          id="start-timer"
-          expand="block"
-          size="large"
-          onClick={() => toggleTimer()}
-          
-        >Start Working</IonButton>
-
+        <IonButton id="start-timer" expand="block" size="large" onClick={() => toggleTimer()}>
+          Start Working
+        </IonButton>
       </IonContent>
-      <IonModal 
+      <IonModal
         isOpen={timerView}
         showBackdrop={false}
         cssClass="timer-modal"
         backdropDismiss={false}
-       >
+      >
         <IonGrid className="timer-grid">
           <IonRow>
             <IonCol offset="2">
@@ -152,12 +168,12 @@ const Home: React.FC = () => {
                   <IonCol size="3">
                     <strong className="big-numbers">{minutes}</strong>
                   </IonCol>
-                  <IonCol size="3"className="small-numbers" >
+                  <IonCol size="3" className="small-numbers">
                     <span>{seconds}</span>
                   </IonCol>
                 </IonRow>
               </IonGrid>
-            </IonCol> 
+            </IonCol>
           </IonRow>
           <IonRow>
             <IonCol size="4" offset="2">
@@ -169,14 +185,16 @@ const Home: React.FC = () => {
             <IonCol size="5">
               <div className="timer-icons" onClick={() => pauseTimer()}>
                 <img src={paused ? resumeIcon : breakIcon}></img>
-                  <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
+                <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
               </div>
             </IonCol>
           </IonRow>
         </IonGrid>
-        
+
         <div className="current-task-section">
-          <p id="current-task-section-head"><strong>Task in Progress</strong></p>
+          <p id="current-task-section-head">
+            <strong>Task in Progress</strong>
+          </p>
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>Task Title</IonCardTitle>
@@ -185,7 +203,9 @@ const Home: React.FC = () => {
               <IonBadge color="secondary">#chore</IonBadge>
             </IonCardContent>
           </IonCard>
-          <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>Complete Task</IonButton>
+          <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>
+            Complete Task
+          </IonButton>
         </div>
       </IonModal>
 

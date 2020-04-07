@@ -71,6 +71,7 @@
   z-index: 1000;
   right: 2em;
   outline: none;
+
   @-moz-document url-prefix() {
     bottom: 5.5em;
   }
@@ -178,7 +179,8 @@ ion-item {
   border-radius: 20px;
   font-size: 12px;
   width: fit-content;
-  padding: 3px 11px;
+  padding: 2px 11px;
+  margin: 0 !important;
 }
 
 .red {
