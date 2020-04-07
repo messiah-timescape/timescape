@@ -55,18 +55,13 @@ const Home: React.FC = () => {
     }
 
     ctrl.link_state(duration => {
-      // syncTime(duration);
+      // updateSeconds(duration.seconds());
+      // updateMinutes(duration.minutes());
+      // updateHours(duration.hours());
     });
 
     return ctrl;
   });
-
-  function syncTime(duration) {
-    console.log(duration.seconds());
-    updateSeconds(duration.seconds());
-    updateMinutes(duration.minutes());
-    updateHours(duration.hours());
-  }
 
   function toggleTimer() {
     setTimerView(!timerView);
