@@ -38,9 +38,9 @@ const Home: React.FC = () => {
     }
     
     ctrl.link_state(duration => {
-      updateSeconds(duration.seconds());
-      updateMinutes(duration.minutes());
-      updateHours(duration.hours());
+      // updateSeconds(duration.seconds());
+      // updateMinutes(duration.minutes());
+      // updateHours(duration.hours());
     
     });
 
