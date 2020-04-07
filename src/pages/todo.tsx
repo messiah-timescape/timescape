@@ -38,19 +38,19 @@ const Todo = () => {
   const [renderTasks, setRenderTasks] = useState(false);
 
   useEffect(() => {
+    function syncTasks(taskList) {
+      setTasksHTML(GenerateTasks(taskList));
+      setRenderTasks(true);
+    }
+
+    function syncTags(tagList) {
+      setTags(tagList);
+    }
+
     CheckAuth();
     task_sync(syncTasks);
     tag_sync(syncTags);
   }, []);
-
-  function syncTasks(taskList) {
-    setTasksHTML(GenerateTasks(taskList));
-    setRenderTasks(true);
-  }
-
-  function syncTags(tagList) {
-    setTags(tagList);
-  }
 
   const AddEditModal = () => {
     let task = {
@@ -245,9 +245,11 @@ const Todo = () => {
                               <div key={task.id + "task"}>
                                 <p>{task.name}</p>
                                 {task.tag ? (
-                                  <p className={`tag ${task.tag.model.color}`}>
-                                    {task.tag.model.name}
-                                  </p>
+                                  <Fade>
+                                    <p className={`tag ${task.tag.model.color}`}>
+                                      {task.tag.model.name}
+                                    </p>
+                                  </Fade>
                                 ) : (
                                   undefined
                                 )}
