@@ -70,17 +70,9 @@ const Home: React.FC = () => {
         ctrl.start();
       });
     } else {
-      if (paused) {
-        timer_controller.then(ctrl => {
-          ctrl.start();
-        });
-        console.log("Timer Resumed");
-      } else {
-        console.log("Timer switched off.");
-        timer_controller.then(ctrl => {
-          ctrl.stop();
-        });
-      }
+      timer_controller.then(ctrl => {
+        ctrl.stop();
+      });
     }
     setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
   }

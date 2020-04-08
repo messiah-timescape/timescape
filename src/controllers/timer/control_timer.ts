@@ -61,6 +61,9 @@ class TimerController {
     }
 
     async stop( unset_currenttask:boolean = false) {
+        if ( !this.timer.current_task ) {
+            throw new Error("Current task necessary");
+        }
         return this.modify_timer( async () => {
             (await this.timer.current_task!.promise).work_periods.create(new Period().fill_fields({
                 start: this.timer.timer_start,

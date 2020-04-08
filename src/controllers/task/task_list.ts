@@ -63,10 +63,10 @@ function task_sync(change_state: Function, page_length?:number): Promise<TaskLis
   return new Promise<TaskList>(async (resolve, reject) => {
     let task_list = await TaskList.create(change_state, page_length);
     task_list.add_group("Due today", (task: Task) => {
-      return task.deadline && moment(task.deadline).isSame(moment(), "day");
+      return task.deadline && moment(task.deadline).isSame(moment(), "day") && !task.completed;
     });
     task_list.add_group("Due tomorrow", (task: Task) => {
-      return task.deadline && moment(task.deadline).isSame(moment().add(1, "day"), "day");
+      return task.deadline && moment(task.deadline).isSame(moment().add(1, "day"), "day") && !task.completed;
     });
     task_list.groups.push(
       new TaskGroup(101, "Due Later", (task: Task) => {
