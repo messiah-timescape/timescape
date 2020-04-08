@@ -12,7 +12,7 @@ import {
   IonCardContent,
   IonBadge
 } from "@ionic/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import breakIcon from "../assets/breakIcon.png";
 import stopIcon from "../assets/stopIcon.png";
 import resumeIcon from "../assets/resumeIcon.png";
@@ -28,7 +28,7 @@ const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
   const [completeTask, showCompleteTask] = useState(false);
-  //const [time, updateTime] = useState(moment({hour: 0, minute: 0, seconds: 0}));
+  const [homeBG, setHomeBG] = useState(true)
   const [seconds, updateSeconds] = useState(0);
   const [minutes, updateMinutes] = useState(0);
   const [hours, updateHours] = useState(0);
@@ -72,9 +72,11 @@ const Home: React.FC = () => {
     } else {
       timer_controller.then(ctrl => {
         ctrl.stop();
+        ctrl.unlink_state();
       });
     }
     setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
+    setHomeBG(!homeBG);
   }
 
   function pauseTimer() {
@@ -95,9 +97,12 @@ const Home: React.FC = () => {
   }
 
   function complete() {
+    timer_controller.then(ctrl => {
+      ctrl.unlink_state();
+    });
     showCompleteTask(true);
-    toggleTimer();
     setTimeout(() => {
+      toggleTimer();
       showCompleteTask(false);
     }, 2000);
   }
@@ -115,7 +120,7 @@ const Home: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent className="ion-padding" id="home-page">
+      <IonContent className="ion-padding" id={homeBG ? "home-page" : ""}>
         <div className="header">
           <h2>Hi {currentUser}</h2>
           <p>How's your day going?</p>
@@ -123,6 +128,7 @@ const Home: React.FC = () => {
         {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
         <IonButton
+          hidden={timerView}
           onClick={() => {
             userlogout().then(() => {
               let url = window.location.href.split("/");
@@ -134,29 +140,28 @@ const Home: React.FC = () => {
           Logout
         </IonButton>
 
-        <IonButton id="start-timer" expand="block" size="large" onClick={() => toggleTimer()}>
+        <IonButton id="start-timer" expand="block" size="large" hidden={timerView} onClick={() => toggleTimer()}>
           Start Working
         </IonButton>
       </IonContent>
-      <IonModal
-        isOpen={timerView}
-        showBackdrop={false}
-        cssClass="timer-modal"
-        backdropDismiss={false}
+      
+      <div 
+        className="timer-view"
+        hidden={!timerView}
       >
         <IonGrid className="timer-grid">
           <IonRow>
             <IonCol offset="2">
               <IonGrid>
                 <IonRow>
-                  <IonCol size="3" offset="1">
-                    <strong className="big-numbers">{hours}</strong>
+                  <IonCol size="4" offset="0">
+                    <strong className="big-numbers">{hours.toString().padStart(2, "0")}</strong>
                   </IonCol>
-                  <IonCol size="3">
-                    <strong className="big-numbers">{minutes}</strong>
+                  <IonCol size="4">
+                    <strong className="big-numbers">{minutes.toString().padStart(2, "0")}</strong>
                   </IonCol>
-                  <IonCol size="3" className="small-numbers">
-                    <span>{seconds}</span>
+                  <IonCol size="4" className="small-numbers">
+                    <span>{seconds.toString().padStart(2, "0")}</span>
                   </IonCol>
                 </IonRow>
               </IonGrid>
@@ -194,7 +199,7 @@ const Home: React.FC = () => {
             Complete Task
           </IonButton>
         </div>
-      </IonModal>
+      </div>
 
       <IonModal
         isOpen={completeTask}
