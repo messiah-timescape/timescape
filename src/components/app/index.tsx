@@ -1,29 +1,16 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
-import {
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
-  IonIcon,
-  IonLabel
-} from "@ionic/react";
+import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import {
-  checkmark,
-  document,
-  stopwatch,
-  calendar,
-  settings
-} from "ionicons/icons";
+import { checkmark, document, stopwatch, calendar, settings } from "ionicons/icons";
 import Home from "../../pages/home";
-import Calendar from "../../pages/calendar";
 import Login from "../../pages/login";
 import Register from "../../pages/register";
 import AddTask from "../../pages/addTask";
 import Todo from "../../pages/todo";
 import Intro from "../../pages/intro";
-import Survey from "../../pages/survey"
+import Survey from "../../pages/survey";
 import init_app from "../../init_app";
 
 /* Core CSS required for Ionic components to work properly */
@@ -32,7 +19,6 @@ import "@ionic/react/css/core.css";
 /* Basic CSS for apps built with Ionic */
 import "@ionic/react/css/normalize.css";
 import "@ionic/react/css/structure.css";
-// import "@ionic/react/css/typography.css";
 
 /* Optional CSS utils that can be commented out */
 import "@ionic/react/css/padding.css";
@@ -57,7 +43,6 @@ const App: React.FC = () => {
         <IonTabs>
           <IonRouterOutlet>
             <Route path="/home" component={Home} exact={true} />
-            <Route path="/calendar" component={Calendar} exact={true} />
             <Route path="/login" component={Login} exact={true} />
             <Route path="/register" component={Register} exact={true} />
             <Route path="/addtask" component={AddTask} exact={true} />
@@ -86,11 +71,6 @@ const App: React.FC = () => {
               <IonTabButton tab="home" href="/home">
                 <IonIcon icon={stopwatch} />
                 <IonLabel>Dashboard</IonLabel>
-              </IonTabButton>
-
-              <IonTabButton tab="calendar" href="/calendar">
-                <IonIcon icon={calendar} />
-                <IonLabel>Calendar</IonLabel>
               </IonTabButton>
 
               <IonTabButton tab="settings" href="/settings">
