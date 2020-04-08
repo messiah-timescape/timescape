@@ -1,11 +1,4 @@
-import {
-  IonContent,
-  IonInput,
-  IonItem,
-  IonButton,
-  IonIcon,
-  IonRouterLink
-} from "@ionic/react";
+import { IonContent, IonInput, IonItem, IonButton, IonIcon, IonRouterLink } from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
@@ -18,6 +11,8 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
   const [showFailedLogin, setShowFailedLogin] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function google_login() {
     userlogin_google_oauth().then(res => {
@@ -28,6 +23,7 @@ const Register: React.FC = () => {
   }
 
   function handleSubmitSignUp(email_input: string, password_input: string) {
+    setLoading(true);
     usersignup({ email: email_input, password: password_input }).then(
       successfulRegister,
       failedRegister
@@ -40,7 +36,9 @@ const Register: React.FC = () => {
       window.location.href = url.join("/");
     }
 
-    function failedRegister() {
+    function failedRegister(e) {
+      setErrorMessage(e.message);
+      setLoading(false);
       setShowFailedLogin(true);
     }
   }
@@ -96,25 +94,28 @@ const Register: React.FC = () => {
                 }}
               ></IonIcon>
             </IonItem>
-            {showFailedLogin ? (
-              <p className="wrong-password-text">Email already registered.</p>
+            {showFailedLogin ? <p className="wrong-password-text">{errorMessage}</p> : <p></p>}
+
+            {loading ? (
+              <div className="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
             ) : (
-              <p></p>
+              <IonButton
+                className="button"
+                onClick={() =>
+                  handleSubmitSignUp(
+                    (document.getElementById("email-field") as HTMLInputElement).value,
+                    (document.getElementById("password-field") as HTMLInputElement).value
+                  )
+                }
+              >
+                Register
+              </IonButton>
             )}
-            <IonButton
-              className="button"
-              onClick={() =>
-                handleSubmitSignUp(
-                  (document.getElementById("email-field") as HTMLInputElement)
-                    .value,
-                  (document.getElementById(
-                    "password-field"
-                  ) as HTMLInputElement).value
-                )
-              }
-            >
-              Register
-            </IonButton>
 
             <IonRouterLink href="/login">
               <p>Cancel</p>
@@ -130,9 +131,7 @@ const Register: React.FC = () => {
             <p>
               Already have an account?
               <br />
-              <IonRouterLink href="/login">
-                Login
-              </IonRouterLink>
+              <IonRouterLink href="/login">Login</IonRouterLink>
             </p>
           </div>
         </div>
