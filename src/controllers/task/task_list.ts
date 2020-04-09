@@ -44,14 +44,16 @@ class TaskList extends CollectionList<Task>{
     
     let ordered_groups = [...this.groups].sort((a,b) => a.index - b.index);
     this.model_array.forEach(task => {
-      if (task.tag){
-        this.promises_toawait.push(task.tag.promise);
-      } 
-      for (let i = 0; i < ordered_groups.length; i++) {
-        const group = ordered_groups[i];
-        if (task && group.group_condition(task)) {
-          group.tasks.push(task);
-          break;
+      if(task){
+        if (task.tag){
+          this.promises_toawait.push(task.tag.promise);
+        } 
+        for (let i = 0; i < ordered_groups.length; i++) {
+          const group = ordered_groups[i];
+          if (task && group.group_condition(task)) {
+            group.tasks.push(task);
+            break;
+          }
         }
       }
     });

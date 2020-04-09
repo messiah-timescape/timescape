@@ -6,6 +6,8 @@ import { Task } from "../../models/task";
 import { create_task, delete_task, complete_task } from "./task_actions";
 import { TestLoginActions } from "../user/login.test";
 import CurrentUser from "../user";
+import { UsermodelDto } from "../../models/field_types";
+import { Tag } from "../../models";
 
 describe("Task List", ()=> {
     beforeAll(async () => {
@@ -14,7 +16,6 @@ describe("Task List", ()=> {
     });
 
     it('should retrieve an initial list of tasks when called', async done => {
-        expect.assertions(2);
         let task_list = await task_sync(()=>{
             expect(task_list.tasks.length).toBeGreaterThan(0);
             expect(task_list.groups.length).toBeGreaterThan(0);
@@ -71,20 +72,23 @@ describe("Task List", ()=> {
         let task_order = 1;
         let task_deadline = moment();
         let task_tag = await (await (CurrentUser.get_loggedin())).tags.findOne()
+        let tag_dto = (task_tag)?new UsermodelDto<Tag>(task_tag):null
         try{
             task = await create_task({
                 name: task_name,
                 order: task_order,
                 deadline: task_deadline,
-                tag: (task_tag)?task_tag:undefined
+                tag: (tag_dto)?tag_dto:undefined
             });
         } catch(err) {
             throw err;
         }
         if(task !== undefined) {
             expect(task.name).toBe(task_name);
-            if ( task.tag )
-                expect(task.tag.id).toBe(task_tag!.id);
+            if ( task.tag ){
+                await task.tag.promise;
+                expect(task.tag.model!.id).toBe(task_tag!.id);
+            }
         }
         else throw new Error("\nMESSAGE from create_task.test.ts: Task is undefined.\n");
     });

@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import { FirebaseUser, User } from "../../models/user";
+import { FirebaseUser, User } from "../../models";
 import { userlogin_email_password } from "./login";
 import CurrentUser from ".";
 import { getRepository } from "fireorm";

@@ -9,7 +9,10 @@ export let update_settings = async (input_settings:Partial<UserSettings>)=> {
     let user_repo = getRepository(User);
     for (let index in input_settings) {
         curr_user.settings[index] = input_settings[index];
-    };
+    }
+    if(curr_user.timer.current_task){
+        await curr_user.timer.current_task.promise;
+    }
     return await user_repo.update(curr_user);
 }
 
