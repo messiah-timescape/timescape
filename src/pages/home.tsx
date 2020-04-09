@@ -103,7 +103,7 @@ const Home: React.FC = () => {
   }
 
   const [currentUser, setCurrentUser] = useState(String);
-  let token = user.get_user();
+  let token = user.get_loggedin();
 
   CheckAuth();
 
