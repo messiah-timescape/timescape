@@ -12,15 +12,14 @@ import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import googleIcon from "../assets/googleIcon.png";
 import "../styles/Login.scss";
-import {
-  userlogin_email_password,
-  userlogin_google_oauth
-} from "../controllers/user/login";
+import { userlogin_email_password, userlogin_google_oauth } from "../controllers/user/login";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordIcon, setPasswordIcon] = useState(eye);
   const [showWrongCredentials, setShowWrongCredentials] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function google_login() {
     userlogin_google_oauth().then(() => {
@@ -33,10 +32,8 @@ const Login: React.FC = () => {
   }
 
   function handleSubmit(username: string, password: string) {
-    userlogin_email_password(username, password).then(
-      successfulLogin,
-      failedLogin
-    );
+    setLoading(true);
+    userlogin_email_password(username, password).then(successfulLogin, failedLogin);
 
     function successfulLogin() {
       setShowWrongCredentials(false);
@@ -45,7 +42,9 @@ const Login: React.FC = () => {
       window.location.href = url.join("/");
     }
 
-    function failedLogin() {
+    function failedLogin(e) {
+      setLoading(false);
+      setErrorMessage(e.message);
       setShowWrongCredentials(true);
     }
   }
@@ -103,9 +102,7 @@ const Login: React.FC = () => {
                 ></IonIcon>
               </IonItem>
               {showWrongCredentials ? (
-                <p className="wrong-password-text">
-                  Incorrect username or password.
-                </p>
+                <p className="wrong-password-text">{errorMessage}</p>
               ) : (
                 <p></p>
               )}
@@ -114,21 +111,26 @@ const Login: React.FC = () => {
                 <IonRouterLink>Forgot Password?</IonRouterLink>
               </p>
 
-              <IonButton
-                className="button"
-                onClick={() =>
-                  handleSubmit(
-                    (document.getElementById(
-                      "username-field"
-                    ) as HTMLInputElement).value,
-                    (document.getElementById(
-                      "password-field"
-                    ) as HTMLInputElement).value
-                  )
-                }
-              >
-                Login
-              </IonButton>
+              {loading ? (
+                <div className="lds-ring">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              ) : (
+                <IonButton
+                  className="button"
+                  onClick={() =>
+                    handleSubmit(
+                      (document.getElementById("username-field") as HTMLInputElement).value,
+                      (document.getElementById("password-field") as HTMLInputElement).value
+                    )
+                  }
+                >
+                  Login
+                </IonButton>
+              )}
             </form>
             <div className="alt-login">
               <button onClick={() => google_login()}>
@@ -139,9 +141,7 @@ const Login: React.FC = () => {
               <p>
                 Don't have an account?
                 <br />
-                <IonRouterLink href="/register">
-                  Sign Up
-                </IonRouterLink>
+                <IonRouterLink href="/register">Sign Up</IonRouterLink>
               </p>
             </div>
           </div>
