@@ -74,7 +74,8 @@ class TimerController {
             if (unset_currenttask) {
                 this.timer.current_task = undefined;
             }
-            console.log("Alright we're done here");
+            this.reset_timer_value();
+            this.unlink_state();
         });
     }
 
@@ -128,6 +129,10 @@ class TimerController {
         }
         return this._timer_value;
     }
+
+    reset_timer_value(){
+        this._timer_value = undefined;
+    }
     
     counter?:NodeJS.Timeout;
     link_state(set_state_fn:Function) { // Links timer to the UI
@@ -135,7 +140,7 @@ class TimerController {
         this.counter = setInterval(()=> {
             this.timer_value.add(1000);
             set_state_fn(this.timer_value);
-        }, 1000);
+        }, 1000);   
     }
     
     unlink_state() {
