@@ -3,47 +3,54 @@ import { getRepository } from "fireorm";
 import firebase from "firebase";
 
 class CurrentUser {
+    static firebase_user?:firebase.User;
+    static current_user?:User;
+    static current_user_unsub?;
+
+    static init_currentuser() {
+        if (this.firebase_user) {
+            this.current_user_unsub = firebase
+            .firestore().collection('user').doc(this.firebase_user.uid).onSnapshot(user_snapshot => {
+                this.current_user = new User(user_snapshot.data());
+                this.current_user.firebase_user = this.firebase_user;
+            });
+        }
+    }
+
+    static init_firebaseuser(){
+        let unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            if ( user ) {
+                if ( this.current_user ) {
+                    this.current_user.firebase_user = user;
+                } else {
+                    this.init_currentuser();
+                }
+            } else {
+                this.current_user = undefined;
+            }
+        });
+    }
 
     static async get_user():Promise<User | null> {
-        let user_repo = getRepository(User);
-
-        let curr_user = firebase.auth().currentUser;
-        if ( !curr_user ){
+        this.init_firebaseuser();
+        if ( !this.current_user_unsub ){
             await new Promise(resolve => {
-                firebase.auth().onAuthStateChanged(user => {
+                let unsubscribe = firebase.auth().onAuthStateChanged(user => {
+                    unsubscribe();
                     resolve(null);
                 });
             });
         }
         
-        curr_user = firebase.auth().currentUser;
-        
-        if (curr_user === null) {
-            return new Promise(resolve => {
-                resolve(null);
-            });
-        }
-        
-        return user_repo.findById(curr_user.uid).then((user)=> {
-            if (user && curr_user)
-                user.firebase_user = curr_user;
-            return user;
-        });
+        return new Promise(resolve => {
+            resolve(this.current_user);
+        })
     }
 
     static async get_loggedin():Promise<User> {
         let current_user = await this.get_user();
         
         if ( current_user ) {
-            // if(current_user.timer.current_task && !current_user.timer.current_task.model ) {
-            //     console.log(current_user.timer.current_task);
-            //     await current_user.timer.current_task.promise.then(
-            //         task => console.log(task)
-            //     );
-            // }
-            // if(current_user.timer.current_task){
-            //     await current_user.timer.current_task.promise;
-            // }
             return current_user;
         } else {
             throw new Error("User not logged in");
