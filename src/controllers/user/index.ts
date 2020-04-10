@@ -41,6 +41,9 @@ class CurrentUser {
             //         task => console.log(task)
             //     );
             // }
+            // if(current_user.timer.current_task){
+            //     await current_user.timer.current_task.promise;
+            // }
             return current_user;
         } else {
             throw new Error("User not logged in");

@@ -30,7 +30,7 @@ const Home: React.FC = () => {
   const [paused, setPaused] = useState(false);
   const [completeTask, showCompleteTask] = useState(false);
   const [showSelectTask, setShowSelectTask] = useState(false);
-  //const [time, updateTime] = useState(moment({hour: 0, minute: 0, seconds: 0}));
+  const [homeBG, setHomeBG] = useState(true);
   const [seconds, updateSeconds] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
   const [currentTask, setCurrentTask]: [any, any] = useState();
@@ -84,19 +84,13 @@ const Home: React.FC = () => {
         ctrl.start();
       });
     } else {
-      if (paused) {
-        timer_controller.then(ctrl => {
-          ctrl.start();
-        });
-        console.log("Timer Resumed");
-      } else {
-        console.log("Timer switched off.");
-        timer_controller.then(ctrl => {
-          ctrl.stop();
-        });
-      }
+      timer_controller.then(ctrl => {
+        ctrl.stop();
+        ctrl.unlink_state();
+      });
     }
     setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
+    setHomeBG(!homeBG);
   }
 
   function pauseTimer() {
@@ -118,12 +112,13 @@ const Home: React.FC = () => {
 
   function complete() {
     timer_controller.then(controller => {
+      controller.unlink_state();
+      showCompleteTask(true);
+      setTimeout(() => {
+        showCompleteTask(false);
+      }, 2000);
       controller.complete_task().then(() => {
-        showCompleteTask(true);
         toggleTimer();
-        setTimeout(() => {
-          showCompleteTask(false);
-        }, 2000);
       });
     });
   }
@@ -131,6 +126,7 @@ const Home: React.FC = () => {
   const GenerateTasks = tasks => {
     return (
       <React.Fragment>
+        <h1>Select a Task</h1>
         {tasks.map(taskGroup => {
           return (
             <React.Fragment key={taskGroup.index + "frag"}>
@@ -179,12 +175,7 @@ const Home: React.FC = () => {
   };
 
   const SelectTaskModal = () => {
-    return (
-      <IonContent className="ion-padding">
-        <h1>Select a Task</h1>
-        {loading ? <LoadingIcon /> : tasksHTML}
-      </IonContent>
-    );
+    return <IonContent className="ion-padding">{loading ? <LoadingIcon /> : tasksHTML}</IonContent>;
   };
 
   const LoadingIcon = () => {
@@ -197,7 +188,7 @@ const Home: React.FC = () => {
   };
 
   const [currentUser, setCurrentUser] = useState(String);
-  let token = user.get_user();
+  let token = user.get_loggedin();
 
   CheckAuth();
 
@@ -210,7 +201,7 @@ const Home: React.FC = () => {
   return (
     <React.Fragment>
       <IonPage>
-        <IonContent className="ion-padding" id="home-page">
+        <IonContent className="ion-padding" id={homeBG ? "home-page" : ""}>
           {showSelectTask ? <SelectTaskModal /> : undefined}
           <Fade top>
             <div className="header">
@@ -220,6 +211,7 @@ const Home: React.FC = () => {
             {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
             <IonButton
+              hidden={timerView}
               onClick={() => {
                 userlogout().then(() => {
                   let url = window.location.href.split("/");
@@ -235,6 +227,7 @@ const Home: React.FC = () => {
             id="start-timer"
             expand="block"
             size="large"
+            hidden={timerView}
             onClick={() => {
               setShowSelectTask(true);
             }}
@@ -242,10 +235,11 @@ const Home: React.FC = () => {
             Start Working
           </IonButton>
         </IonContent>
+
         <IonModal
           isOpen={timerView}
           showBackdrop={false}
-          cssClass="timer-modal"
+          cssClass="timer-view"
           backdropDismiss={false}
         >
           <IonGrid className="timer-grid">
@@ -253,14 +247,14 @@ const Home: React.FC = () => {
               <IonCol offset="2">
                 <IonGrid>
                   <IonRow>
-                    <IonCol size="3" offset="1">
-                      <strong className="big-numbers">{hours}</strong>
+                    <IonCol size="4" offset="0">
+                      <strong className="big-numbers">{hours.toString().padStart(2, "0")}</strong>
                     </IonCol>
-                    <IonCol size="3">
-                      <strong className="big-numbers">{minutes}</strong>
+                    <IonCol size="4">
+                      <strong className="big-numbers">{minutes.toString().padStart(2, "0")}</strong>
                     </IonCol>
-                    <IonCol size="3" className="small-numbers">
-                      <span>{seconds}</span>
+                    <IonCol size="4" className="small-numbers">
+                      <span>{seconds.toString().padStart(2, "0")}</span>
                     </IonCol>
                   </IonRow>
                 </IonGrid>

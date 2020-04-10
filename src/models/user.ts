@@ -76,6 +76,7 @@ export class FirebaseUser{
 }
 
 
+@Collection('user_settings')
 export class UserSettings {
     constructor(init_fields?:object) {
         Object.assign(this, init_fields);
@@ -111,14 +112,14 @@ export class User extends BaseModel{
     display_name!: string;
 
     @Type(() => UserSettings)
-    settings: UserSettings = {
+    settings: UserSettings = new UserSettings({
         work_start_time:moment().hours(8),
         work_stop_time: moment().hours(16),
         work_days:[Weekdays.Monday],
         sleep_start:moment().hours(20),
         sleep_stop:moment().hours(7),
         overwork_limit: moment.duration(3, 'hours')
-    };
+    });
 
 
     @Type(() => Timer)

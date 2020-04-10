@@ -4,14 +4,11 @@ import {
   IonButton,
   IonProgressBar,
   IonItem,
-  IonInput,
   IonModal,
   IonLabel,
-  IonGrid,
-  IonCol,
-  IonRow,
   IonCheckbox,
-  IonList
+  IonList,
+  IonDatetime
 } from "@ionic/react";
 import "../styles/Survey.scss";
 import { store_survey } from "../controllers/user/survey";
@@ -19,6 +16,7 @@ import { userlink_google, user_hasgoogle } from "../controllers/user/link_google
 //import user from "../controllers/user/index"
 import moment from "moment";
 import Weekdays from "../utils/weekdays";
+import googleIcon from "../assets/googleIcon.png"
 
 const Survey: React.FC = () => {
   const [progressValue, setProgressValue] = useState(0.25);
@@ -33,77 +31,96 @@ const Survey: React.FC = () => {
     { val: "Sunday", isChecked: false }
 ];
 
-  const [interval, setInterval] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
-  const [sleep, setSleep] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
-  const [wake, setWake] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
+  const [overworkLimit, setOverworkLimit] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
   const [workDays, setWorkDays] = useState([""]);
   const [workStart, setWorkStart] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
   const [workStop, setWorkStop] = useState(moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0}));
 
-  function handleSubmit(interval, sleep, wake, workDays, workStart, workStop) {
+  function handleSubmit(overworkLimit, sleep, wake, workDays, workStart, workStop) {
       store_survey({
         work_days: workDays,
-        overwork_limit: interval,
+        overwork_limit: overworkLimit,
         sleep_start: sleep,
         sleep_stop: wake,
         work_start_time: workStart,
         work_stop_time: workStop
       });
+
+      user_hasgoogle().then((has_google:boolean) => {
+        if ( has_google ) {
+          toHome();
+        } else {
+          next();
+        }
+      });
   }
 
-  function next() { //all the animation stuff for the next menu
-    setModalNum(modalNum + 1);
-    setProgressValue(progressValue + 0.2);
+  function updateOverworkLimit(time: String) {
+    if (time !== undefined) {
+      let val = time.split('T').pop();
+      let val2 = val? val.split(':') : "";
+      setOverworkLimit(overworkLimit.add(val2[0], 'hour').add(val2[1], 'minute'));
+    } else {
+      setOverworkLimit(overworkLimit.add(3, 'hour'));
+    }
 
-
-    console.log(interval, "overwork_limit");
-    console.log(sleep, "sleep_start");
-    console.log(wake, "sleep_stop");
-    console.log(workDays, "work_days");
-    console.log(workStart, "work_start_time");
-    console.log(workStop, "work_stop_time");
-    console.log("-----------------------------------------------");
-}
-
-function modal1 (h: string, m: string) { //gets user input
-  let hNum = +h; //converts hours input to an actual number
-  let mNum = +m; //converts minutes input to an actual number
-  setInterval(interval.add(hNum, "hours").add(mNum, "minutes"));
-  next();
-}
-
-function modal2 (s: string, w: string) {
-  let sleepTime = +s;
-  let wakeTime = +w;
-  setSleep(sleep.add(sleepTime, "hours"));
-  setWake(wake.add(wakeTime, "hours"));
-  next();
-}
-
-  function modal3 (...arg: boolean[]) {
-    setWorkDays([...workDays].concat(Weekdays.Monday, Weekdays.Tuesday));
-    setWorkDays(workDays.splice(1));
     next();
   }
 
-  function modal4(wStart, wStop) {
-    let start = +wStart;
-    let stop = +wStop;
-    setWorkStart(workStart.add(start, "hours"));
-    setWorkStop(workStop.add(stop, "hours"));
-    handleSubmit(interval, sleep, wake, workDays, workStart, workStop);
-    
-    //TODO: Add visual indicator to show that somethign is being processed in the background
-    //      and that the next page is being loaded
-    console.log("Clicked", "NEEDS TO BE CHANGED")
-    user_hasgoogle().then((has_google:boolean) => {
-      if ( has_google ) {
-        toHome();
-      } else {
-        next();
+  function updateWorkDays(...days: boolean[]) {
+    let week = [
+      Weekdays.Monday,
+      Weekdays.Tuesday,
+      Weekdays.Wednesday,
+      Weekdays.Thursday,
+      Weekdays.Friday,
+      Weekdays.Saturday,
+      Weekdays.Sunday
+    ]
+
+    let count = 0;
+    let count2 = 0;
+    let sub = [""];
+    for (let day of days) {
+      if (day) {
+        sub[count2] = week[count];
+        count2++;
       }
-    });
+      count++;
+    }
+
+    setWorkDays(sub);
+    next();
   }
+
+  function updateStartTime(time: String) {
+    if (time !== undefined) {
+      let val = time.split('T').pop();
+      let val2 = val? val.split(':') : "";
+      setWorkStart(workStart.add(val2[0], 'hour').add(val2[1], 'minute'));
+    } else {
+      setWorkStart(workStart.add(12, 'hour'));
+    }
+
+    next();
+  }
+
+  function updateStopTime(time: String) {
+    if (time !== undefined) {
+      let val = time.split('T').pop();
+      let val2 = val? val.split(':') : "";
+      setWorkStop(workStop.add(val2[0], 'hour').add(val2[1], 'minute'));
+    } else {
+      setWorkStop(workStop.add(21, 'hour'));
+    }
+
+    handleSubmit(overworkLimit, moment({hour: 0}), moment({hour: 0}), workDays, workStart, workStop);
+  }
+
+  function next() { // all the animation stuff for the next menu
+    setModalNum(modalNum + 1);
+    setProgressValue(progressValue + 0.2);
+}
 
   function toHome() { //Sends the user the the dashboard
     let url = window.location.href.split("/");
@@ -131,90 +148,18 @@ function modal2 (s: string, w: string) {
             How much time do you typically spend working on something before
             needing <br />a break?
           </p>
-          <IonGrid>
-            <IonRow>
-              <IonCol size-lg="4">
-                <IonItem>
-                  <IonLabel>Hours</IonLabel>
-                  <IonInput id="hours-field" placeholder="3"></IonInput>
-                </IonItem>
-              </IonCol>
-              <IonCol size-lg="4">
-                <IonItem>
-                  <IonLabel>Minutes</IonLabel>
-                  <IonInput id="minutes-field" placeholder="30"></IonInput>
-                </IonItem>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <IonItem>
+            <IonDatetime id="overwork" displayFormat="H:mm" minuteValues="0,15,30,45" placeholder="Pick a Time"></IonDatetime>
+          </IonItem>
           <IonButton
             className="survey-nextButton"
-            onClick={() =>
-              modal1(
-                (document.getElementById("hours-field") as HTMLInputElement)
-                  .value,
-                (document.getElementById("minutes-field") as HTMLInputElement)
-                  .value
-              )
-            }
-          >
-            Next
-          </IonButton>
+            onClick={() => updateOverworkLimit((document.getElementById("overwork") as HTMLInputElement).value)}>Next</IonButton>
         </IonContent>
       </IonModal>
 
       <IonModal
         cssClass="survey-modal-2"
         isOpen={modalNum === 1}
-        backdropDismiss={false}
-        showBackdrop={false}
-        keyboardClose={false}
-      >
-        <IonContent className="ion-padding">
-          <p className="modal-title">
-            When do you normaly go to bed and when do you usually wake up?
-          </p>
-          <IonGrid>
-            <IonRow>
-              <IonCol size-lg="6" offset="2">
-                <div className="modal-item">
-                  <IonItem>
-                    <IonLabel>Bedtime</IonLabel>
-                    <IonInput id="bedtime-field" placeholder="11"></IonInput>
-                  </IonItem>
-                </div>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size-lg="6" offset="2">
-                <div className="modal-item">
-                  <IonItem>
-                    <IonLabel>Wake Up</IonLabel>
-                    <IonInput id="wakeUp-field" placeholder="8"></IonInput>
-                  </IonItem>
-                </div>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-          <IonButton
-            className="survey-nextButton"
-            onClick={() =>
-              modal2(
-                (document.getElementById("bedtime-field") as HTMLInputElement)
-                  .value,
-                (document.getElementById("wakeUp-field") as HTMLInputElement)
-                  .value
-              )
-            }
-          >
-            Next
-          </IonButton>
-        </IonContent>
-      </IonModal>
-
-      <IonModal
-        cssClass="survey-modal-3"
-        isOpen={modalNum === 2}
         backdropDismiss={false}
         showBackdrop={false}
         keyboardClose={false}
@@ -229,17 +174,43 @@ function modal2 (s: string, w: string) {
             </IonItem>
           ))}
         </IonList>
-        <IonButton className="survey-nextButton" onClick={() => 
-          modal3(
-            (document.getElementById("Monday") as HTMLInputElement).checked
-          )
-        }>
+        <IonButton className="survey-nextButton" onClick={() => updateWorkDays(
+          (document.getElementById("Monday") as HTMLInputElement).checked,
+          (document.getElementById("Tuesday") as HTMLInputElement).checked,
+          (document.getElementById("Wednesday") as HTMLInputElement).checked,
+          (document.getElementById("Thursday") as HTMLInputElement).checked,
+          (document.getElementById("Friday") as HTMLInputElement).checked,
+          (document.getElementById("Saturday") as HTMLInputElement).checked,
+          (document.getElementById("Sunday") as HTMLInputElement).checked
+        )}>
           Next
         </IonButton>
       </IonModal>
 
       <IonModal
-        cssClass="survey-modal-2"
+        cssClass="survey-modal-1"
+        isOpen={modalNum === 2}
+        backdropDismiss={false}
+        showBackdrop={false}
+        keyboardClose={false}
+      >
+        <IonContent className="ion-padding">
+          <p>
+            What time of day do you usually start working?
+          </p>
+          <IonItem>
+            <IonDatetime id="startWork" displayFormat="h:mm A" placeholder="Pick a Time"></IonDatetime>
+          </IonItem>
+          <IonButton
+            className="survey-nextButton"
+            onClick={() => updateStartTime((document.getElementById("startWork") as HTMLInputElement).value)}>
+            Next
+          </IonButton>
+        </IonContent>
+      </IonModal>
+
+      <IonModal
+        cssClass="survey-modal-1"
         isOpen={modalNum === 3}
         backdropDismiss={false}
         showBackdrop={false}
@@ -247,41 +218,14 @@ function modal2 (s: string, w: string) {
       >
         <IonContent className="ion-padding">
           <p>
-            What time of day do you usually start working and when do you stop?
+            What time of day do you usually stop working?
           </p>
-          <IonGrid>
-            <IonRow>
-              <IonCol size-lg="6" offset="2">
-                <div className="modal-item">
-                  <IonItem>
-                    <IonLabel>Start</IonLabel>
-                    <IonInput id="start-field" placeholder="12"></IonInput>
-                  </IonItem>
-                </div>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size-lg="6" offset="2">
-                <div className="modal-item">
-                  <IonItem>
-                    <IonLabel>Stop</IonLabel>
-                    <IonInput id="stop-field" placeholder="9"></IonInput>
-                  </IonItem>
-                </div>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <IonItem>
+            <IonDatetime id="stoptWork" displayFormat="h:mm A" placeholder="Pick a Time"></IonDatetime>
+          </IonItem>
           <IonButton
             className="survey-nextButton"
-            onClick={() =>
-              modal4(
-                (document.getElementById("start-field") as HTMLInputElement)
-                  .value,
-                (document.getElementById("stop-field") as HTMLInputElement)
-                  .value
-              )
-            }
-          >
+            onClick={() => updateStopTime((document.getElementById("stoptWork") as HTMLInputElement).value)}>
             Next
           </IonButton>
         </IonContent>
@@ -295,19 +239,16 @@ function modal2 (s: string, w: string) {
       keyboardClose={false}
       >
         <IonContent className="ion-padding">
-          <h3>Sync your new account with Google for extra features!</h3>
-          <p>You can always do this at any time from your settings.</p>
+          <p>Sync your new account with Google for extra features!</p>
 
-          <IonGrid>
-            <IonRow>
-              <IonCol size="3" offset="3">
-                <p className="link-text" onClick={() => toHome()}>Skip</p>
-              </IonCol>
-              <IonCol size="3">
-                <p className="link-text" onClick={() => syncAccounts()}>Sync</p>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <button id="sync-button" onClick={() => syncAccounts()}>
+                <img id="googlePic" src={googleIcon} alt="google login icon" />
+                <p>Sync with Google</p>
+          </button>
+
+          <button id="skip-button" onClick={() => toHome()}>
+                <p>Skip</p>
+          </button>
         </IonContent>
       </IonModal>
 

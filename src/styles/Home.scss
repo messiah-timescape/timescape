@@ -1,11 +1,3 @@
-.homepage-graphic {
-  position: absolute;
-  top: 0;
-  left: 0;
-  max-height: 50%;
-  z-index: -1;
-}
-
 .timer-icons {
   text-align: center;
   img {
@@ -55,12 +47,11 @@
   width: 95%;
 }
 
-.timer-modal {
-  .modal-wrapper {
-    --height: 80%;
-    position: absolute;
-    bottom: 7%;
-  }
+.timer-view {
+  position: absolute;
+  top: 15%;
+  width: 100%;
+  height: 100%;
 }
 
 .complete-task-modal {
