@@ -47,7 +47,15 @@ const Home: React.FC = () => {
     task_sync(syncTasks);
   }, []);
 
-  let timer_controller = get_controller().then(async ctrl => {
+  function state_setter() {
+    // console.log(duration.seconds());
+    // updateTimer(duration);
+    // updateSeconds(duration.seconds());
+    // updateMinutes(duration.minutes());
+    // updateHours(duration.hours());
+  }
+
+  let timer_controller = get_controller(state_setter).then(async ctrl => {
     if (ctrl.timer.current_task) console.log(ctrl.timer.current_task);
     if (
       !(
@@ -66,14 +74,6 @@ const Home: React.FC = () => {
       console.log("We have task: ", await ctrl.timer.current_task);
     }
 
-    ctrl.link_state(duration => {
-      // console.log(duration.seconds());
-      // updateTimer(duration);
-      // updateSeconds(duration.seconds());
-      // updateMinutes(duration.minutes());
-      // updateHours(duration.hours());
-    });
-
     return ctrl;
   });
 
@@ -86,7 +86,6 @@ const Home: React.FC = () => {
     } else {
       timer_controller.then(ctrl => {
         ctrl.stop();
-        ctrl.unlink_state();
       });
     }
     setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
@@ -112,7 +111,6 @@ const Home: React.FC = () => {
 
   function complete() {
     timer_controller.then(controller => {
-      controller.unlink_state();
       showCompleteTask(true);
       setTimeout(() => {
         showCompleteTask(false);
