@@ -12,7 +12,7 @@ ion-progress-bar {
     transform: translate(-50%, 0);
 
     div {
-        box-shadow: none !important;
+        --box-shadow: none;
         text-align: center;
     }
 
@@ -37,39 +37,15 @@ ion-progress-bar {
         box-shadow: none !important;
         text-align: center;
     }
-    
-    .modal-wrapper {
-        height: 60% !important;
-    }
-
-    .modal-title {
-        margin-bottom: 3em;
-    }
-
-    .modal-item {
-        padding-right: 30%;
-    }
-
-    .survey-nextButton {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translate(-50%, 0);
-    }
-}
-
-.survey-modal-3 {
-    div {
-        box-shadow: none !important;
-        text-align: center;
-    }
 
     ion-list {
-        margin-bottom: 20%;
+        ion-item {
+            height: 10%;
+        }
     }
     
     .modal-wrapper {
-        height: 80% !important;
+        height: 67% !important;
     }
 
     .survey-nextButton {
@@ -86,14 +62,49 @@ ion-progress-bar {
         text-align: center;
     }
 
-    p {
-        opacity: 50%;
+    .modal-wrapper {
+        height: 67% !important;
     }
 
     .link-text {
         opacity: 100%;
         color: var( --ion-color-secondary);
         cursor: pointer;
+    }
+
+    #sync-button {
+        outline: none;
+        display: flex;
+        align-items: center;
+        border-radius: 3em;
+        padding: 0 2em;
+        background: white;
+        box-shadow: 0px 1px 4px #0000001f;
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translate(-50%);
+        p {
+          font-size: 1.3em;
+          margin-left: 1em;
+        }
+      }
+
+      #skip-button {
+        outline: none;
+        align-items: center;
+        background: none;
+        box-shadow: none;
+        position: absolute;
+        top: 38%;
+        left: 50%;
+        transform: translate(-50%);
+
+        p {
+            font-size: 1.3em;
+            margin-left: 1em;
+            color: var(--ion-color-secondary);
+          }
     }
 }
 
