@@ -9,6 +9,7 @@ import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
 import { Timer } from "./timer";
+import { resolve } from "dns";
 
 export enum UserProvider{
     Google = "Google",
@@ -45,6 +46,7 @@ export class FirebaseUser{
     async user():Promise<User>{
         return (await this.create_or_load_user()).user;
     }
+
 
     async create_or_load_user():Promise<{user:User,new:boolean}> {
         let org_user = await this.load_user();
@@ -146,23 +148,28 @@ export class User extends BaseModel{
         });
     }
 
+    default_tags_promise;
     @Exclude()
     set_default_tags() {
-        this.tags.find().then((tag_list) => {
-            if ( tag_list.length === 0) {
-                console.log("Setting default tags", tag_list);
-                let default_tags = {
-                     "School": TagColors.blue,
-                     "Chores": TagColors.green, 
-                     "Work": TagColors.red,
-                     "Hobbies": TagColors.purple
-                };
-                this.tags.runTransaction( async tran => {
-                    for ( let tag in default_tags) {
-                        tran.create(new Tag().fill_fields({name:tag, color: default_tags[tag]}));
-                    }
-                });
-            }
+        let promises:Promise<Tag>[] = [];
+        this.default_tags_promise = new Promise(resolve => {
+            this.tags.find().then((tag_list) => {
+                if ( tag_list.length === 0) {
+                    let default_tags = {
+                        "School": TagColors.blue,
+                        "Chores": TagColors.green, 
+                        "Work": TagColors.red,
+                        "Hobbies": TagColors.purple
+                    };
+                    this.tags.runTransaction( async tran => {
+                        for ( let tag in default_tags) {
+                            promises.push(tran.create(new Tag().fill_fields({name:tag, color: default_tags[tag]})));
+                        }
+                    }).then(resolve);
+                } else {
+                    resolve();
+                }
+            });
         });
     }
 }
