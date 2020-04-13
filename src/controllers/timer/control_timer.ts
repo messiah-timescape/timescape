@@ -8,10 +8,11 @@ import moment from "moment";
 import { UsermodelDto } from "../../models/field_types";
 
 export async function get_controller(state_setter:Function) {
-    return new TimerController((await CurrentUser.get_loggedin()), state_setter);
+    let ctrl = new TimerController((await CurrentUser.get_loggedin()), state_setter);
+    return ctrl;
 }
 
-class TimerController {
+export class TimerController {
     user:User;
     timer:Timer;
     _timer_value?:moment.Duration;
@@ -20,6 +21,12 @@ class TimerController {
         this.user = user;
         this.timer = user.timer;
         this.state_setter = state_setter;
+        if ( this.timer.is_started() ) {
+            this.state_setter(this.timer_value)
+            if ( !this.timer.is_onbreak() ) {
+                this.start_counter();
+            }
+        }
     }
 
     async modify_timer( modifier:Function ) {

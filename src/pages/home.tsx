@@ -25,6 +25,7 @@ import CurrentUser from "../controllers/user/index";
 import Fade from "react-reveal/Fade";
 import task_sync from "../controllers/task/task_list";
 
+let timer_controller;
 const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -40,88 +41,89 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     function syncTasks(taskList) {
-      setTasksHTML(GenerateTasks(taskList));
+      setTasksHTML(GenerateTasks(taskList, timer_controller));
     }
 
     CheckAuth();
-    task_sync(syncTasks);
+    task_sync(tasks => {
+      syncTasks(tasks);
+    });
+
+    timer_controller = get_controller(state_setter).then( async ctrl => {
+      if (ctrl.timer.is_started()) {
+        await ctrl.timer.current_task!.promise;
+        if (ctrl.timer.current_task!.model!.tag)
+          await ctrl.timer.current_task!.model!.tag.promise;
+        setCurrentTask(ctrl.timer.current_task!.model);
+        
+        setTimerView(true);
+      }
+      return ctrl;
+    });
+
   }, []);
 
-  function state_setter() {
-    // console.log(duration.seconds());
-    // updateTimer(duration);
-    // updateSeconds(duration.seconds());
-    // updateMinutes(duration.minutes());
-    // updateHours(duration.hours());
+  function state_setter(duration) {
+    updateSeconds(duration.seconds());
+    updateMinutes(duration.minutes());
+    updateHours(duration.hours());
   }
 
-  let timer_controller = get_controller(state_setter).then(async ctrl => {
-    if (ctrl.timer.current_task) console.log(ctrl.timer.current_task);
-    if (
-      !(
-        ctrl.timer.current_task &&
-        (ctrl.timer.current_task.model || (await ctrl.timer.current_task.promise))
-      )
-    ) {
-      let rando_task = await (await CurrentUser.get_loggedin()).tasks.findOne();
-      if (rando_task) {
-        console.log("Settinsg random task");
-        ctrl.set_current_task(rando_task);
-      } else {
-        console.log("Gonna need some tasks for this one to work");
-      }
-    } else {
-      console.log("We have task: ", await ctrl.timer.current_task);
-    }
-
-    return ctrl;
-  });
+  
 
   function toggleTimer() {
-    setTimerView(!timerView);
-    if (!timerView) {
-      timer_controller.then(ctrl => {
-        ctrl.start();
-      });
-    } else {
-      timer_controller.then(ctrl => {
-        ctrl.stop();
-      });
+    if (timer_controller){
+      setTimerView(!timerView);
+      if (!timerView) {
+        timer_controller.then(ctrl => {
+          ctrl.start();
+        });
+      } else {
+        timer_controller.then(ctrl => {
+          ctrl.stop();
+        });
+      }
+      setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
+      setHomeBG(!homeBG);
     }
-    setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
-    setHomeBG(!homeBG);
   }
 
   function pauseTimer() {
-    setPaused(!paused);
-    if (!paused) {
-      console.log("Timer paused");
+    if (timer_controller) {
 
-      timer_controller.then(ctrl => {
-        ctrl.start_break();
-      });
-    } else {
-      console.log("Timer resumed");
+      setPaused(!paused);
+      if (!paused) {
+        console.log("Timer paused");
 
-      timer_controller.then(ctrl => {
-        ctrl.start();
-      });
+        timer_controller.then(ctrl => {
+          ctrl.start_break();
+        });
+      } else {
+        console.log("Timer resumed");
+
+        timer_controller.then(ctrl => {
+          ctrl.start();
+        });
+      }
     }
   }
 
   function complete() {
-    timer_controller.then(controller => {
-      showCompleteTask(true);
-      setTimeout(() => {
-        showCompleteTask(false);
-      }, 2000);
-      controller.complete_task().then(() => {
-        toggleTimer();
+    if (timer_controller) {
+      timer_controller.then(controller => {
+        showCompleteTask(true);
+        setTimeout(() => {
+          showCompleteTask(false);
+        }, 2000);
+        controller.complete_task().then(() => {
+          setTimerView(false);
+          setHomeBG(true);
+        });
       });
-    });
+    }
   }
 
-  const GenerateTasks = tasks => {
+  const GenerateTasks = (tasks, timer_ctrl )=> {
     return (
       <React.Fragment>
         <h1>Select a Task</h1>
@@ -138,15 +140,17 @@ const Home: React.FC = () => {
                     <IonCard
                       key={task.id + "item"}
                       onClick={() => {
-                        setLoading(true);
-                        timer_controller
-                          .then(controller => controller.set_current_task(task))
-                          .then(() => {
-                            setShowSelectTask(false);
-                            toggleTimer();
-                            setCurrentTask(task);
-                            setLoading(false);
-                          });
+                        if ( timer_ctrl ){
+                          setLoading(true);
+                          timer_ctrl
+                            .then(controller => controller.set_current_task(task))
+                            .then(() => {
+                              setShowSelectTask(false);
+                              toggleTimer();
+                              setCurrentTask(task);
+                              setLoading(false);
+                            });
+                        }
                       }}
                     >
                       <div className="select-task" key={task.id}>
@@ -173,7 +177,17 @@ const Home: React.FC = () => {
   };
 
   const SelectTaskModal = () => {
-    return <IonContent className="ion-padding">{loading ? <LoadingIcon /> : tasksHTML}</IonContent>;
+    return <IonContent className="ion-padding">
+      {loading ? <LoadingIcon /> : tasksHTML}
+      <IonButton
+        id="cancel-timer"
+        onClick={() => {
+          setShowSelectTask(false);
+        }}
+      >
+        CANCEL
+      </IonButton>
+    </IonContent>;
   };
 
   const LoadingIcon = () => {
@@ -280,7 +294,7 @@ const Home: React.FC = () => {
             </p>
             <IonCard>
               <IonCardHeader>
-                <IonCardTitle>{currentTask ? currentTask.name : undefined}</IonCardTitle>
+                <IonCardTitle>{currentTask ? currentTask.name : "No task set?"}</IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
                 {currentTask ? (

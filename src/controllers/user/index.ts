@@ -1,62 +1,57 @@
 import { User } from "../../models";
 import firebase from "firebase";
 import { getRepository } from "fireorm";
+import { BaseRepo } from "../../models/base_model";
 
 class CurrentUser {
     static firebase_user?:firebase.User;
     static current_user?:User;
     static current_user_unsub?;
-    static on_change?:Function;
-
-    static call_on_change(param) {
-        if (this.on_change) {
-            return this.on_change(param);
-        }
-    }
-
+    static firebaseuser_set_promise?:Promise<never>;
+    static user_set_promise?:Promise<never>;
     static init_currentuser() {
         if (this.firebase_user) {
-            this.current_user_unsub = firebase
-            .firestore().collection('user').doc(this.firebase_user.uid).onSnapshot(user_snapshot => {
-                if (user_snapshot.exists){
-                    this.current_user = getRepository(User).init_plain(user_snapshot);
-                    if (this.current_user)
-                        this.current_user.firebase_user = this.firebase_user;
-                    this.call_on_change(this.current_user);
-                }
+            this.user_set_promise = new Promise(resolve => {
+                this.current_user_unsub = firebase
+                .firestore().collection('user').doc(this.firebase_user!.uid).onSnapshot(user_snapshot => {
+                    if (user_snapshot.exists){
+                        this.current_user = (getRepository(User) as BaseRepo<User>).init_plain(user_snapshot);
+                        if (this.current_user)
+                            this.current_user.firebase_user = this.firebase_user;
+                        resolve();
+                    }
+                });
             });
         }
     }
 
     static init_firebaseuser(){
-        let unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            if ( user ) {
-                this.firebase_user = user;
-                if ( this.current_user ) {
-                    this.current_user.firebase_user = user;
+        this.firebaseuser_set_promise = new Promise( resolve => {
+            firebase.auth().onAuthStateChanged(user => {
+                if ( user ) {
+                    this.firebase_user = user;
+                    if ( this.current_user ) {
+                        this.current_user.firebase_user = user;
+                    } else {
+                        this.init_currentuser();
+                        resolve();
+                    }
                 } else {
-                    this.init_currentuser();
+                    this.firebase_user = undefined;
+                    this.current_user = undefined;
                 }
-            } else {
-                this.firebase_user = undefined;
-                this.current_user = undefined;
-            }
+            });
         });
     }
 
-    static async get_user():Promise<User | null> {
+    static async get_user():Promise<User | undefined> {
         this.init_firebaseuser();
         
-        let that = this;
-        return new Promise(resolve => {
-            if ( this.current_user ){
-                resolve(this.current_user);
-            } else {
-                that.on_change = () => {
-                    resolve(this.current_user);
-                };
-            }
-        });
+        if ( !this.current_user ){
+            await this.firebaseuser_set_promise;
+            await this.user_set_promise;
+        } 
+        return this.current_user;
     }
 
     static async get_loggedin():Promise<User> {
