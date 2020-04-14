@@ -21,7 +21,6 @@ import user from "../controllers/user/index";
 import userlogout from "../controllers/user/logout";
 import CheckAuth from "../helpers/CheckAuth";
 import { get_controller } from "../controllers/timer/control_timer";
-import CurrentUser from "../controllers/user/index";
 import Fade from "react-reveal/Fade";
 import task_sync from "../controllers/task/task_list";
 
@@ -39,29 +38,44 @@ const Home: React.FC = () => {
   const [hours, updateHours] = useState(0);
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
-    function syncTasks(taskList) {
-      setTasksHTML(GenerateTasks(taskList, timer_controller));
-    }
+
+    const syncTasks = (taskList) =>{
+      setTasksHTML(GenerateTasks(taskList));
+    };
 
     CheckAuth();
     task_sync(tasks => {
       syncTasks(tasks);
     });
 
-    timer_controller = get_controller(state_setter).then( async ctrl => {
-      if (ctrl.timer.is_started()) {
-        await ctrl.timer.current_task!.promise;
-        if (ctrl.timer.current_task!.model!.tag)
-          await ctrl.timer.current_task!.model!.tag.promise;
-        setCurrentTask(ctrl.timer.current_task!.model);
-        
-        setTimerView(true);
-      }
-      return ctrl;
-    });
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect( () => {
+
+
+    if ( !timer_controller )
+      timer_controller = get_controller(state_setter).then( async ctrl => {
+        if (ctrl.timer.is_started()) {
+          await ctrl.timer.current_task!.promise;
+          if (ctrl.timer.current_task!.model!.tag)
+            await ctrl.timer.current_task!.model!.tag.promise;
+          setCurrentTask(ctrl.timer.current_task!.model);
+          
+          setTimerView(true);
+        }
+        return ctrl;
+      });
+
+    return () => {
+      timer_controller.then( async ctrl => {
+        ctrl.stop_counter()
+      } )
+    };
+  })
+
 
   function state_setter(duration) {
     updateSeconds(duration.seconds());
@@ -123,7 +137,7 @@ const Home: React.FC = () => {
     }
   }
 
-  const GenerateTasks = (tasks, timer_ctrl )=> {
+  const GenerateTasks = (tasks )=> {
     return (
       <React.Fragment>
         <h1>Select a Task</h1>
@@ -140,9 +154,9 @@ const Home: React.FC = () => {
                     <IonCard
                       key={task.id + "item"}
                       onClick={() => {
-                        if ( timer_ctrl ){
+                        if ( timer_controller ){
                           setLoading(true);
-                          timer_ctrl
+                          timer_controller
                             .then(controller => controller.set_current_task(task))
                             .then(() => {
                               setShowSelectTask(false);
@@ -276,13 +290,13 @@ const Home: React.FC = () => {
             <IonRow>
               <IonCol size="4" offset="2">
                 <div className="timer-icons" onClick={() => toggleTimer()}>
-                  <img src={stopIcon} />
+                  <img src={stopIcon} alt=""/>
                   <p id="yellow">Stop Working</p>
                 </div>
               </IonCol>
               <IonCol size="5">
                 <div className="timer-icons" onClick={() => pauseTimer()}>
-                  <img src={paused ? resumeIcon : breakIcon}></img>
+                  <img src={paused ? resumeIcon : breakIcon} alt=""></img>
                   <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
                 </div>
               </IonCol>
@@ -319,7 +333,7 @@ const Home: React.FC = () => {
           cssClass="complete-task-modal"
           backdropDismiss={false}
         >
-          <img src={taskCompleteIcon} />
+          <img src={taskCompleteIcon} alt="" />
           <h2>Task Complete!</h2>
         </IonModal>
       </IonPage>

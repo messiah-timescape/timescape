@@ -9,7 +9,6 @@ import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
 import { Timer } from "./timer";
-import { resolve } from "dns";
 
 export enum UserProvider{
     Google = "Google",
