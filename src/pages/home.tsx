@@ -181,11 +181,12 @@ const Home: React.FC = () => {
       {loading ? <LoadingIcon /> : tasksHTML}
       <IonButton
         id="cancel-timer"
+        fill="outline"
         onClick={() => {
           setShowSelectTask(false);
         }}
       >
-        CANCEL
+        Cancel
       </IonButton>
     </IonContent>;
   };
@@ -239,7 +240,7 @@ const Home: React.FC = () => {
             id="start-timer"
             expand="block"
             size="large"
-            hidden={timerView}
+            hidden={timerView || showSelectTask}
             onClick={() => {
               setShowSelectTask(true);
             }}
