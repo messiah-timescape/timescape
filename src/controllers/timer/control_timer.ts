@@ -150,13 +150,17 @@ export class TimerController {
 
     reset_counter(){
         this._timer_value = moment.duration(0);
+        this.counter = undefined;
     }
 
     start_counter() {
-        this.counter = setInterval(()=> {
-            this.timer_value.add(1000);
+        if ( !this.counter ) {
             this.state_setter(this.timer_value);
-        }, 1000);   
+            this.counter = setInterval(()=> {
+                this.state_setter(this.timer_value);
+                this.timer_value.add(1000);
+            }, 1000);
+        }
     }
 
     pause_counter() {

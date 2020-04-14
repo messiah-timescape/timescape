@@ -65,16 +65,17 @@ const Home: React.FC = () => {
           setCurrentTask(ctrl.timer.current_task!.model);
           
           setTimerView(true);
+          ctrl.start_counter();
         }
         return ctrl;
       });
 
-    return () => {
-      timer_controller.then( async ctrl => {
-        ctrl.stop_counter()
-      } )
-    };
-  })
+    // return () => {
+    //   timer_controller.then( async ctrl => {
+    //     ctrl.stop_counter()
+    //   } )
+    // };
+  }, []);
 
 
   function state_setter(duration) {
@@ -90,13 +91,14 @@ const Home: React.FC = () => {
         timer_controller.then((ctrl) => {
           ctrl.start();
         });
+        setHomeBG(false);
       } else {
         timer_controller.then((ctrl) => {
           ctrl.stop();
         });
+        setHomeBG(true);
       }
       setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
-      setHomeBG(!homeBG);
     }
   }
 
