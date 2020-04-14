@@ -157,8 +157,8 @@ export class TimerController {
         if ( !this.counter ) {
             this.state_setter(this.timer_value);
             this.counter = setInterval(()=> {
-                this.state_setter(this.timer_value);
                 this.timer_value.add(1000);
+                this.state_setter(this.timer_value);
             }, 1000);
         }
     }
@@ -166,6 +166,7 @@ export class TimerController {
     pause_counter() {
         if (this.counter) {
             clearInterval(this.counter);
+            this.counter = undefined;
         }
     }
 
