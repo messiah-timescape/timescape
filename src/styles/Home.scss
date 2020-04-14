@@ -196,6 +196,14 @@ ion-badge {
   transform: translate(-50.5%, 0);
 }
 
+#cancel-timer {
+  width: 80%;
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  transform: translate(-50.5%, 0);
+}
+
 #stop-timer {
   background-color: var(--ion-color-primary);
 }
