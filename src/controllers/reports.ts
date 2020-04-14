@@ -8,7 +8,7 @@ import { Period } from "../models/task";
  */
 
 /* A sector of the pie chart in reports */
-class Sector {
+export class Sector {
     category!: String; // Tag.name | "Break" | "Other" ("Other" is cateogry of Task where Task.tag === undefined)
     duration!: Duration; // is there a way to require fields 'hours' and 'seconds'?
     
