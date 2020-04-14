@@ -12,7 +12,7 @@ export let userlogin_email_password = (email: string, password: string) => {
       if (data && data.user) {
         let user = FirebaseUser.create_from_firebase(data.user);
 
-        await user.user()
+        await user.user();
         return user;
       } else {
         throw new Error("User not logged in");

@@ -22,9 +22,13 @@ const Register: React.FC = () => {
     });
   }
 
-  function handleSubmitSignUp(email_input: string, password_input: string) {
+  function handleSubmitSignUp(name_input: string, email_input: string, password_input: string) {
     setLoading(true);
-    usersignup({ email: email_input, password: password_input }).then(
+    usersignup({
+      display_name: name_input,
+      email: email_input,
+      password: password_input
+    }).then(
       successfulRegister,
       failedRegister
     );
@@ -45,11 +49,16 @@ const Register: React.FC = () => {
 
   function handleKeyDown(e: any) {
     if (e.key === "Enter") {
-      handleSubmitSignUp(
-        (document.getElementById("email-field") as HTMLInputElement).value,
-        (document.getElementById("password-field") as HTMLInputElement).value
-      );
+      submit_form();
     }
+  }
+
+  function submit_form() {
+    handleSubmitSignUp(
+      (document.getElementById("name-field") as HTMLInputElement).value,
+      (document.getElementById("email-field") as HTMLInputElement).value,
+      (document.getElementById("password-field") as HTMLInputElement).value
+    );
   }
 
   return (
@@ -60,6 +69,17 @@ const Register: React.FC = () => {
           <h1>Register</h1>
 
           <form className="form-register">
+            <IonItem className="input">
+              <IonInput
+                name="name"
+                placeholder="Name"
+                id="name-field"
+                required
+                onKeyDown={e => {
+                  handleKeyDown(e);
+                }}
+              ></IonInput>
+            </IonItem>
             <IonItem className="input">
               <IonInput
                 name="email"
@@ -106,12 +126,7 @@ const Register: React.FC = () => {
             ) : (
               <IonButton
                 className="button"
-                onClick={() =>
-                  handleSubmitSignUp(
-                    (document.getElementById("email-field") as HTMLInputElement).value,
-                    (document.getElementById("password-field") as HTMLInputElement).value
-                  )
-                }
+                onClick={submit_form}
               >
                 Register
               </IonButton>

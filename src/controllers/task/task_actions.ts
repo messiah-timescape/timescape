@@ -28,6 +28,9 @@ export let update_task = async (task_id:string, input_task:Partial<Task>)=> {
 export let complete_task = async (task_id: string) => {
     let curr_user = await CurrentUser.get_loggedin();
     let task = await curr_user.tasks!.findById(task_id);
-    task.completed = true;
+    task.completed = !task.completed;
+    if (task.tag){
+        await task.tag.promise;
+    }
     return await curr_user.tasks!.update(task);
 };

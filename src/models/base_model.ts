@@ -1,6 +1,7 @@
 import { BaseFirestoreRepository, IEntity } from "fireorm";
 import { classToPlain } from "class-transformer";
 import { replace_undefined_by_null } from "../utils/replace_undefined_with_null";
+import { firestore } from "firebase";
 
 export default abstract class BaseModel {
     id: string = '';
@@ -47,10 +48,21 @@ export class BaseRepo<T extends IEntity> extends BaseFirestoreRepository<T> {
                 return obj;
             }
         }
+
+        
         // let old_extractTFromDocSnap = this.extractTFromDocSnap;
         // this.extractTFromDocSnap = (doc: firestore.DocumentSnapshot): T => {
         //     return old_extractTFromDocSnap(doc);
         // }
 
+    }
+
+    init_plain(doc: firestore.DocumentSnapshot) :T|undefined {
+        if (doc){
+            let entity = this.extractTFromDocSnap(doc);
+            if ( entity )
+                this.initializeSubCollections(entity);
+            return entity;
+        }
     }
 }

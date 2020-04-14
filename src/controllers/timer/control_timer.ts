@@ -7,18 +7,26 @@ import { complete_task } from "../task/task_actions";
 import moment from "moment";
 import { UsermodelDto } from "../../models/field_types";
 
-export async function get_controller() {
-    return new TimerController((await CurrentUser.get_loggedin()));
+export async function get_controller(state_setter:Function) {
+    let ctrl = new TimerController((await CurrentUser.get_loggedin()), state_setter);
+    return ctrl;
 }
 
-class TimerController {
+export class TimerController {
     user:User;
     timer:Timer;
     _timer_value?:moment.Duration;
 
-    constructor(user:User) {
+    constructor(user:User, state_setter:Function) {
         this.user = user;
         this.timer = user.timer;
+        this.state_setter = state_setter;
+        if ( this.timer.is_started() ) {
+            this.state_setter(this.timer_value)
+            if ( !this.timer.is_onbreak() ) {
+                this.start_counter();
+            }
+        }
     }
 
     async modify_timer( modifier:Function ) {
@@ -50,6 +58,9 @@ class TimerController {
                 this.timer.timer_start = moment();
                 console.log("Let's gooo!", this.timer.timer_start);
             }
+        }).then( passthrough => {
+            this.start_counter();
+            return passthrough;
         });
     }
 
@@ -57,6 +68,9 @@ class TimerController {
         return this.modify_timer( () => {
             this.timer.break_start = moment();
             console.log("Break time!");
+        }).then( passthrough => {
+            this.pause_counter();
+            return passthrough;
         });
     }
 
@@ -74,7 +88,9 @@ class TimerController {
             if (unset_currenttask) {
                 this.timer.current_task = undefined;
             }
-            console.log("Alright we're done here");
+        }).then(passthrough => {
+            this.stop_counter();
+            return passthrough;
         });
     }
 
@@ -121,6 +137,9 @@ class TimerController {
     stop_break_button_enabled():boolean {
         return !!this.timer.break_start;
     }
+    
+    state_setter:Function;
+    counter?:NodeJS.Timeout;
 
     get timer_value():moment.Duration{
         if (!this._timer_value) {
@@ -128,20 +147,28 @@ class TimerController {
         }
         return this._timer_value;
     }
-    
-    counter?:NodeJS.Timeout;
-    link_state(set_state_fn:Function) { // Links timer to the UI
-        set_state_fn(this.timer_value);
+
+    reset_counter(){
+        this._timer_value = moment.duration(0);
+    }
+
+    start_counter() {
         this.counter = setInterval(()=> {
             this.timer_value.add(1000);
-            set_state_fn(this.timer_value);
-        }, 1000);
+            this.state_setter(this.timer_value);
+        }, 1000);   
     }
-    
-    unlink_state() {
+
+    pause_counter() {
         if (this.counter) {
             clearInterval(this.counter);
         }
+    }
+
+    stop_counter() {
+        this.pause_counter();
+        this.reset_counter();
+        this.state_setter(this.timer_value);
     }
 }
 

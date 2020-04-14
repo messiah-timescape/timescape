@@ -3,7 +3,7 @@ import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { checkmark, document, stopwatch, calendar, settings } from "ionicons/icons";
+import { checkmark, document, stopwatch, settings } from "ionicons/icons";
 import Home from "../../pages/home";
 import Login from "../../pages/login";
 import Register from "../../pages/register";

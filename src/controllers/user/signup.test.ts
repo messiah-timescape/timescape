@@ -35,10 +35,10 @@ describe('User Signup with Email and Password', ()=> {
        }); 
     });
     it('creates the new user in db', done=> {
-        expect.assertions(3);
         return usersignup(new_user).then(async (user_from_db)=> {
             if (user_from_db) {
                 let user = await user_from_db.user();
+                await user.default_tags_promise;
                 uid = user.id;
                 expect(new_user.email).toBe(user_from_db.email);
                 let tags = await user.tags.find();

@@ -32,7 +32,7 @@ describe('User Login with Email and Password', ()=>{
             test_run = true;
             expect.assertions(2);
             return TestLoginActions.email_password().then(async (user:any)=>{
-                let current_user = await CurrentUser.get_user();
+                let current_user = await CurrentUser.get_loggedin();
                 if(current_user){
                     expect(current_user.email).toBe(auth_user.email);
                 }

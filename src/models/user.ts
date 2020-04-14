@@ -9,6 +9,7 @@ import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
 import { Timer } from "./timer";
+import { resolve } from "dns";
 
 export enum UserProvider{
     Google = "Google",
@@ -46,6 +47,7 @@ export class FirebaseUser{
         return (await this.create_or_load_user()).user;
     }
 
+
     async create_or_load_user():Promise<{user:User,new:boolean}> {
         let org_user = await this.load_user();
         
@@ -76,6 +78,7 @@ export class FirebaseUser{
 }
 
 
+@Collection('user_settings')
 export class UserSettings {
     constructor(init_fields?:object) {
         Object.assign(this, init_fields);
@@ -111,14 +114,14 @@ export class User extends BaseModel{
     display_name!: string;
 
     @Type(() => UserSettings)
-    settings: UserSettings = {
+    settings: UserSettings = new UserSettings({
         work_start_time:moment().hours(8),
         work_stop_time: moment().hours(16),
         work_days:[Weekdays.Monday],
         sleep_start:moment().hours(20),
         sleep_stop:moment().hours(7),
         overwork_limit: moment.duration(3, 'hours')
-    };
+    });
 
 
     @Type(() => Timer)
@@ -145,23 +148,28 @@ export class User extends BaseModel{
         });
     }
 
+    default_tags_promise;
     @Exclude()
     set_default_tags() {
-        this.tags.find().then((tag_list) => {
-            if ( tag_list.length === 0) {
-                console.log("Setting default tags", tag_list);
-                let default_tags = {
-                     "School": TagColors.blue,
-                     "Chores": TagColors.green, 
-                     "Work": TagColors.red,
-                     "Hobbies": TagColors.purple
-                };
-                this.tags.runTransaction( async tran => {
-                    for ( let tag in default_tags) {
-                        tran.create(new Tag().fill_fields({name:tag, color: default_tags[tag]}));
-                    }
-                });
-            }
+        let promises:Promise<Tag>[] = [];
+        this.default_tags_promise = new Promise(resolve => {
+            this.tags.find().then((tag_list) => {
+                if ( tag_list.length === 0) {
+                    let default_tags = {
+                        "School": TagColors.blue,
+                        "Chores": TagColors.green, 
+                        "Work": TagColors.red,
+                        "Hobbies": TagColors.purple
+                    };
+                    this.tags.runTransaction( async tran => {
+                        for ( let tag in default_tags) {
+                            promises.push(tran.create(new Tag().fill_fields({name:tag, color: default_tags[tag]})));
+                        }
+                    }).then(resolve);
+                } else {
+                    resolve();
+                }
+            });
         });
     }
 }
