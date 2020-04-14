@@ -9,7 +9,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent
+  IonCardContent,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import breakIcon from "../assets/breakIcon.png";
@@ -46,7 +46,7 @@ const Home: React.FC = () => {
     };
 
     CheckAuth();
-    task_sync(tasks => {
+    task_sync((tasks) => {
       syncTasks(tasks);
     });
 
@@ -83,17 +83,15 @@ const Home: React.FC = () => {
     updateHours(duration.hours());
   }
 
-  
-
   function toggleTimer() {
-    if (timer_controller){
+    if (timer_controller) {
       setTimerView(!timerView);
       if (!timerView) {
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.start();
         });
       } else {
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.stop();
         });
       }
@@ -104,18 +102,17 @@ const Home: React.FC = () => {
 
   function pauseTimer() {
     if (timer_controller) {
-
       setPaused(!paused);
       if (!paused) {
         console.log("Timer paused");
 
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.start_break();
         });
       } else {
         console.log("Timer resumed");
 
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.start();
         });
       }
@@ -124,7 +121,7 @@ const Home: React.FC = () => {
 
   function complete() {
     if (timer_controller) {
-      timer_controller.then(controller => {
+      timer_controller.then((controller) => {
         showCompleteTask(true);
         setTimeout(() => {
           showCompleteTask(false);
@@ -141,7 +138,7 @@ const Home: React.FC = () => {
     return (
       <React.Fragment>
         <h1>Select a Task</h1>
-        {tasks.map(taskGroup => {
+        {tasks.map((taskGroup) => {
           return (
             <React.Fragment key={taskGroup.index + "frag"}>
               <h3 className="date" key={taskGroup.index + "date"}>
@@ -149,7 +146,7 @@ const Home: React.FC = () => {
               </h3>
 
               {taskGroup.tasks.length > 0 ? (
-                taskGroup.tasks.map(task => {
+                taskGroup.tasks.map((task) => {
                   return (
                     <IonCard
                       key={task.id + "item"}
@@ -172,9 +169,7 @@ const Home: React.FC = () => {
                           <p>{task.name}</p>
                           {task.tag ? (
                             <p className={`tag ${task.tag.model.color}`}>{task.tag.model.name}</p>
-                          ) : (
-                            undefined
-                          )}
+                          ) : undefined}
                         </div>
                       </div>
                     </IonCard>
@@ -191,18 +186,20 @@ const Home: React.FC = () => {
   };
 
   const SelectTaskModal = () => {
-    return <IonContent className="ion-padding">
-      {loading ? <LoadingIcon /> : tasksHTML}
-      <IonButton
-        id="cancel-timer"
-        fill="outline"
-        onClick={() => {
-          setShowSelectTask(false);
-        }}
-      >
-        Cancel
-      </IonButton>
-    </IonContent>;
+    return (
+      <IonContent className="ion-padding">
+        {loading ? <LoadingIcon /> : tasksHTML}
+        <IonButton
+          id="cancel-timer"
+          fill="outline"
+          onClick={() => {
+            setShowSelectTask(false);
+          }}
+        >
+          Cancel
+        </IonButton>
+      </IonContent>
+    );
   };
 
   const LoadingIcon = () => {
@@ -219,7 +216,7 @@ const Home: React.FC = () => {
 
   CheckAuth();
 
-  token.then(function(result) {
+  token.then(function (result) {
     if (result) {
       setCurrentUser(result.display_name || result.email);
     }
@@ -316,9 +313,7 @@ const Home: React.FC = () => {
                   <p className={`tag ${currentTask.tag ? currentTask.tag.model.color : undefined}`}>
                     {currentTask.tag ? currentTask.tag.model.name : undefined}
                   </p>
-                ) : (
-                  undefined
-                )}
+                ) : undefined}
               </IonCardContent>
             </IonCard>
             <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>
@@ -333,8 +328,10 @@ const Home: React.FC = () => {
           cssClass="complete-task-modal"
           backdropDismiss={false}
         >
-          <img src={taskCompleteIcon} alt="" />
-          <h2>Task Complete!</h2>
+          <div className="complete-task-div">
+            <img src={taskCompleteIcon} alt="" />
+            <h2>Task Complete!</h2>
+          </div>
         </IonModal>
       </IonPage>
     </React.Fragment>
