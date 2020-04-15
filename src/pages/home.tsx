@@ -30,7 +30,6 @@ const Home: React.FC = () => {
   const [paused, setPaused] = useState(false);
   const [completeTask, showCompleteTask] = useState(false);
   const [showSelectTask, setShowSelectTask] = useState(false);
-  const [homeBG, setHomeBG] = useState(true);
   const [seconds, updateSeconds] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
   const [currentTask, setCurrentTask]: [any, any] = useState();
@@ -91,12 +90,12 @@ const Home: React.FC = () => {
         timer_controller.then((ctrl) => {
           ctrl.start();
         });
-        setHomeBG(false);
+        
       } else {
         timer_controller.then((ctrl) => {
           ctrl.stop();
         });
-        setHomeBG(true);
+        
       }
       setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
     }
@@ -130,7 +129,6 @@ const Home: React.FC = () => {
         }, 2000);
         controller.complete_task().then(() => {
           setTimerView(false);
-          setHomeBG(true);
         });
       });
     }
@@ -188,20 +186,20 @@ const Home: React.FC = () => {
   };
 
   const SelectTaskModal = () => {
-    return (
-      <IonContent className="ion-padding">
-        {loading ? <LoadingIcon /> : tasksHTML}
-        <IonButton
-          id="cancel-timer"
-          fill="outline"
-          onClick={() => {
-            setShowSelectTask(false);
-          }}
-        >
-          Cancel
-        </IonButton>
-      </IonContent>
-    );
+    return <IonContent className="select-modal">
+      {loading ? <LoadingIcon /> : tasksHTML}
+
+      <IonButton
+            id="cancel-timer"
+            fill="outline"
+            hidden={!showSelectTask}
+            onClick={() => {
+              setShowSelectTask(false);
+            }}
+          >
+        Cancel
+      </IonButton>
+    </IonContent>;
   };
 
   const LoadingIcon = () => {
@@ -227,17 +225,17 @@ const Home: React.FC = () => {
   return (
     <React.Fragment>
       <IonPage>
-        <IonContent className="ion-padding" id={homeBG ? "home-page" : ""}>
+        <IonContent className="ion-padding" id={!timerView ? "home-page" : ""}>
           {showSelectTask ? <SelectTaskModal /> : undefined}
           <Fade top>
-            <div className="header">
+            <div className="header" hidden={timerView || showSelectTask}>
               <h2>Hi {currentUser}</h2>
               <p>How's your day going?</p>
             </div>
             {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
             <IonButton
-              hidden={timerView}
+              hidden={timerView || showSelectTask}
               onClick={() => {
                 userlogout().then(() => {
                   let url = window.location.href.split("/");
