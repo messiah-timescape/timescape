@@ -85,12 +85,10 @@ const Home: React.FC = () => {
         timer_controller.then((ctrl) => {
           ctrl.start();
         });
-        
       } else {
         timer_controller.then((ctrl) => {
           ctrl.stop();
         });
-        
       }
       setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
     }
@@ -175,7 +173,9 @@ const Home: React.FC = () => {
                   );
                 })
               ) : (
-                <React.Fragment />
+                <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+                  No tasks here!
+                </h4>
               )}
             </React.Fragment>
           );
@@ -185,20 +185,22 @@ const Home: React.FC = () => {
   };
 
   const SelectTaskModal = () => {
-    return <IonContent className="select-modal">
-      {loading ? <LoadingIcon /> : tasksHTML}
+    return (
+      <IonContent className="select-modal">
+        {loading ? <LoadingIcon /> : tasksHTML}
 
-      <IonButton
-            id="cancel-timer"
-            fill="outline"
-            hidden={!showSelectTask}
-            onClick={() => {
-              setShowSelectTask(false);
-            }}
-          >
-        Cancel
-      </IonButton>
-    </IonContent>;
+        <IonButton
+          id="cancel-timer"
+          fill="outline"
+          hidden={!showSelectTask}
+          onClick={() => {
+            setShowSelectTask(false);
+          }}
+        >
+          Cancel
+        </IonButton>
+      </IonContent>
+    );
   };
 
   const LoadingIcon = () => {
