@@ -1,7 +1,13 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
+import {
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { checkmark, document, stopwatch, settings } from "ionicons/icons";
 import Home from "../../pages/home";
@@ -11,6 +17,7 @@ import AddTask from "../../pages/addTask";
 import Todo from "../../pages/todo";
 import Intro from "../../pages/intro";
 import Survey from "../../pages/survey";
+import Reports from "../../pages/reports";
 import init_app from "../../init_app";
 
 /* Core CSS required for Ionic components to work properly */
@@ -46,41 +53,34 @@ const App: React.FC = () => {
             <Route path="/login" component={Login} exact={true} />
             <Route path="/register" component={Register} exact={true} />
             <Route path="/addtask" component={AddTask} exact={true} />
+            <Route path="/reports" component={Reports} exact={true} />
             <Route path="/todo" component={Todo} exact={true} />
             <Route path="/intro" component={Intro} exact={true} />
             <Route path="/survey" component={Survey} exact={true} />
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 
-          {currentTabString !== "login" &&
-          currentTabString !== "register" &&
-          currentTabString !== "intro" &&
-          currentTabString !== "survey" &&
-          currentTabString !== "addtask" ? (
-            <IonTabBar slot="bottom">
-              <IonTabButton tab="todo" href="/todo">
-                <IonIcon icon={checkmark} />
-                <IonLabel>To-Do</IonLabel>
-              </IonTabButton>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="todo" href="/todo">
+              <IonIcon icon={checkmark} />
+              <IonLabel>To-Do</IonLabel>
+            </IonTabButton>
 
-              <IonTabButton tab="reports" href="/reports">
-                <IonIcon icon={document} />
-                <IonLabel>Reports</IonLabel>
-              </IonTabButton>
+            <IonTabButton tab="reports" href="/reports">
+              <IonIcon icon={document} />
+              <IonLabel>Reports</IonLabel>
+            </IonTabButton>
 
-              <IonTabButton tab="home" href="/home">
-                <IonIcon icon={stopwatch} />
-                <IonLabel>Dashboard</IonLabel>
-              </IonTabButton>
+            <IonTabButton tab="home" href="/home">
+              <IonIcon icon={stopwatch} />
+              <IonLabel>Dashboard</IonLabel>
+            </IonTabButton>
 
-              <IonTabButton tab="settings" href="/settings">
-                <IonIcon icon={settings} />
-                <IonLabel>Settings</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          ) : (
-            <IonTabBar></IonTabBar>
-          )}
+            <IonTabButton tab="settings" href="/settings">
+              <IonIcon icon={settings} />
+              <IonLabel>Settings</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
         </IonTabs>
       </IonReactRouter>
     </IonApp>
