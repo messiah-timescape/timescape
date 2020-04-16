@@ -39,9 +39,6 @@ import "@ionic/react/css/display.css";
 import "../theme/variables.scss";
 
 const App: React.FC = () => {
-  let currentTab = window.location.href.split("/");
-  let currentTabString = currentTab[currentTab.length - 1];
-
   init_app();
 
   return (
