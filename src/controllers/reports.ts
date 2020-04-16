@@ -11,7 +11,7 @@ import { get_settings } from "./user/settings";
  * A lot of functions in pseudo code @ end of file can be reused in other get<Frequency>Report()
  */
 
-/* A data object to hold all the information we want */
+/* A data object to hold all the information we want from the tasks for the report */
 export class ReportTaskInfo {
     completed!:Boolean;
     work_period!:Period[];
@@ -38,11 +38,12 @@ export class Sector {
 export class Report {
     id: String = ""; // will we be using this? Brainstorm how to index reports...
 
-    time_frame!: Moment | Moment[]; // review type; might want to change since different for each report
+    time_frame!: Period; // review type; might want to change since different for each report
     total_focus_time!: Duration; // again, is there a way to require these fields
     tasks_completed!:Number;
     focus_percentage!:Number; // 65 will resemble 65%
     chart_sectors!: Sector[];
+    report_task_collection!:ReportTaskInfo[];
 
     constructor(init_fields:object) { // REFACTOR: right now it accepts any object
         Object.assign(this, init_fields);
@@ -50,30 +51,48 @@ export class Report {
     }
 
     public getData() {
+        // var data:ReportTaskInfo[];
         // var query = firebase.firestore()
         // .collectionGroup('tasks')
-        // .where('work_period', '<=', <Period>)
-        // .where('work_period', '>=', <Period>);
+        // .where('work_period', '>=', this.time_frame.start) // this query needs work
+        // .where('work_period', '<=', this.time_frame.end);
         // query.get().then((snapShot)=> {
-        //     snapShot.forEach((doc)=> {
+            // snapShot.forEach((doc)=> {
+            //     let tag = doc.tag;
+            //     let completed = doc.completed;
+            //     for(key in doc.work_periods) {
+            //         if (doc.work_periods[key].isBetween(this.time_frame.start, this.time_frame.end);
+            //             data.push(new ReportTaskInfo({
+            //                 completed: completed,
+            //                 work_period: work_period[key],
+            //                 tag: tag
+            //             }));
+            //     }
+            // }
                 //// put each doc.tag and doc.work_periods 
                 //// together in array of Data objects?
         //     })
         // })
         var work_task = new ReportTaskInfo({
-            work_period: { start: moment().subtract(2, "days"), end: moment() },
+            completed: true,
+            work_period: { start: moment().subtract(2, "days").subtract(3, "hours"), end: moment().subtract(2, "days") },
             tag: "Work"
-        })
+        });
         var school_task = new ReportTaskInfo ({
-            work_period: {start: moment().subtract(4, "days"), end: moment().subtract(2, "days").hour(8).minutes(24) },
+            completed: true,
+            work_period: { start: moment().subtract(3, "days").hour(20).minutes(24), end: moment().subtract(3, "days") },
             tag: "School"
-        })
+        });
+        var chore_task = new ReportTaskInfo({
+            completed: false,
+            work_period: { start: moment().subtract(1, "day").subtract(4, "hours"), end: moment().subtract(1, "day") },
+            tag: "Chore"
+        });
 
-        var data = [ work_task, school_task ];
-        return data;
+        this.report_task_collection = [ work_task, school_task, chore_task];
     }
 
-    public async fill_calculations() { // should this be async?
+    public async fill_calculations() {
         var data = this.getData();
 
         // make declarations for all calculations
@@ -84,8 +103,8 @@ export class Report {
             sector:Sector,
             chart_sector:Sector[] = [];
 
-        for (const key in data) {
-            var obj = data[key];
+        for (const key in this.report_task_collection) {
+            var obj = this.report_task_collection[key];
             // reset focus_time for new task info
             focus_time = 0;
             // loop through each property of ReportTaskInfo
@@ -126,19 +145,22 @@ export class Report {
             chart_sector.push(sector);
         }
 /************* the following is for focus_percentage*/
-        var user_work_start, user_work_stop;
-        // retrieve user settings; I'm not sure how to do this when I 
-        // can't make this calcFocusPercentage() async but also can't
-        // use a .then(()=> {...}) on the get_settings()
-        var settings = await get_settings();
-        user_work_start = settings.work_start_time;
-        user_work_stop = settings.work_stop_time;
+        // var user_work_start, user_work_stop;
+        // // retrieve user settings; I'm not sure how to do this when I 
+        // // can't make this calcFocusPercentage() async but also can't
+        // // use a .then(()=> {...}) on the get_settings()
+        // var settings = await get_settings();
+        // user_work_start = settings.work_start_time;
+        // user_work_stop = settings.work_stop_time;
            
-        var totalWorkTime = user_work_stop - user_work_start; // won't work for same reasons as fill_calculations() 
+        // var totalWorkTime = user_work_stop - user_work_start; // won't work for same reasons as fill_calculations() 
+        var start_work:any = moment().hour(8).minutes(30), stop_work:any = moment().hour(13).minutes(30);
+        var totalWorkTime = stop_work - start_work;
+
  /*************/
         this.total_focus_time = moment.duration(total_focus_time); // will change once focus_time is properly calculated
         this.tasks_completed = completed;
-        this.focus_percentage = (focus_time / totalWorkTime) * 100;
+        this.focus_percentage = Math.round((focus_time / totalWorkTime) * 100);
         this.chart_sectors = chart_sector;
 
         return this;
@@ -151,15 +173,17 @@ class Timeline {
 
 export class DailyReport extends Report {
     timeline!: Period[]; // Can we make use of Period class, or not since is SubCollection?
-    static getDailyReport(page) {
-        let report = new Report({time_frame: moment()}).getData();
+    static getDailyReport(page, time_frame) {
+        let report = new DailyReport(time_frame).getData();
+        // populate timeline
+        return report;
     }
     //
 }
 
 export class WeeklyReport extends Report {
     graph!: (Duration | Number)[];
-    static getWeeklyReport(page) {
+    static getWeeklyReport(page, time_frame) {
         //
     }
     //
@@ -167,7 +191,7 @@ export class WeeklyReport extends Report {
 
 export class MonthlyReport extends Report {
     graph!: (Duration | Number)[];
-    static getMonthlyReport(page) {
+    static getMonthlyReport(page, time_frame) {
         //
     }
     //
@@ -177,16 +201,19 @@ export class MonthlyReport extends Report {
 export function getReport(type:String, page:Number, time_frame:Moment[]){
     switch (type.toLowerCase()) {
         case "daily":
-            DailyReport.getDailyReport(page);
+            DailyReport.getDailyReport(page, time_frame);
             break;
         case "weekly":
-            WeeklyReport.getWeeklyReport(page);
+            WeeklyReport.getWeeklyReport(page, time_frame);
             break;
         case "monthly":
-            MonthlyReport.getMonthlyReport(page);
+            MonthlyReport.getMonthlyReport(page, time_frame);
             break;
         default:
-            DailyReport.getDailyReport(page);
+            let today:Period = new Period();
+            today.start = moment().startOf('day');
+            today.end = moment();
+            DailyReport.getDailyReport(page, today);
             break;        
     }
 }

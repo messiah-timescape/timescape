@@ -1,11 +1,9 @@
-// import { Report, Sector } from "./reports";
+import { Report } from "./reports";
+import { Period } from "../models";
 import moment from "moment";
-import firebase, { app } from "firebase";
 import init_app from "../init_app";
 import { TestLoginActions } from "./user/login.test";
-import CurrentUser from "./user";
-import { ReportTaskInfo } from "./reports";
-import { Period } from "../models";
+import firebase from "firebase";
 
 describe('testing queries', ()=> {
     beforeAll(async () => {
@@ -13,34 +11,65 @@ describe('testing queries', ()=> {
         return await TestLoginActions.email_password();
     });
 
-    it('i want to see if this query will work', async ()=> {
-        let data = firebase.firestore().collectionGroup('tasks').where('name', "==", "Changes order from 1 to 2");
-        // console.log(await data.get());
-        // let curr_user = await CurrentUser.get_loggedin();
-        // let task = curr_user.tasks.findOne();
-        // console.log(await task);
-        // var config = {
-        //     apiKey: process.env.REACT_APP_API_KEY,
-        //     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-        //     projectId: process.env.REACT_APP_ID
-        // }
-        // var app = firebase.initializeApp(config);
-        // var db = firebase.firestore(app);
-        // let data = db.collectionGroup('tasks').where('name', "==", "Changes order from 1 to 2");
-        console.log("Do we get past the query?");
-        console.log(`I think this is the query builder: ${data}\n`);
-        data.get().then(function (querySnapshot) {
-            console.log("Is get() activated?");
-            querySnapshot.forEach(function (doc) {
-                console.log("Is the forEach being used?");
-                console.log(doc.id, ' => ', doc.data());
-                // var obj = doc.work_periods;
-                // for(let key in obj) {
-
-                // }
-            });
-        });
+    it('runs some functions from report.ts', async done=>{
+        let time_frame:Period = new Period();
+        time_frame.start = moment().subtract(4, "days");
+        time_frame.end = moment();
+        var report = new Report({ time_frame: time_frame });
+        report.getData(); 
+        report = await report.fill_calculations();
+        console.log(report);
+        done();
     });
+    
+    afterAll(async ()=> {
+        firebase.auth().signOut();
+    })
+});
+
+// import { Report, Sector } from "./reports";
+// import moment from "moment";
+// import firebase, { app } from "firebase";
+// import init_app from "../init_app";
+// import { TestLoginActions } from "./user/login.test";
+// import CurrentUser from "./user";
+// import { ReportTaskInfo } from "./reports";
+// import { Period } from "../models";
+
+// describe('testing queries', ()=> {
+//     beforeAll(async () => {
+//         init_app();
+//         return await TestLoginActions.email_password();
+//     });
+
+//     it('i want to see if this query will work', async ()=> {
+//         let data = firebase.firestore().collectionGroup('tasks').where('name', "==", "Changes order from 1 to 2");
+//         // console.log(await data.get());
+//         // let curr_user = await CurrentUser.get_loggedin();
+//         // let task = curr_user.tasks.findOne();
+//         // console.log(await task);
+//         // var config = {
+//         //     apiKey: process.env.REACT_APP_API_KEY,
+//         //     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+//         //     projectId: process.env.REACT_APP_ID
+//         // }
+//         // var app = firebase.initializeApp(config);
+//         // var db = firebase.firestore(app);
+//         // let data = db.collectionGroup('tasks').where('name', "==", "Changes order from 1 to 2");
+//         console.log("Do we get past the query?");
+//         console.log(`I think this is the query builder: ${data}\n`);
+//         data.get().then(function (querySnapshot) {
+//             console.log("Is get() activated?");
+//             querySnapshot.forEach(function (doc) {
+//                 console.log("Is the forEach being used?");
+//                 console.log(doc.id, ' => ', doc.data());
+//                 // var obj = doc.work_periods;
+//                 // for(let key in obj) {
+
+//                 // }
+//             });
+//         });
+//     });
 
     // it('iterating through an array of objects', done=> {
     //     var period:Period = new Period();
@@ -96,9 +125,9 @@ describe('testing queries', ()=> {
     //     done();
     // });
 
-    afterAll(async ()=> {
-        firebase.auth().signOut();
-    })
+//     afterAll(async ()=> {
+//         firebase.auth().signOut();
+//     })
 
-});
+// });
 
