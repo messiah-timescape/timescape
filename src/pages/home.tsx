@@ -37,10 +37,8 @@ const Home: React.FC = () => {
   const [hours, updateHours] = useState(0);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
-
-    const syncTasks = (taskList) =>{
+    const syncTasks = (taskList) => {
       setTasksHTML(GenerateTasks(taskList));
     };
 
@@ -49,20 +47,18 @@ const Home: React.FC = () => {
       syncTasks(tasks);
     });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect( () => {
-
-
-    if ( !timer_controller )
-      timer_controller = get_controller(state_setter).then( async ctrl => {
+  useEffect(() => {
+    if (!timer_controller)
+      timer_controller = get_controller(state_setter).then(async (ctrl) => {
         if (ctrl.timer.is_started()) {
           await ctrl.timer.current_task!.promise;
           if (ctrl.timer.current_task!.model!.tag)
             await ctrl.timer.current_task!.model!.tag.promise;
           setCurrentTask(ctrl.timer.current_task!.model);
-          
+
           setTimerView(true);
           ctrl.start_counter();
         }
@@ -75,7 +71,6 @@ const Home: React.FC = () => {
     //   } )
     // };
   }, []);
-
 
   function state_setter(duration) {
     updateSeconds(duration.seconds());
@@ -134,7 +129,7 @@ const Home: React.FC = () => {
     }
   }
 
-  const GenerateTasks = (tasks )=> {
+  const GenerateTasks = (tasks) => {
     return (
       <React.Fragment>
         <h1>Select a Task</h1>
@@ -151,10 +146,12 @@ const Home: React.FC = () => {
                     <IonCard
                       key={task.id + "item"}
                       onClick={() => {
-                        if ( timer_controller ){
+                        if (timer_controller) {
                           setLoading(true);
                           timer_controller
-                            .then(controller => controller.set_current_task(task))
+                            .then((controller) =>
+                              controller.set_current_task(task)
+                            )
                             .then(() => {
                               setShowSelectTask(false);
                               toggleTimer();
@@ -168,7 +165,9 @@ const Home: React.FC = () => {
                         <div key={task.id + "task"}>
                           <p>{task.name}</p>
                           {task.tag ? (
-                            <p className={`tag ${task.tag.model.color}`}>{task.tag.model.name}</p>
+                            <p className={`tag ${task.tag.model.color}`}>
+                              {task.tag.model.name}
+                            </p>
                           ) : undefined}
                         </div>
                       </div>
@@ -272,10 +271,14 @@ const Home: React.FC = () => {
                 <IonGrid>
                   <IonRow>
                     <IonCol size="4" offset="0">
-                      <strong className="big-numbers">{hours.toString().padStart(2, "0")}</strong>
+                      <strong className="big-numbers">
+                        {hours.toString().padStart(2, "0")}
+                      </strong>
                     </IonCol>
                     <IonCol size="4">
-                      <strong className="big-numbers">{minutes.toString().padStart(2, "0")}</strong>
+                      <strong className="big-numbers">
+                        {minutes.toString().padStart(2, "0")}
+                      </strong>
                     </IonCol>
                     <IonCol size="4" className="small-numbers">
                       <span>{seconds.toString().padStart(2, "0")}</span>
@@ -287,7 +290,7 @@ const Home: React.FC = () => {
             <IonRow>
               <IonCol size="4" offset="2">
                 <div className="timer-icons" onClick={() => toggleTimer()}>
-                  <img src={stopIcon} alt=""/>
+                  <img src={stopIcon} alt="" />
                   <p id="yellow">Stop Working</p>
                 </div>
               </IonCol>
@@ -306,17 +309,27 @@ const Home: React.FC = () => {
             </p>
             <IonCard>
               <IonCardHeader>
-                <IonCardTitle>{currentTask ? currentTask.name : "No task set?"}</IonCardTitle>
+                <IonCardTitle>
+                  {currentTask ? currentTask.name : "No task set?"}
+                </IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
                 {currentTask ? (
-                  <p className={`tag ${currentTask.tag ? currentTask.tag.model.color : undefined}`}>
+                  <p
+                    className={`tag ${
+                      currentTask.tag ? currentTask.tag.model.color : undefined
+                    }`}
+                  >
                     {currentTask.tag ? currentTask.tag.model.name : undefined}
                   </p>
                 ) : undefined}
               </IonCardContent>
             </IonCard>
-            <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>
+            <IonButton
+              id="complete-task-button"
+              fill="outline"
+              onClick={() => complete()}
+            >
               Complete Task
             </IonButton>
           </div>

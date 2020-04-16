@@ -159,6 +159,9 @@ and (min-width : 1224px) {
     opacity: 1;
     border-radius: 50%;
     animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  .complete-task-div {
+    height: 100vh;
+    background: var(--ion-color-success);
   }
   
   .lds-ripple div:nth-child(2) {
@@ -466,4 +469,4 @@ and (max-device-width : 1024px) {
     --border-width: 1px;
     --border-color: var(--ion-color-success);
   }
-}// -----------End-Mobile---------------
+}

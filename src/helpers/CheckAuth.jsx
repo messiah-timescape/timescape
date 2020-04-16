@@ -6,7 +6,7 @@ const CheckAuth = () => {
   routeRedirect.setAttribute("from", "*");
   routeRedirect.setAttribute("to", "/login");
 
-  user.get_user().then(function(result) {
+  user.get_user().then(function (result) {
     if (!result) {
       let url = window.location.href.split("/");
       url[3] = "login";
