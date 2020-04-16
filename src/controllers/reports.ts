@@ -1,11 +1,27 @@
 import moment, { Duration, Moment } from "moment";
 import { Period } from "../models/task";
+import firebase from "firebase";
+import { Tag } from "../models";
+import { get_settings } from "./user/settings";
+
 // import { Tag } from "../models/tag";
 
 /**************** NOTE TO SELF *************
  * Weekly and Monthly reports need daily aggregations for productivity (focus_percentage and tasks_completed)
  * A lot of functions in pseudo code @ end of file can be reused in other get<Frequency>Report()
  */
+
+/* A data object to hold all the information we want */
+export class ReportTaskInfo {
+    completed!:Boolean;
+    work_period!:Period[];
+    tag!:"string";
+
+    constructor(init_fields:object) {
+        Object.assign(this, init_fields);
+        return this;
+    }
+}
 
 /* A sector of the pie chart in reports */
 export class Sector {
@@ -32,6 +48,101 @@ export class Report {
         Object.assign(this, init_fields);
         return this;
     }
+
+    public getData() {
+        // var query = firebase.firestore()
+        // .collectionGroup('tasks')
+        // .where('work_period', '<=', <Period>)
+        // .where('work_period', '>=', <Period>);
+        // query.get().then((snapShot)=> {
+        //     snapShot.forEach((doc)=> {
+                //// put each doc.tag and doc.work_periods 
+                //// together in array of Data objects?
+        //     })
+        // })
+        var work_task = new ReportTaskInfo({
+            work_period: { start: moment().subtract(2, "days"), end: moment() },
+            tag: "Work"
+        })
+        var school_task = new ReportTaskInfo ({
+            work_period: {start: moment().subtract(4, "days"), end: moment().subtract(2, "days").hour(8).minutes(24) },
+            tag: "School"
+        })
+
+        var data = [ work_task, school_task ];
+        return data;
+    }
+
+    public async fill_calculations() { // should this be async?
+        var data = this.getData();
+
+        // make declarations for all calculations
+        var total_focus_time = 0, 
+            completed = 0,
+            tag_name = "", 
+            focus_time = 0, 
+            sector:Sector,
+            chart_sector:Sector[] = [];
+
+        for (const key in data) {
+            var obj = data[key];
+            // reset focus_time for new task info
+            focus_time = 0;
+            // loop through each property of ReportTaskInfo
+            for(var prop in obj) {
+                if(obj.hasOwnProperty(prop)) {
+                    // find "completed" on ReportTaskInfo
+                    if (prop == "completed" && obj[prop] == true) {
+                        completed++;
+                    }
+                    // find "work_period" on ReportTaskInfo
+                    if(prop == "work_period") {
+                        let period = obj[prop];
+                        var start, end;
+                        // find the "start" and "end" values
+                        for (let val in period) {
+                            if (val == "start") {
+                                start = period[val];
+                            } else if (val == "end") {
+                                end = period[val];
+                            }
+                        }
+                    }
+                    // find tag and save
+                    if(prop == "tag") {
+                        tag_name = obj[prop];
+                    }
+                }
+            } 
+            // subtract start from end to find duration once done looping through properties
+            total_focus_time += end - start; // this will not work with current code
+            focus_time += end - start; // this also will not work with current code
+
+            sector = new Sector({
+                category: tag_name,
+                duration: focus_time
+            });  
+            
+            chart_sector.push(sector);
+        }
+/************* the following is for focus_percentage*/
+        var user_work_start, user_work_stop;
+        // retrieve user settings; I'm not sure how to do this when I 
+        // can't make this calcFocusPercentage() async but also can't
+        // use a .then(()=> {...}) on the get_settings()
+        var settings = await get_settings();
+        user_work_start = settings.work_start_time;
+        user_work_stop = settings.work_stop_time;
+           
+        var totalWorkTime = user_work_stop - user_work_start; // won't work for same reasons as fill_calculations() 
+ /*************/
+        this.total_focus_time = moment.duration(total_focus_time); // will change once focus_time is properly calculated
+        this.tasks_completed = completed;
+        this.focus_percentage = (focus_time / totalWorkTime) * 100;
+        this.chart_sectors = chart_sector;
+
+        return this;
+    }
 }
 
 class Timeline {
@@ -41,7 +152,7 @@ class Timeline {
 export class DailyReport extends Report {
     timeline!: Period[]; // Can we make use of Period class, or not since is SubCollection?
     static getDailyReport(page) {
-        //
+        let report = new Report({time_frame: moment()}).getData();
     }
     //
 }
@@ -63,7 +174,7 @@ export class MonthlyReport extends Report {
 }
 
 // Redirects to the correct get<Frequency>Report function
-export function getReport(type:String, page:Number){
+export function getReport(type:String, page:Number, time_frame:Moment[]){
     switch (type.toLowerCase()) {
         case "daily":
             DailyReport.getDailyReport(page);
@@ -88,16 +199,20 @@ export function getReport(type:String, page:Number){
 ******************************************
 * total_focus_time: for each task, take a work_period and subtract start from end, then add to sum
 * tasks_completed: count tasks where tasks.completed = true;
-* focus percentage: (total_focus_time / work_time ) * 100
+* focus_percentage: (total_focus_time / work_time ) * 100
 * chart_sectors: total duration per tag
 * timeline: 
 * *consider Google events
+
+
+* total_focus_time, tasks_completed, and chart_sectors all filter through ReportTaskInfo[]
+* focus_percentage uses total_focus_time
 
 /*
 * when getDailyReport is called...
 * // find tasks where tasks.work_periods.start.format("MM DD") === moment.startOf('day').fromNow().format("MM DD")
 * && tasks.work_periods.start.format("MM DD") = moment.subtract(7, 'days').format("MM DD")
-* and put in tasks: Task[]
+* and put in ReportTaskInfo: ReportTaskInfo[]
 *
 ****** TASKS COMPLETED **********
 *********************************
