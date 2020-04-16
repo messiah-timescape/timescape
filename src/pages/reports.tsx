@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { IonContent, IonCard, IonPage } from "@ionic/react";
 import "../styles/Reports.scss";
 import FusionCharts from "fusioncharts";

@@ -34,7 +34,7 @@ const Todo = () => {
   const [currentEditTask, setCurrentEditTask]: [any, any] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
-  const [tags, setTags] = useState();
+  const [tags, setTags] = useState<any>();
   const [renderTasks, setRenderTasks] = useState(false);
 
   useEffect(() => {

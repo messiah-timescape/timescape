@@ -65,11 +65,11 @@ const Home: React.FC = () => {
         return ctrl;
       });
 
-    // return () => {
-    //   timer_controller.then( async ctrl => {
-    //     ctrl.stop_counter()
-    //   } )
-    // };
+    return () => {
+      timer_controller.then( async ctrl => {
+        ctrl.stop_counter()
+      } )
+    };
   }, []);
 
   function state_setter(duration) {
