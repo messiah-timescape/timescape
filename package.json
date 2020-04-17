@@ -23,6 +23,7 @@
     "firebase": "^7.14.0",
     "fireorm": "^0.12.1",
     "fusioncharts": "^3.15.1-sr.1",
+    "googleapis": "^49.0.0",
     "ionicons": "^4.6.3",
     "moment": "^2.24.0",
     "react": "^16.13.1",

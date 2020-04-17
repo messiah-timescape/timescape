@@ -6,7 +6,6 @@ const CheckAuth = async () => {
   routeRedirect.setAttribute("from", "*");
   routeRedirect.setAttribute("to", "/login");
 
-  console.log("ASD");
   let result = await user.get_user();
   if (!result) {
     let url = window.location.href.split("/");
