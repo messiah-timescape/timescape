@@ -9,7 +9,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent
+  IonCardContent,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import breakIcon from "../assets/breakIcon.png";
@@ -21,7 +21,6 @@ import user from "../controllers/user/index";
 import userlogout from "../controllers/user/logout";
 import CheckAuth from "../helpers/CheckAuth";
 import { get_controller } from "../controllers/timer/control_timer";
-import CurrentUser from "../controllers/user/index";
 import Fade from "react-reveal/Fade";
 import task_sync from "../controllers/task/task_list";
 
@@ -31,7 +30,6 @@ const Home: React.FC = () => {
   const [paused, setPaused] = useState(false);
   const [completeTask, showCompleteTask] = useState(false);
   const [showSelectTask, setShowSelectTask] = useState(false);
-  const [homeBG, setHomeBG] = useState(true);
   const [seconds, updateSeconds] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
   const [currentTask, setCurrentTask]: [any, any] = useState();
@@ -40,27 +38,38 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    function syncTasks(taskList) {
-      setTasksHTML(GenerateTasks(taskList, timer_controller));
-    }
+    const syncTasks = (taskList) => {
+      setTasksHTML(GenerateTasks(taskList));
+    };
 
     CheckAuth();
-    task_sync(tasks => {
+    task_sync((tasks) => {
       syncTasks(tasks);
     });
 
-    timer_controller = get_controller(state_setter).then( async ctrl => {
-      if (ctrl.timer.is_started()) {
-        await ctrl.timer.current_task!.promise;
-        if (ctrl.timer.current_task!.model!.tag)
-          await ctrl.timer.current_task!.model!.tag.promise;
-        setCurrentTask(ctrl.timer.current_task!.model);
-        
-        setTimerView(true);
-      }
-      return ctrl;
-    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
+    if (!timer_controller)
+      timer_controller = get_controller(state_setter).then(async (ctrl) => {
+        if (ctrl.timer.is_started()) {
+          await ctrl.timer.current_task!.promise;
+          if (ctrl.timer.current_task!.model!.tag)
+            await ctrl.timer.current_task!.model!.tag.promise;
+          setCurrentTask(ctrl.timer.current_task!.model);
+
+          setTimerView(true);
+          ctrl.start_counter();
+        }
+        return ctrl;
+      });
+
+    return () => {
+      timer_controller.then( async ctrl => {
+        ctrl.stop_counter()
+      } )
+    };
   }, []);
 
   function state_setter(duration) {
@@ -69,39 +78,35 @@ const Home: React.FC = () => {
     updateHours(duration.hours());
   }
 
-  
-
   function toggleTimer() {
-    if (timer_controller){
+    if (timer_controller) {
       setTimerView(!timerView);
       if (!timerView) {
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.start();
         });
       } else {
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.stop();
         });
       }
       setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
-      setHomeBG(!homeBG);
     }
   }
 
   function pauseTimer() {
     if (timer_controller) {
-
       setPaused(!paused);
       if (!paused) {
         console.log("Timer paused");
 
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.start_break();
         });
       } else {
         console.log("Timer resumed");
 
-        timer_controller.then(ctrl => {
+        timer_controller.then((ctrl) => {
           ctrl.start();
         });
       }
@@ -110,24 +115,23 @@ const Home: React.FC = () => {
 
   function complete() {
     if (timer_controller) {
-      timer_controller.then(controller => {
+      timer_controller.then((controller) => {
         showCompleteTask(true);
         setTimeout(() => {
           showCompleteTask(false);
         }, 2000);
         controller.complete_task().then(() => {
           setTimerView(false);
-          setHomeBG(true);
         });
       });
     }
   }
 
-  const GenerateTasks = (tasks, timer_ctrl )=> {
+  const GenerateTasks = (tasks) => {
     return (
       <React.Fragment>
         <h1>Select a Task</h1>
-        {tasks.map(taskGroup => {
+        {tasks.map((taskGroup) => {
           return (
             <React.Fragment key={taskGroup.index + "frag"}>
               <h3 className="date" key={taskGroup.index + "date"}>
@@ -135,15 +139,17 @@ const Home: React.FC = () => {
               </h3>
 
               {taskGroup.tasks.length > 0 ? (
-                taskGroup.tasks.map(task => {
+                taskGroup.tasks.map((task) => {
                   return (
                     <IonCard
                       key={task.id + "item"}
                       onClick={() => {
-                        if ( timer_ctrl ){
+                        if (timer_controller) {
                           setLoading(true);
-                          timer_ctrl
-                            .then(controller => controller.set_current_task(task))
+                          timer_controller
+                            .then((controller) =>
+                              controller.set_current_task(task)
+                            )
                             .then(() => {
                               setShowSelectTask(false);
                               toggleTimer();
@@ -157,17 +163,19 @@ const Home: React.FC = () => {
                         <div key={task.id + "task"}>
                           <p>{task.name}</p>
                           {task.tag ? (
-                            <p className={`tag ${task.tag.model.color}`}>{task.tag.model.name}</p>
-                          ) : (
-                            undefined
-                          )}
+                            <p className={`tag ${task.tag.model.color}`}>
+                              {task.tag.model.name}
+                            </p>
+                          ) : undefined}
                         </div>
                       </div>
                     </IonCard>
                   );
                 })
               ) : (
-                <React.Fragment />
+                <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+                  No tasks here!
+                </h4>
               )}
             </React.Fragment>
           );
@@ -177,17 +185,11 @@ const Home: React.FC = () => {
   };
 
   const SelectTaskModal = () => {
-    return <IonContent className="ion-padding">
-      {loading ? <LoadingIcon /> : tasksHTML}
-      <IonButton
-        id="cancel-timer"
-        onClick={() => {
-          setShowSelectTask(false);
-        }}
-      >
-        CANCEL
-      </IonButton>
-    </IonContent>;
+    return (
+      <IonContent className="select-modal">
+        {loading ? <LoadingIcon /> : tasksHTML}
+      </IonContent>
+    );
   };
 
   const LoadingIcon = () => {
@@ -204,7 +206,7 @@ const Home: React.FC = () => {
 
   CheckAuth();
 
-  token.then(function(result) {
+  token.then(function (result) {
     if (result) {
       setCurrentUser(result.display_name || result.email);
     }
@@ -213,17 +215,17 @@ const Home: React.FC = () => {
   return (
     <React.Fragment>
       <IonPage>
-        <IonContent className="ion-padding" id={homeBG ? "home-page" : ""}>
+        <IonContent className="ion-padding" id={!timerView ? "home-page" : ""}>
           {showSelectTask ? <SelectTaskModal /> : undefined}
           <Fade top>
-            <div className="header">
+            <div className="header" hidden={timerView || showSelectTask}>
               <h2>Hi {currentUser}</h2>
               <p>How's your day going?</p>
             </div>
             {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
             <IonButton
-              hidden={timerView}
+              hidden={timerView || showSelectTask}
               onClick={() => {
                 userlogout().then(() => {
                   let url = window.location.href.split("/");
@@ -239,13 +241,23 @@ const Home: React.FC = () => {
             id="start-timer"
             expand="block"
             size="large"
-            hidden={timerView}
+            hidden={timerView || showSelectTask}
             onClick={() => {
               setShowSelectTask(true);
             }}
           >
             Start Working
           </IonButton>
+
+          <IonButton
+          id="cancel-timer"
+          hidden={!showSelectTask}
+          onClick={() => {
+            setShowSelectTask(false);
+          }}
+        >
+          Cancel
+        </IonButton>
         </IonContent>
 
         <IonModal
@@ -260,10 +272,14 @@ const Home: React.FC = () => {
                 <IonGrid>
                   <IonRow>
                     <IonCol size="4" offset="0">
-                      <strong className="big-numbers">{hours.toString().padStart(2, "0")}</strong>
+                      <strong className="big-numbers">
+                        {hours.toString().padStart(2, "0")}
+                      </strong>
                     </IonCol>
                     <IonCol size="4">
-                      <strong className="big-numbers">{minutes.toString().padStart(2, "0")}</strong>
+                      <strong className="big-numbers">
+                        {minutes.toString().padStart(2, "0")}
+                      </strong>
                     </IonCol>
                     <IonCol size="4" className="small-numbers">
                       <span>{seconds.toString().padStart(2, "0")}</span>
@@ -275,13 +291,13 @@ const Home: React.FC = () => {
             <IonRow>
               <IonCol size="4" offset="2">
                 <div className="timer-icons" onClick={() => toggleTimer()}>
-                  <img src={stopIcon} />
+                  <img src={stopIcon} alt="" />
                   <p id="yellow">Stop Working</p>
                 </div>
               </IonCol>
               <IonCol size="5">
                 <div className="timer-icons" onClick={() => pauseTimer()}>
-                  <img src={paused ? resumeIcon : breakIcon}></img>
+                  <img src={paused ? resumeIcon : breakIcon} alt=""></img>
                   <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
                 </div>
               </IonCol>
@@ -294,19 +310,27 @@ const Home: React.FC = () => {
             </p>
             <IonCard>
               <IonCardHeader>
-                <IonCardTitle>{currentTask ? currentTask.name : "No task set?"}</IonCardTitle>
+                <IonCardTitle>
+                  {currentTask ? currentTask.name : "No task set?"}
+                </IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
                 {currentTask ? (
-                  <p className={`tag ${currentTask.tag ? currentTask.tag.model.color : undefined}`}>
+                  <p
+                    className={`tag ${
+                      currentTask.tag ? currentTask.tag.model.color : undefined
+                    }`}
+                  >
                     {currentTask.tag ? currentTask.tag.model.name : undefined}
                   </p>
-                ) : (
-                  undefined
-                )}
+                ) : undefined}
               </IonCardContent>
             </IonCard>
-            <IonButton id="complete-task-button" fill="outline" onClick={() => complete()}>
+            <IonButton
+              id="complete-task-button"
+              fill="outline"
+              onClick={() => complete()}
+            >
               Complete Task
             </IonButton>
           </div>
@@ -318,8 +342,10 @@ const Home: React.FC = () => {
           cssClass="complete-task-modal"
           backdropDismiss={false}
         >
-          <img src={taskCompleteIcon} />
-          <h2>Task Complete!</h2>
+          <div className="complete-task-div">
+            <img src={taskCompleteIcon} alt="" />
+            <h2>Task Complete!</h2>
+          </div>
         </IonModal>
       </IonPage>
     </React.Fragment>

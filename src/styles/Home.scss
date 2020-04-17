@@ -1,3 +1,4 @@
+// -----------Desktop----------
 .timer-icons {
   text-align: center;
   img {
@@ -49,21 +50,28 @@
 
 .timer-view {
   position: absolute;
-  top: 15%;
+  top: 0%;
   width: 100%;
-  height: 100%;
+  height: 90%;
+  div {
+    box-shadow: none !important;
+    text-align: center;
+  }
 }
 
 .complete-task-modal {
-  --background: var(--ion-color-success);
+  div {
+    box-shadow: none !important;
+  }
   .modal-wrapper {
     --height: 100%;
+    --width: 100%;
     position: absolute;
-    bottom: 7%;
+    bottom: 10%;
   }
 
   img {
-    width: 30%;
+    width: 10em;
     position: absolute;
     bottom: 50%;
     left: 50%;
@@ -71,9 +79,9 @@
   }
 
   h2 {
-    color: #ffffff;
+    color: var(--ion-color-success);
     position: absolute;
-    bottom: 40%;
+    bottom: 37%;
     left: 50%;
     transform: translate(-50%);
   }
@@ -90,6 +98,11 @@ main {
 ion-button {
   --border-radius: 10px;
   --box-shadow: none;
+}
+
+.select-modal {
+  top: 0;
+  height: 85%;
 }
 
 .select-task {
@@ -183,11 +196,18 @@ ion-badge {
 }
 
 #start-timer {
-  width: 80%;
+  width: 50%;
   position: absolute;
-  bottom: 2%;
+  bottom: 3%;
   left: 50%;
   transform: translate(-50.5%, 0);
+}
+
+#cancel-timer {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  transform: translate(-50%);
 }
 
 #stop-timer {
@@ -200,6 +220,7 @@ ion-badge {
 
 #current-task-section-head {
   padding-left: 1.5em;
+  margin-top: 7em;
 }
 
 #complete-task-button {

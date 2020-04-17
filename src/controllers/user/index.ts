@@ -11,6 +11,7 @@ class CurrentUser {
     static user_set_promise?:Promise<never>;
     static init_currentuser() {
         if (this.firebase_user) {
+            let resolved = false;
             this.user_set_promise = new Promise(resolve => {
                 this.current_user_unsub = firebase
                 .firestore().collection('user').doc(this.firebase_user!.uid).onSnapshot(user_snapshot => {
@@ -18,7 +19,10 @@ class CurrentUser {
                         this.current_user = (getRepository(User) as BaseRepo<User>).init_plain(user_snapshot);
                         if (this.current_user)
                             this.current_user.firebase_user = this.firebase_user;
+                    }
+                    if ( !resolved ) {
                         resolve();
+                        resolved = true;
                     }
                 });
             });
@@ -26,6 +30,7 @@ class CurrentUser {
     }
 
     static init_firebaseuser(){
+        let resolved = false;
         this.firebaseuser_set_promise = new Promise( resolve => {
             firebase.auth().onAuthStateChanged(user => {
                 if ( user ) {
@@ -34,11 +39,14 @@ class CurrentUser {
                         this.current_user.firebase_user = user;
                     } else {
                         this.init_currentuser();
-                        resolve();
                     }
                 } else {
                     this.firebase_user = undefined;
                     this.current_user = undefined;
+                }
+                if ( !resolved ){
+                    resolved = true;
+                    resolve();
                 }
             });
         });
@@ -50,7 +58,7 @@ class CurrentUser {
         if ( !this.current_user ){
             await this.firebaseuser_set_promise;
             await this.user_set_promise;
-        } 
+        }
         return this.current_user;
     }
 

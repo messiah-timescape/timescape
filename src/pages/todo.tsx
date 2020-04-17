@@ -11,7 +11,7 @@ import {
   IonDatetime,
   IonSelectOption,
   IonSelect,
-  IonTextarea
+  IonTextarea,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
@@ -22,7 +22,7 @@ import {
   delete_task,
   complete_task,
   create_task,
-  update_task
+  update_task,
 } from "../controllers/task/task_actions";
 import moment from "moment";
 import Fade from "react-reveal/Fade";
@@ -34,7 +34,7 @@ const Todo = () => {
   const [currentEditTask, setCurrentEditTask]: [any, any] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
-  const [tags, setTags] = useState();
+  const [tags, setTags] = useState<any>();
   const [renderTasks, setRenderTasks] = useState(false);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const Todo = () => {
       name: currentEditTask ? currentEditTask.name : "",
       notes: currentEditTask ? currentEditTask.notes : "",
       deadline: currentEditTask ? currentEditTask.deadline : moment(),
-      tag: currentEditTask ? currentEditTask.tag : null
+      tag: currentEditTask ? currentEditTask.tag : null,
     };
 
     function handleAdd() {
@@ -77,7 +77,7 @@ const Todo = () => {
       let temp: any = [];
 
       if (tags) {
-        tags.forEach(tag => {
+        tags.forEach((tag) => {
           let selectBoolean = false;
 
           if (currentEditTask) {
@@ -100,7 +100,11 @@ const Todo = () => {
     }
 
     return (
-      <IonModal isOpen={true} onDidDismiss={() => setShowEdit(false)} cssClass="edit-modal">
+      <IonModal
+        isOpen={true}
+        onDidDismiss={() => setShowEdit(false)}
+        cssClass="edit-modal"
+      >
         <IonContent className="ion-padding">
           <div className="modal-buttons">
             <p
@@ -129,7 +133,7 @@ const Todo = () => {
               value={currentEditTask ? currentEditTask.name : ""}
               id="title-field"
               required
-              onIonChange={e => {
+              onIonChange={(e) => {
                 task.name = (e.target as HTMLInputElement).value;
               }}
             ></IonInput>
@@ -141,8 +145,10 @@ const Todo = () => {
               id="tags-field"
               multiple={false}
               placeholder="Add Tag"
-              onIonChange={e => {
-                task.tag = new UsermodelDto((e.target as HTMLInputElement).value);
+              onIonChange={(e) => {
+                task.tag = new UsermodelDto(
+                  (e.target as HTMLInputElement).value
+                );
               }}
             >
               {generateTagSelection()}
@@ -155,7 +161,7 @@ const Todo = () => {
               value={currentEditTask ? currentEditTask.notes : ""}
               placeholder="Add Note"
               rows={6}
-              onIonChange={e => {
+              onIonChange={(e) => {
                 task.notes = (e.target as HTMLInputElement).value;
               }}
             ></IonTextarea>
@@ -170,13 +176,20 @@ const Todo = () => {
                   ? `${task.deadline.get("month") + 1} ${task.deadline.get(
                       "date"
                     )} ${task.deadline.get("year")}`
-                  : `${task.deadline.month() + 1} ${task.deadline.date()} ${task.deadline.year()}`
+                  : `${
+                      task.deadline.month() + 1
+                    } ${task.deadline.date()} ${task.deadline.year()}`
               }
               displayFormat="MM DD YYYY"
               id="time-field"
-              onIonBlur={e => {
-                let date = (e.target as HTMLInputElement).value.split("T")[0].split("-");
-                task.deadline = moment(`${date[1]}/${date[2]}/${date[0]}`, "MM/DD/YYYY");
+              onIonBlur={(e) => {
+                let date = (e.target as HTMLInputElement).value
+                  .split("T")[0]
+                  .split("-");
+                task.deadline = moment(
+                  `${date[1]}/${date[2]}/${date[0]}`,
+                  "MM/DD/YYYY"
+                );
               }}
               placeholder="Add Due Date"
               slot="end"
@@ -201,7 +214,7 @@ const Todo = () => {
             cssClass: "cancel-button",
             handler: () => {
               console.log("Confirm Cancel");
-            }
+            },
           },
           {
             text: "Delete",
@@ -210,19 +223,19 @@ const Todo = () => {
             handler: () => {
               console.log("Confirm Delete", toDeleteId);
               delete_task(toDeleteId.toString());
-            }
-          }
+            },
+          },
         ]}
       />
     );
   };
 
-  const GenerateTasks = tasks => {
+  const GenerateTasks = (tasks) => {
     return (
       <>
         <div className="negative-z">
           <Fade>
-            {tasks.map(taskGroup => {
+            {tasks.map((taskGroup) => {
               return (
                 <React.Fragment key={taskGroup.index + "frag"}>
                   <h3 className="date" key={taskGroup.index + "date"}>
@@ -230,7 +243,7 @@ const Todo = () => {
                   </h3>
 
                   {taskGroup.tasks.length > 0 ? (
-                    taskGroup.tasks.map(task => {
+                    taskGroup.tasks.map((task) => {
                       return (
                         <IonItemSliding key={task.id + "tag"}>
                           <IonItem key={task.id + "item"}>
@@ -245,21 +258,14 @@ const Todo = () => {
                               <div key={task.id + "task"}>
                                 <p>{task.name}</p>
                                 {task.tag ? (
-                                  <Fade>
-                                    <p className={`tag ${task.tag.model.color}`}>
-                                      {task.tag.model.name}
-                                    </p>
-                                  </Fade>
-                                ) : (
-                                  undefined
-                                )}
+                                  <p className={`tag ${task.tag.model.color}`}>
+                                    {task.tag.model.name}
+                                  </p>
+                                ) : undefined}
                               </div>
                             </div>
                           </IonItem>
                           <IonItemOptions side="start" key={task.id + "slide"}>
-                            <button className="add-button">
-                              <div className="add-mask"></div>
-                            </button>
                             <button
                               className="edit-button"
                               onClick={() => {
@@ -270,7 +276,10 @@ const Todo = () => {
                               <div className="edit-mask"></div>
                             </button>
                           </IonItemOptions>
-                          <IonItemOptions side="end" key={task.id + "slide end"}>
+                          <IonItemOptions
+                            side="end"
+                            key={task.id + "slide end"}
+                          >
                             <button
                               className="delete-button"
                               onClick={() => {
@@ -285,7 +294,10 @@ const Todo = () => {
                       );
                     })
                   ) : (
-                    <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+                    <h4
+                      className="no-tasks-here"
+                      key={taskGroup.index + "status"}
+                    >
                       No tasks here!
                     </h4>
                   )}
