@@ -188,17 +188,6 @@ const Home: React.FC = () => {
     return (
       <IonContent className="select-modal">
         {loading ? <LoadingIcon /> : tasksHTML}
-
-        <IonButton
-          id="cancel-timer"
-          fill="outline"
-          hidden={!showSelectTask}
-          onClick={() => {
-            setShowSelectTask(false);
-          }}
-        >
-          Cancel
-        </IonButton>
       </IonContent>
     );
   };
@@ -259,6 +248,16 @@ const Home: React.FC = () => {
           >
             Start Working
           </IonButton>
+
+          <IonButton
+          id="cancel-timer"
+          hidden={!showSelectTask}
+          onClick={() => {
+            setShowSelectTask(false);
+          }}
+        >
+          Cancel
+        </IonButton>
         </IonContent>
 
         <IonModal
