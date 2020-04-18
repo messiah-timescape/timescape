@@ -1,8 +1,6 @@
 import moment, { Duration, Moment } from "moment";
-import { Period } from "../models/task";
-import firebase from "firebase";
-import { Tag } from "../models";
-import { get_settings } from "./user/settings";
+import { Period } from "../../models/task";
+import {get_events} from "../user/get_events";
 
 // import { Tag } from "../models/tag";
 
@@ -90,6 +88,11 @@ export class Report {
         });
 
         this.report_task_collection = [ work_task, school_task, chore_task];
+
+        get_events(this.time_frame.start, this.time_frame.end).then( events => {
+            if (events)
+                this.report_task_collection = this.report_task_collection.concat(events);
+        })
     }
 
     public async fill_calculations() {

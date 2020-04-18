@@ -7,7 +7,13 @@ import { date_field, usermodel_field, UsermodelDto } from "./field_types";
 
 @Collection('period')
 export class Period extends BaseModel {
-
+    constructor(start?:Moment, end?:Moment){
+        super();
+        if (start)
+            this.start = start;
+        if (end)
+            this.end = end;
+    }
     @date_field
     start!: Moment;
 

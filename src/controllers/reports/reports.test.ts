@@ -1,8 +1,8 @@
 import { Report } from "./reports";
-import { Period } from "../models";
+import { Period } from "../../models";
 import moment from "moment";
-import init_app from "../init_app";
-import { TestLoginActions } from "./user/login.test";
+import init_app from "../../init_app";
+import { TestLoginActions } from "../user/login.test";
 import firebase from "firebase";
 
 describe('testing queries', ()=> {
