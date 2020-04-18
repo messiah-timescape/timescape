@@ -4,6 +4,16 @@ import moment from "moment";
 import init_app from "../../init_app";
 import { TestLoginActions } from "../user/login.test";
 import firebase from "firebase";
+import CurrentUser from "../user";
+
+describe ("Report tests", ()=>{
+beforeAll( async done => {
+    await init_app();
+    let d = await TestLoginActions.email_password();
+    done();
+    return d;
+});
+
 
 it('runs some functions from report.ts', async done=>{
     let time_frame:Period = new Period();
@@ -129,3 +139,4 @@ it('runs some functions from report.ts', async done=>{
 
 // });
 
+});

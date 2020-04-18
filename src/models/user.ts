@@ -4,7 +4,7 @@ import {Type, Exclude} from "class-transformer"
 import Weekdays from "../utils/weekdays";
 import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
-import { Task } from "./task";
+import { Task, Period } from "./task";
 import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
@@ -127,6 +127,13 @@ export class User extends BaseModel{
     @Type(() => Timer)
     timer: Timer = new Timer();
     
+
+    @SubCollection(Period)
+    work_periods!: ISubCollection<Period>;
+
+    @SubCollection(Period)
+    break_periods!: ISubCollection<Period>;
+
     @SubCollection(Task)
     tasks!: ISubCollection<Task>;
 

@@ -1,6 +1,8 @@
 import moment, { Duration, Moment } from "moment";
 import { Period } from "../../models/task";
 import {get_events} from "../user/get_events";
+import CurrentUser from "../user";
+import { Tag } from "../../models";
 
 // import { Tag } from "../models/tag";
 
@@ -11,10 +13,10 @@ import {get_events} from "../user/get_events";
 /* A data object to hold all the information we want from the tasks for the report */
 export class ReportTaskInfo {
     completed!:Boolean;
-    work_period!:Period[];
-    tag!:"string";
+    work_period!:Period;
+    tag!:Tag;
 
-    constructor(init_fields:object) {
+    constructor(init_fields:Partial<ReportTaskInfo>) {
         Object.assign(this, init_fields);
         return this;
     }
@@ -52,9 +54,26 @@ export class Report {
     }
 
     // Creates ReportTaskInfo and populates this.report_task_collection
-    public getReportData() {
+    async getReportData() {
         // var data:ReportTaskInfo[];
-        // var query = firebase.firestore()
+        let user = await CurrentUser.get_loggedin();
+
+        let mapping_promises:Promise<any>[] = [];
+        user.work_periods
+            .whereGreaterOrEqualThan('start', this.time_frame.start)
+            .whereLessOrEqualThan('end', this.time_frame.end).find().then( work_periods => {
+                work_periods.forEach(work_period => {
+                    mapping_promises.push((async () => {
+                        let task = (await work_period.task!.promise);
+                        if ( task.tag ) await task.tag.promise;
+                        this.report_task_collection.push(new ReportTaskInfo({
+                            completed: task.completed,
+                            work_period: work_period,
+                            tag: (task.tag)?task.tag.model:undefined
+                        }));
+                    })());
+                });
+            });
         // .collectionGroup('tasks')
         // .where('work_period', '>=', this.time_frame.start) // this query needs work (I wish we could use <Moment>.isBetween(<Moment>, <Moment>))
         // .where('work_period', '<=', this.time_frame.end);  // we want to get all tasks from current month so that all reports (daily, weekly, and monthly) can make use of this.report_task_collection
@@ -75,34 +94,36 @@ export class Report {
                 //// together in array of Data objects?
         //     })
         // })
-        var work_task = new ReportTaskInfo({
-            completed: true,
-            work_period: { start: moment().subtract(2, "days").subtract(3, "hours"), end: moment().subtract(2, "days") },
-            tag: "Work"
-        });
-        var school_task = new ReportTaskInfo ({
-            completed: true,
-            work_period: { start: moment().subtract(3, "days").hour(20).minutes(24), end: moment().subtract(3, "days") },
-            tag: "School"
-        });
-        var chore_task = new ReportTaskInfo({
-            completed: false,
-            work_period: { start: moment().subtract(1, "day").subtract(4, "hours"), end: moment().subtract(1, "day") },
-            tag: "Chore"
-        });
+        // var work_task = new ReportTaskInfo({
+        //     completed: true,
+        //     work_period: { start: moment().subtract(2, "days").subtract(3, "hours"), end: moment().subtract(2, "days") },
+        //     tag: "Work"
+        // });
+        // var school_task = new ReportTaskInfo ({
+        //     completed: true,
+        //     work_period: { start: moment().subtract(3, "days").hour(20).minutes(24), end: moment().subtract(3, "days") },
+        //     tag: "School"
+        // });
+        // var chore_task = new ReportTaskInfo({
+        //     completed: false,
+        //     work_period: { start: moment().subtract(1, "day").subtract(4, "hours"), end: moment().subtract(1, "day") },
+        //     tag: "Chore"
+        // });
 
-        this.report_task_collection = [ work_task, school_task, chore_task];
+        // this.report_task_collection = [ work_task, school_task, chore_task];
 
-        get_events(this.time_frame.start, this.time_frame.end).then( events => {
-            if (events)
+        mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
+            if (events) {
                 this.report_task_collection = this.report_task_collection.concat(events);
-        })
+            }
+        }));
+        await Promise.all(mapping_promises);
     }
 
     // populates all properties that hold aggregated data
     public async fill_calculations() {
         if(this.report_task_collection === undefined) { // Will we use fill_calculations after getReportData? (If so, we need this if statement)
-            this.getReportData();
+            await this.getReportData();
         }
          
         // make declarations for all calculations

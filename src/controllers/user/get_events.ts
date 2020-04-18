@@ -19,11 +19,12 @@ export async function get_events(start_datetime:Moment, end_datetime:Moment) {
             calendarId: "primary",
 
         });
-        return event_list.data.items?.map( event => {
+        let list = event_list.data.items?.map( event => {
             if ( event.start?.dateTime && event.end?.dateTime)
                 return new ReportTaskInfo({
                     work_period: new Period(moment(event.start?.dateTime), moment(event.end?.dateTime))
                 });
-        });
+        }).filter( value => value );
+        return (list as ReportTaskInfo[]);
     }
 }
