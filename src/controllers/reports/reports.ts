@@ -6,7 +6,6 @@ import {get_events} from "../user/get_events";
 
 /**************** NOTE TO SELF *************
  * Weekly and Monthly reports need daily aggregations for productivity (focus_percentage and tasks_completed)
- * A lot of functions in pseudo code @ end of file can be reused in other get<Frequency>Report()
  */
 
 /* A data object to hold all the information we want from the tasks for the report */
@@ -21,8 +20,8 @@ export class ReportTaskInfo {
     }
 }
 
-/* A sector of the pie chart in reports */
-export class Sector {
+/* A section of the pie chart in reports as well as a section in the graph for weekly/monthly reports */
+export class ChartSection {
     category!: String; // Tag.name | "Break" | "Other" ("Other" is cateogry of Task where Task.tag === undefined)
     duration!: Duration; // is there a way to require fields 'hours' and 'seconds'?
     
@@ -32,15 +31,19 @@ export class Sector {
     }
 }
 
+/* A section for the timeline in daily report */
+export class TimelineSection {
+    category!: String; // Tag.name | "Break" | "Other"
+    section!: Period; // beginning and end of a section
+}
+
 /* A report with all aggregated data */
 export class Report {
-    id: String = ""; // will we be using this? Brainstorm how to index reports...
-
-    time_frame!: Period; // review type; might want to change since different for each report
-    total_focus_time!: Duration; // again, is there a way to require these fields
+    time_frame!: Period;
+    total_focus_time!: Duration;
     tasks_completed!:Number;
     focus_percentage!:Number; // 65 will resemble 65%
-    chart_sectors!: Sector[];
+    chart_sectors!: ChartSection[];
     report_task_collection!:ReportTaskInfo[];
 
     constructor(init_fields:object) { // REFACTOR: right now it accepts any object
@@ -48,13 +51,14 @@ export class Report {
         return this;
     }
 
-    public getData() {
+    // Creates ReportTaskInfo and populates this.report_task_collection
+    public getReportData() {
         // var data:ReportTaskInfo[];
         // var query = firebase.firestore()
         // .collectionGroup('tasks')
-        // .where('work_period', '>=', this.time_frame.start) // this query needs work
-        // .where('work_period', '<=', this.time_frame.end);
-        // query.get().then((snapShot)=> {
+        // .where('work_period', '>=', this.time_frame.start) // this query needs work (I wish we could use <Moment>.isBetween(<Moment>, <Moment>))
+        // .where('work_period', '<=', this.time_frame.end);  // we want to get all tasks from current month so that all reports (daily, weekly, and monthly) can make use of this.report_task_collection
+        // query.get().then((snapShot)=> {                    // would need to make sure that if getMonthReport() is being used for other months, we call this query again
             // snapShot.forEach((doc)=> {
             //     let tag = doc.tag;
             //     let completed = doc.completed;
@@ -95,16 +99,19 @@ export class Report {
         })
     }
 
+    // populates all properties that hold aggregated data
     public async fill_calculations() {
-        var data = this.getData();
-
+        if(this.report_task_collection === undefined) { // Will we use fill_calculations after getReportData? (If so, we need this if statement)
+            this.getReportData();
+        }
+         
         // make declarations for all calculations
         var total_focus_time = 0, 
             completed = 0,
             tag_name = "", 
             focus_time = 0, 
-            sector:Sector,
-            chart_sector:Sector[] = [];
+            sector:ChartSection,
+            chart_sector:ChartSection[] = [];
 
         for (const key in this.report_task_collection) {
             var obj = this.report_task_collection[key];
@@ -137,26 +144,29 @@ export class Report {
                 }
             } 
             // subtract start from end to find duration once done looping through properties
-            total_focus_time += end - start; // this will not work with current code
-            focus_time += end - start; // this also will not work with current code
+            total_focus_time += end - start; 
+            focus_time += end - start; 
 
-            sector = new Sector({
+            sector = new ChartSection({
                 category: tag_name,
                 duration: focus_time
             });  
             
             chart_sector.push(sector);
         }
-/************* the following is for focus_percentage*/
+/************* the following is for focus_percentage; requires retrieving user_settings from current user*/
         // var user_work_start, user_work_stop;
         // // retrieve user settings; I'm not sure how to do this when I 
         // // can't make this calcFocusPercentage() async but also can't
         // // use a .then(()=> {...}) on the get_settings()
         // var settings = await get_settings();
-        // user_work_start = settings.work_start_time;
-        // user_work_stop = settings.work_stop_time;
+        // user_work_start:any = settings.work_start_time;
+        // user_work_stop:any = settings.work_stop_time;
            
-        // var totalWorkTime = user_work_stop - user_work_start; // won't work for same reasons as fill_calculations() 
+        // var totalWorkTime = user_work_stop - user_work_start; 
+/****************************************************************************** 4
+        Add in considerations of Google events (subtract even duration from totalWorkTime)
+ ******************************************************************************/
         var start_work:any = moment().hour(8).minutes(30), stop_work:any = moment().hour(13).minutes(30);
         var totalWorkTime = stop_work - start_work;
 
@@ -170,62 +180,96 @@ export class Report {
     }
 }
 
-class Timeline {
-    //
-}
-
 export class DailyReport extends Report {
-    timeline!: Period[]; // Can we make use of Period class, or not since is SubCollection?
-    static getDailyReport(page, time_frame) {
-        let report = new DailyReport(time_frame).getData();
-        // populate timeline
+    timeline!: TimelineSection[];
+    private static populate_timeline() {
+        // loop through this.report_task_collection
+        // add things to this.timeline
+        // include Google events
+    }
+
+    // I think we'll need to return 7 reports for the page instead of just the first one
+    public static getDailyReport(page) {
+        // var time_frame is this day (the default)
+        var time_frame:Period = create_time_frame(moment().startOf('day'), moment());
+        time_frame.start = moment();
+        time_frame.end = moment().startOf('day');
+
+        let report = new DailyReport(time_frame).fill_calculations();
+        this.populate_timeline();
         return report;
     }
-    //
+
+    
 }
 
 export class WeeklyReport extends Report {
-    graph!: (Duration | Number)[];
-    static getWeeklyReport(page, time_frame) {
-        //
+    graph!: ChartSection[];
+
+    private static populate_graph() {
+        // loop through this.report_task_collection
+        // add things to this.graph
     }
-    //
+
+    // I think we'll need to return 7 reports for the page instead of just the first one
+    public static getWeeklyReport(page) {
+        // var time_frame is this week (the default)
+        var time_frame:Period = create_time_frame(moment().startOf('week'), moment());
+
+        let report = new WeeklyReport(time_frame).fill_calculations();
+        this.populate_graph();
+        return report;
+    }
 }
 
 export class MonthlyReport extends Report {
-    graph!: (Duration | Number)[];
-    static getMonthlyReport(page, time_frame) {
-        //
+    graph!: ChartSection[];
+
+    private static populate_graph() {
+        // loop through this.report_task_collection
+        // add things to this.graph
     }
-    //
+
+    // I think we'll need to return 7 reports for the page instead of just the first one
+    public static getMonthlyReport(page) {
+        // var time_frame is this month (the defualt)
+        var time_frame:Period = create_time_frame(moment().startOf('month'), moment());
+
+        let report = new MonthlyReport(time_frame).fill_calculations();
+        this.populate_graph();
+        return report;
+    }
 }
 
 // Redirects to the correct get<Frequency>Report function
-export function getReport(type:String, page:Number, time_frame:Moment[]){
+export function getReport(type:String, page:Number){
     switch (type.toLowerCase()) {
         case "daily":
-            DailyReport.getDailyReport(page, time_frame);
+            DailyReport.getDailyReport(page);
             break;
         case "weekly":
-            WeeklyReport.getWeeklyReport(page, time_frame);
+            WeeklyReport.getWeeklyReport(page);
             break;
         case "monthly":
-            MonthlyReport.getMonthlyReport(page, time_frame);
+            MonthlyReport.getMonthlyReport(page);
             break;
         default:
-            let today:Period = new Period();
-            today.start = moment().startOf('day');
-            today.end = moment();
-            DailyReport.getDailyReport(page, today);
+            DailyReport.getDailyReport(page);
             break;        
     }
 }
 
+function create_time_frame(start:Moment, end:Moment) {
+    let time_frame:Period = new Period();
+    time_frame.start = start;
+    time_frame.end = end;
 
-/*************
- * Functions *
- *************/
-/* Calculations (from tasks in timeframe):
+    return time_frame;
+}
+
+
+/*****************************************
+* Calculations (from tasks in timeframe):
 ******************************************
 * total_focus_time: for each task, take a work_period and subtract start from end, then add to sum
 * tasks_completed: count tasks where tasks.completed = true;
@@ -238,55 +282,25 @@ export function getReport(type:String, page:Number, time_frame:Moment[]){
 * total_focus_time, tasks_completed, and chart_sectors all filter through ReportTaskInfo[]
 * focus_percentage uses total_focus_time
 
-/*
 * when getDailyReport is called...
-* // find tasks where tasks.work_periods.start.format("MM DD") === moment.startOf('day').fromNow().format("MM DD")
-* && tasks.work_periods.start.format("MM DD") = moment.subtract(7, 'days').format("MM DD")
+* Default:
+* find tasks .where(work_periods.start.format("MM DD YYYY"), ">=", moment.startOf('day').fromNow().format("MM DD YYYY"))
+*            .where(work_periods.end.format("MM DD YYYY"), "<=", moment.subtract(7, 'days').format("MM DD YYYY"))
 * and put in ReportTaskInfo: ReportTaskInfo[]
 *
-****** TASKS COMPLETED **********
-*********************************
-* var tasks_completed:Number = 0;
-* for (task in tasks) {
-*   if(task.completed) {
-*        tasks_completed++;
-*   }
-* }
-*
-******* TOTAL FOCUS TIME AND TOTAL FOCUS TIME PER TAG ******
-************************************************************
-* var tagSum:Number[] = []; // array of total_focus_time per tag (key->value is tag.name->total_focus_time) 
-* var sum:Number = 0;
-* for (let task in tasks) {
-*   for (let prop of task) {
-*       if(typeof(task[prop] === Period)) {            // grab only where task[prop] === work_periods
-*           for (let period of prop) {                 // this is O(n^3); is there a more efficient way?
-*             let addTime = period.end - period.start; // convert to duration
-*             // check tag.name and add to proper index of tagSum
-*             sum += addTime;
-*           }        
-*       }
-*   }
-* } 
-*  total_focus_time = sum;
-*  
-******* FOCUS PERCENTAGE *********
-**********************************
-* // retrieve work_start and work_stop from user_settings
-* let user_settings = get_settings();
-* var focus_percentage, work_dur;
-*
-* work_start = user_settings.work_start_time;
-* work_end = user_settings.work_stop_time;
-* 
-* work_dur = work_end - work_start; // convert to duration
-* focus_percentage = (total_focus_time / work_dur) * 100 // total_focus_time comes from above^^
-*
-******* CHART SECTORS ************
-**********************************
-* var chart_sector:Sector[] = [];
-* for (focus_time in tagSum) {
-*      sector = new Sector({ category: tagSum[focus_time], duration: focus_time});
-*      chart_sector.append(sector);
-* }
+* Ow:
+* find tasks .where(work_periods.start.format("MM DD YYYY"), ">=", this.time_frame.start.format("MM DD"))
+*            .where(work_periods.end.format("MM DD"), "<=", this.time_frame.end.format("MM DD"))
+* and put in ReportTaskInfo: ReportTaskInfo[]
+
+* when getWeekyReport is called...
+* // find tasks .where(work_periods.start.format("MM DD YYYY"), ">=", this.time_frame.start.format("MM DD YYYY"))
+*               .where(work_periods.end.format("MM DD YYYY"), "<=", this.time_frame.end.format("MM DD YYYY"))
+* and put in ReportTaskInfo: ReportTaskInfo[]
+
+* when getMonthlyReport is called...
+* // find tasks .where(work_periods.start.format("MM DD YYYY"), ">=", this.time_frame.start.format("MM DD YYYY"))
+*               .where(work_periods.end.format("MM DD YYYY"), "<=", this.time_frame.end.format("MM DD YYYY"))
+* and put in ReportTaskInfo: ReportTaskInfo[]
+
 */

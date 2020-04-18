@@ -5,26 +5,24 @@ import init_app from "../../init_app";
 import { TestLoginActions } from "../user/login.test";
 import firebase from "firebase";
 
-describe('testing queries', ()=> {
-    beforeAll(async () => {
-        init_app();
-        return await TestLoginActions.email_password();
-    });
+it('runs some functions from report.ts', async done=>{
+    let time_frame:Period = new Period();
+    time_frame.start = moment().subtract(4, "days");
+    time_frame.end = moment();
+    var report = new Report({ time_frame: time_frame });
+    report = await report.fill_calculations();
 
-    it('runs some functions from report.ts', async done=>{
-        let time_frame:Period = new Period();
-        time_frame.start = moment().subtract(4, "days");
-        time_frame.end = moment();
-        var report = new Report({ time_frame: time_frame });
-        report.getData(); 
-        report = await report.fill_calculations();
-        console.log(report);
-        done();
-    });
-    
-    afterAll(async ()=> {
-        firebase.auth().signOut();
-    })
+    for (let prop in report) {
+        if(prop == "report_task_collection") {
+            var obj = report[prop];
+            for(let val in obj) {
+                console.log(`Why is school coming up with negative duration? ${obj[val]}`);  
+            }
+        }
+    }
+
+    console.log(report);
+    done();
 });
 
 // import { Report, Sector } from "./reports";
