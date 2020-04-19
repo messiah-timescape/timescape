@@ -5,14 +5,17 @@ import {
   IonButton,
   IonIcon,
   IonPage,
-  IonRouterLink
+  IonRouterLink,
 } from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import React, { useState } from "react";
 import topImage from "../assets/loginPageTop.png";
 import googleIcon from "../assets/googleIcon.png";
 import "../styles/Login.scss";
-import { userlogin_email_password, userlogin_google_oauth } from "../controllers/user/login";
+import {
+  userlogin_email_password,
+  userlogin_google_oauth,
+} from "../controllers/user/login";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +36,10 @@ const Login: React.FC = () => {
 
   function handleSubmit(username: string, password: string) {
     setLoading(true);
-    userlogin_email_password(username, password).then(successfulLogin, failedLogin);
+    userlogin_email_password(username, password).then(
+      successfulLogin,
+      failedLogin
+    );
 
     function successfulLogin() {
       setShowWrongCredentials(false);
@@ -73,7 +79,7 @@ const Login: React.FC = () => {
                   placeholder="Email or Username"
                   id="username-field"
                   required
-                  onKeyDown={e => {
+                  onKeyDown={(e) => {
                     handleKeyDown(e);
                   }}
                 ></IonInput>
@@ -85,13 +91,13 @@ const Login: React.FC = () => {
                   id="password-field"
                   type={showPassword ? "text" : "password"}
                   required
-                  onKeyDown={e => {
+                  onKeyDown={(e) => {
                     handleKeyDown(e);
                   }}
                 ></IonInput>
                 <IonIcon
                   icon={passwordIcon}
-                  onClick={function() {
+                  onClick={function () {
                     setShowPassword(!showPassword);
                     if (passwordIcon === eye) {
                       setPasswordIcon(eyeOff);
@@ -120,11 +126,15 @@ const Login: React.FC = () => {
                 </div>
               ) : (
                 <IonButton
-                  className="button"
+                  className="round-button button"
                   onClick={() =>
                     handleSubmit(
-                      (document.getElementById("username-field") as HTMLInputElement).value,
-                      (document.getElementById("password-field") as HTMLInputElement).value
+                      (document.getElementById(
+                        "username-field"
+                      ) as HTMLInputElement).value,
+                      (document.getElementById(
+                        "password-field"
+                      ) as HTMLInputElement).value
                     )
                   }
                 >
