@@ -48,10 +48,10 @@ export class TimerController {
                 if (!current_task) {
                     throw new Error("Current task not set");
                 }
-                current_task.break_periods.create(new Period().fill_fields({
-                    start: this.timer.break_start,
-                    end: moment()
-                }));
+                this.user.break_periods.create(new Period(
+                    this.timer.break_start,moment(),
+                    current_task
+                ));
                 this.timer.break_start = undefined;
                 console.log("Break over!");
             } else {
@@ -79,10 +79,10 @@ export class TimerController {
             throw new Error("Current task necessary");
         }
         return this.modify_timer( async () => {
-            (await this.timer.current_task!.promise).work_periods.create(new Period().fill_fields({
-                start: this.timer.timer_start,
-                end: ( this.timer.is_onbreak() )?this.timer.break_start:moment()
-            }));
+            this.user.work_periods.create(new Period(
+                this.timer.timer_start, ( this.timer.is_onbreak() )?this.timer.break_start:moment(),
+                this.timer.current_task!.promise
+            ));
             this.timer.timer_start = undefined;
             this.timer.break_start = undefined;
             if (unset_currenttask) {

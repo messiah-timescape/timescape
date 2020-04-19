@@ -37,7 +37,7 @@ export let userlogin_google_oauth = () => {
         let token = (result.credential as firebase.auth.OAuthCredential).accessToken;
         let user = FirebaseUser.create_from_firebase(result.user);
         user.google_access_token = token;
-        let create_user_status = await user.create_or_load_user();
+        let create_user_status = await user.create_or_load_user( );
         return {
           user: user,
           new: create_user_status.new

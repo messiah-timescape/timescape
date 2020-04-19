@@ -4,7 +4,7 @@ import {Type, Exclude} from "class-transformer"
 import Weekdays from "../utils/weekdays";
 import moment, { Moment, Duration } from "moment";
 import BaseModel from "./base_model";
-import { Task } from "./task";
+import { Task, Period } from "./task";
 import { date_field, duration_field, TagColors } from "./field_types";
 import { Tag } from "./tag";
 import {User as RealFirebaseUser} from "firebase";
@@ -47,10 +47,10 @@ export class FirebaseUser{
     }
 
 
-    async create_or_load_user():Promise<{user:User,new:boolean}> {
+    async create_or_load_user( ):Promise<{user:User,new:boolean}> {
         let org_user = await this.load_user();
         
-        let user:User = (org_user)?org_user:await this.create_user();
+        let user:User = (org_user)?org_user:await this.create_user(  );
         user.set_default_tags();
         return {
             user: user,
@@ -58,7 +58,7 @@ export class FirebaseUser{
         };
     }
 
-    create_user():Promise<User> {
+    create_user( ):Promise<User> {
         let new_user = new User({
             id: this.uid + '',
             email: this.email + '',
@@ -111,6 +111,7 @@ export class User extends BaseModel{
     id!: string;
     email!: string;
     display_name!: string;
+    google_access_token?: string;
 
     @Type(() => UserSettings)
     settings: UserSettings = new UserSettings({
@@ -126,6 +127,13 @@ export class User extends BaseModel{
     @Type(() => Timer)
     timer: Timer = new Timer();
     
+
+    @SubCollection(Period)
+    work_periods!: ISubCollection<Period>;
+
+    @SubCollection(Period)
+    break_periods!: ISubCollection<Period>;
+
     @SubCollection(Task)
     tasks!: ISubCollection<Task>;
 
