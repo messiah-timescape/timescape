@@ -27,6 +27,9 @@ import {
 import moment from "moment";
 import Fade from "react-reveal/Fade";
 import { UsermodelDto } from "../models/field_types";
+// import { create_tag } from "../controllers/tags/tag_actions";
+// import { Tag } from "../models/tag";
+// import { TagColors } from "../models/field_types";
 
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
@@ -340,7 +343,6 @@ const Todo = () => {
 
         <IonContent>
           {renderTasks ? tasksHTML : <LoadingScreen />}
-
           <DeleteModal />
           {showEdit ? <AddEditModal /> : <React.Fragment />}
         </IonContent>
