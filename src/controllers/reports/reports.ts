@@ -4,8 +4,6 @@ import {get_events} from "../user/get_events";
 import CurrentUser from "../user";
 import { Tag } from "../../models";
 
-// import { Tag } from "../models/tag";
-
 /**************** NOTE TO SELF *************
  * Weekly and Monthly reports need daily aggregations for productivity (focus_percentage and tasks_completed)
  */
@@ -24,7 +22,7 @@ export class ReportTaskInfo {
 
 /* A section of the pie chart in reports as well as a section in the graph for weekly/monthly reports */
 export class ChartSection {
-    category!: String; // Tag.name | "Break" | "Other" ("Other" is cateogry of Task where Task.tag === undefined)
+    category!: Tag; // Tag.name | "Break" | "Other" ("Other" is cateogry of Task where Task.tag === undefined)
     duration!: Duration; // is there a way to require fields 'hours' and 'seconds'?
     
     constructor(init_fields:object) {
@@ -35,7 +33,7 @@ export class ChartSection {
 
 /* A section for the timeline in daily report */
 export class TimelineSection {
-    category!: String; // Tag.name | "Break" | "Other"
+    category!: Tag; 
     section!: Period; // beginning and end of a section
 }
 
@@ -55,13 +53,19 @@ export class Report {
 
     // Creates ReportTaskInfo and populates this.report_task_collection
     async getReportData() {
-        // var data:ReportTaskInfo[];
         let user = await CurrentUser.get_loggedin();
 
         let mapping_promises:Promise<any>[] = [];
         user.work_periods
-            .whereGreaterOrEqualThan('start', this.time_frame.start)
-            .whereLessOrEqualThan('end', this.time_frame.end).find().then( work_periods => {
+            .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
+            .find().then( work_periods => {
+                for(var prop in work_periods) {
+                    if (work_periods[prop].end.isAfter(this.time_frame.end)) {
+                        var index = parseInt(prop);
+                        work_periods.splice(index, 1);
+                    }
+                }
+
                 work_periods.forEach(work_period => {
                     mapping_promises.push((async () => {
                         let task = (await work_period.task!.promise);
@@ -74,26 +78,7 @@ export class Report {
                     })());
                 });
             });
-        // .collectionGroup('tasks')
-        // .where('work_period', '>=', this.time_frame.start) // this query needs work (I wish we could use <Moment>.isBetween(<Moment>, <Moment>))
-        // .where('work_period', '<=', this.time_frame.end);  // we want to get all tasks from current month so that all reports (daily, weekly, and monthly) can make use of this.report_task_collection
-        // query.get().then((snapShot)=> {                    // would need to make sure that if getMonthReport() is being used for other months, we call this query again
-            // snapShot.forEach((doc)=> {
-            //     let tag = doc.tag;
-            //     let completed = doc.completed;
-            //     for(key in doc.work_periods) {
-            //         if (doc.work_periods[key].isBetween(this.time_frame.start, this.time_frame.end);
-            //             data.push(new ReportTaskInfo({
-            //                 completed: completed,
-            //                 work_period: work_period[key],
-            //                 tag: tag
-            //             }));
-            //     }
-            // }
-                //// put each doc.tag and doc.work_periods 
-                //// together in array of Data objects?
-        //     })
-        // })
+    
         // var work_task = new ReportTaskInfo({
         //     completed: true,
         //     work_period: { start: moment().subtract(2, "days").subtract(3, "hours"), end: moment().subtract(2, "days") },
@@ -129,7 +114,7 @@ export class Report {
         // make declarations for all calculations
         var total_focus_time = 0, 
             completed = 0,
-            tag_name = "", 
+            tag:Tag = new Tag(), 
             focus_time = 0, 
             sector:ChartSection,
             chart_sector:ChartSection[] = [];
@@ -160,7 +145,7 @@ export class Report {
                     }
                     // find tag and save
                     if(prop == "tag") {
-                        tag_name = obj[prop];
+                        tag = obj[prop];
                     }
                 }
             } 
@@ -169,7 +154,7 @@ export class Report {
             focus_time += end - start; 
 
             sector = new ChartSection({
-                category: tag_name,
+                category: tag,
                 duration: focus_time
             });  
             
@@ -212,7 +197,7 @@ export class DailyReport extends Report {
     // I think we'll need to return 7 reports for the page instead of just the first one
     public static getDailyReport(page) {
         // var time_frame is this day (the default)
-        var time_frame:Period = create_time_frame(moment().startOf('day'), moment());
+        var time_frame:Period = new Period(moment().startOf('day'), moment());
         time_frame.start = moment();
         time_frame.end = moment().startOf('day');
 
@@ -235,7 +220,7 @@ export class WeeklyReport extends Report {
     // I think we'll need to return 7 reports for the page instead of just the first one
     public static getWeeklyReport(page) {
         // var time_frame is this week (the default)
-        var time_frame:Period = create_time_frame(moment().startOf('week'), moment());
+        var time_frame:Period = new Period(moment().startOf('week'), moment());
 
         let report = new WeeklyReport(time_frame).fill_calculations();
         this.populate_graph();
@@ -254,7 +239,7 @@ export class MonthlyReport extends Report {
     // I think we'll need to return 7 reports for the page instead of just the first one
     public static getMonthlyReport(page) {
         // var time_frame is this month (the defualt)
-        var time_frame:Period = create_time_frame(moment().startOf('month'), moment());
+        var time_frame:Period = new Period(moment().startOf('month'), moment());
 
         let report = new MonthlyReport(time_frame).fill_calculations();
         this.populate_graph();
@@ -278,14 +263,6 @@ export function getReport(type:String, page:Number){
             DailyReport.getDailyReport(page);
             break;        
     }
-}
-
-function create_time_frame(start:Moment, end:Moment) {
-    let time_frame:Period = new Period();
-    time_frame.start = start;
-    time_frame.end = end;
-
-    return time_frame;
 }
 
 
