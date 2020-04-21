@@ -7,6 +7,7 @@ import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 import ReactFC from "react-fusioncharts";
 import CountUp from "react-countup";
 import Fade from "react-reveal";
+import {getReport} from '../controllers/reports/reports';
 
 ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
 
@@ -28,6 +29,8 @@ const chartConfigs = {
   dataFormat: "json",
   dataSource: dataSource,
 };
+//*************FOR LEANNES USE */
+// getReport('daily');
 
 const Reports: React.FC = () => {
   const [showChart, setShowChart] = useState(false);
