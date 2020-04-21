@@ -195,7 +195,7 @@ export class DailyReport extends Report {
     }
 
     // I think we'll need to return 7 reports for the page instead of just the first one
-    public static getDailyReport(page) {
+    public static getDailyReport() {
         // var time_frame is this day (the default)
         var time_frame:Period = new Period(moment().startOf('day'), moment());
         time_frame.start = moment();
@@ -218,7 +218,7 @@ export class WeeklyReport extends Report {
     }
 
     // I think we'll need to return 7 reports for the page instead of just the first one
-    public static getWeeklyReport(page) {
+    public static getWeeklyReport() {
         // var time_frame is this week (the default)
         var time_frame:Period = new Period(moment().startOf('week'), moment());
 
@@ -237,7 +237,7 @@ export class MonthlyReport extends Report {
     }
 
     // I think we'll need to return 7 reports for the page instead of just the first one
-    public static getMonthlyReport(page) {
+    public static getMonthlyReport() {
         // var time_frame is this month (the defualt)
         var time_frame:Period = new Period(moment().startOf('month'), moment());
 
@@ -248,19 +248,19 @@ export class MonthlyReport extends Report {
 }
 
 // Redirects to the correct get<Frequency>Report function
-export function getReport(type:String, page:Number){
+export function getReport(type:String){
     switch (type.toLowerCase()) {
         case "daily":
-            DailyReport.getDailyReport(page);
+            DailyReport.getDailyReport();
             break;
         case "weekly":
-            WeeklyReport.getWeeklyReport(page);
+            WeeklyReport.getWeeklyReport();
             break;
         case "monthly":
-            MonthlyReport.getMonthlyReport(page);
+            MonthlyReport.getMonthlyReport();
             break;
         default:
-            DailyReport.getDailyReport(page);
+            DailyReport.getDailyReport();
             break;        
     }
 }
