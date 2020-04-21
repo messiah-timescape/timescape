@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IonContent, IonCard, IonPage } from "@ionic/react";
 import "../styles/Reports.scss";
 import FusionCharts from "fusioncharts";
@@ -7,6 +7,7 @@ import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 import ReactFC from "react-fusioncharts";
 import CountUp from "react-countup";
 import Fade from "react-reveal";
+import CheckAuth from '../helpers/CheckAuth';
 import {getReport} from '../controllers/reports/reports';
 
 ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
@@ -29,12 +30,15 @@ const chartConfigs = {
   dataFormat: "json",
   dataSource: dataSource,
 };
-//*************FOR LEANNES USE */
-// getReport('daily');
 
 const Reports: React.FC = () => {
   const [showChart, setShowChart] = useState(false);
   const [showStats, setshowStats] = useState(false);
+
+  useEffect(() => {
+    CheckAuth();
+    // getReport('daily');
+  }, [])
 
   setTimeout(() => {
     setShowChart(true);
