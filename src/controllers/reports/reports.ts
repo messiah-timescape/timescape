@@ -1,6 +1,6 @@
-import moment, { Duration, Moment } from "moment";
+import moment, { Duration } from "moment";
 import { Period } from "../../models/task";
-import {get_events} from "../user/get_events";
+// import {get_events} from "../user/get_events";
 import CurrentUser from "../user";
 import { Tag } from "../../models";
 
@@ -97,11 +97,11 @@ export class Report {
 
         // this.report_task_collection = [ work_task, school_task, chore_task];
 
-        mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
-            if (events) {
-                this.report_task_collection = this.report_task_collection.concat(events);
-            }
-        }));
+        // mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
+        //     if (events) {
+        //         this.report_task_collection = this.report_task_collection.concat(events);
+        //     }
+        // }));
         await Promise.all(mapping_promises);
     }
 
@@ -127,24 +127,24 @@ export class Report {
             for(var prop in obj) {
                 if(obj.hasOwnProperty(prop)) {
                     // find "completed" on ReportTaskInfo
-                    if (prop == "completed" && obj[prop] == true) {
+                    if (prop === "completed" && obj[prop] === true) {
                         completed++;
                     }
                     // find "work_period" on ReportTaskInfo
-                    if(prop == "work_period") {
+                    if(prop === "work_period") {
                         let period = obj[prop];
                         var start, end;
                         // find the "start" and "end" values
                         for (let val in period) {
-                            if (val == "start") {
+                            if (val === "start") {
                                 start = period[val];
-                            } else if (val == "end") {
+                            } else if (val === "end") {
                                 end = period[val];
                             }
                         }
                     }
                     // find tag and save
-                    if(prop == "tag") {
+                    if(prop === "tag") {
                         tag = obj[prop];
                     }
                 }
