@@ -54,7 +54,6 @@ export class Report {
     // Creates ReportTaskInfo and populates this.report_task_collection
     async getReportData() {
         let user = await CurrentUser.get_loggedin();
-
         let mapping_promises:Promise<any>[] = [];
         user.work_periods
             .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
@@ -107,6 +106,8 @@ export class Report {
 
     // populates all properties that hold aggregated data
     public async fill_calculations() {
+        console.log("Before we check report_task_collection, it is ", this.report_task_collection);
+        console.log("And the time_frame is ", this.time_frame);
         if(this.report_task_collection === undefined) { // Will we use fill_calculations after getReportData? (If so, we need this if statement)
             await this.getReportData();
         }
@@ -201,7 +202,8 @@ export class DailyReport extends Report {
         time_frame.start = moment();
         time_frame.end = moment().startOf('day');
 
-        let report = new DailyReport(time_frame).fill_calculations();
+        let report = new DailyReport({ time_frame: time_frame});
+        report.fill_calculations();
         this.populate_timeline();
         return report;
     }
