@@ -17,6 +17,7 @@ import AddTask from "../../pages/addTask";
 import Todo from "../../pages/todo";
 import Intro from "../../pages/intro";
 import Survey from "../../pages/survey";
+import Settings from "../../pages/settings";
 import Reports from "../../pages/reports";
 import init_app from "../../init_app";
 
@@ -54,6 +55,7 @@ const App: React.FC = () => {
             <Route path="/todo" component={Todo} exact={true} />
             <Route path="/intro" component={Intro} exact={true} />
             <Route path="/survey" component={Survey} exact={true} />
+            <Route path="/settings" component={Settings} exact={true} />
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 
