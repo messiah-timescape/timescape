@@ -3,6 +3,7 @@ import { Period } from "../../models/task";
 // import {get_events} from "../user/get_events";
 import CurrentUser from "../user";
 import { Tag } from "../../models";
+import { TagColors } from "../../models/field_types";
 
 /**************** NOTE TO SELF *************
  * Weekly and Monthly reports need daily aggregations for productivity (focus_percentage and tasks_completed)
@@ -44,7 +45,7 @@ export class Report {
     tasks_completed!:Number;
     focus_percentage!:Number; // 65 will resemble 65%
     chart_sectors!: ChartSection[];
-    report_task_collection!:ReportTaskInfo[];
+    report_task_collection:ReportTaskInfo[] = [];
 
     constructor(init_fields:object) { // REFACTOR: right now it accepts any object
         Object.assign(this, init_fields);
@@ -52,20 +53,24 @@ export class Report {
     }
 
     // Creates ReportTaskInfo and populates this.report_task_collection
-    async getReportData() {
+    public async getReportData() {
         let user = await CurrentUser.get_loggedin();
+        console.log(`Our user is`, user);
         let mapping_promises:Promise<any>[] = [];
-        user.work_periods
+        await user.work_periods
             .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
             .find().then( work_periods => {
+                console.log(`We've filtered the start time and have ${work_periods}`);
                 for(var prop in work_periods) {
                     if (work_periods[prop].end.isAfter(this.time_frame.end)) {
+                        console.log(`Now we're making sure that the ${work_periods[prop].end} is after ${this.time_frame.end} to remove it.`);
                         var index = parseInt(prop);
                         work_periods.splice(index, 1);
                     }
                 }
-
+                console.log("These are the work_periods we're returning ", work_periods);
                 work_periods.forEach(work_period => {
+                    console.log("And here we have an element of the work_period array ", work_period);
                     mapping_promises.push((async () => {
                         let task = (await work_period.task!.promise);
                         if ( task.tag ) await task.tag.promise;
@@ -77,41 +82,47 @@ export class Report {
                     })());
                 });
             });
-    
-        // var work_task = new ReportTaskInfo({
-        //     completed: true,
-        //     work_period: { start: moment().subtract(2, "days").subtract(3, "hours"), end: moment().subtract(2, "days") },
-        //     tag: "Work"
-        // });
-        // var school_task = new ReportTaskInfo ({
-        //     completed: true,
-        //     work_period: { start: moment().subtract(3, "days").hour(20).minutes(24), end: moment().subtract(3, "days") },
-        //     tag: "School"
-        // });
-        // var chore_task = new ReportTaskInfo({
-        //     completed: false,
-        //     work_period: { start: moment().subtract(1, "day").subtract(4, "hours"), end: moment().subtract(1, "day") },
-        //     tag: "Chore"
-        // });
-
-        // this.report_task_collection = [ work_task, school_task, chore_task];
 
         // mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
         //     if (events) {
         //         this.report_task_collection = this.report_task_collection.concat(events);
         //     }
         // }));
-        await Promise.all(mapping_promises);
+    
+        await Promise.all(mapping_promises);     
+        // var tag = new Tag();
+        // var tag1 = new Tag();
+        // var tag2 = new Tag();
+        // tag.name = "work";
+        // tag1.name = "school";
+        // tag2.name = "chore";
+        // tag.color = TagColors.blue;
+        // tag1.color = TagColors.purple;
+        // tag2.color = TagColors.green;
+
+        // var work_task = new ReportTaskInfo({
+        //     completed: true,
+        //     work_period: new Period(moment().subtract(5, "hours"), moment().subtract(3, "hours")),
+        //     tag: tag
+        // });
+        // var school_task = new ReportTaskInfo ({
+        //     completed: true,
+        //     work_period: new Period(moment().subtract(3, "hours"), moment().subtract(2, "hours")),
+        //     tag: tag1
+        // });
+        // var chore_task = new ReportTaskInfo({
+        //     completed: false,
+        //     work_period: new Period(moment().subtract(7, "hours"), moment().subtract(1, "hour")),
+        //     tag: tag2
+        // });
+
+        // this.report_task_collection = [ work_task, school_task, chore_task];
     }
 
     // populates all properties that hold aggregated data
     public async fill_calculations() {
-        console.log("Before we check report_task_collection, it is ", this.report_task_collection);
-        console.log("And the time_frame is ", this.time_frame);
-        if(this.report_task_collection === undefined) { // Will we use fill_calculations after getReportData? (If so, we need this if statement)
-            await this.getReportData();
-        }
-         
+        await this.getReportData();
+        console.log("This is what we have for the report task collection: ", JSON.stringify(this.report_task_collection));
         // make declarations for all calculations
         var total_focus_time = 0, 
             completed = 0,
@@ -120,7 +131,8 @@ export class Report {
             sector:ChartSection,
             chart_sector:ChartSection[] = [];
 
-        for (const key in this.report_task_collection) {
+        for (var key in this.report_task_collection) {
+            // console.log("We're hitting ", key, " for report_task_collection.");
             var obj = this.report_task_collection[key];
             // reset focus_time for new task info
             focus_time = 0;
@@ -129,53 +141,57 @@ export class Report {
                 if(obj.hasOwnProperty(prop)) {
                     // find "completed" on ReportTaskInfo
                     if (prop === "completed" && obj[prop] === true) {
+                        // console.log(`We've found ${obj[prop]} is the value for ${prop}`);
                         completed++;
                     }
                     // find "work_period" on ReportTaskInfo
                     if(prop === "work_period") {
+                        // console.log(`We've moved on to ${prop}`);
                         let period = obj[prop];
                         var start, end;
                         // find the "start" and "end" values
                         for (let val in period) {
                             if (val === "start") {
+                                // console.log(`The ${val} for ${period.to_json()} is ${period[val]}`);
                                 start = period[val];
                             } else if (val === "end") {
+                                // console.log(`The ${val} for ${period.to_json()} is ${period[val]}`);
                                 end = period[val];
                             }
                         }
                     }
                     // find tag and save
                     if(prop === "tag") {
+                        // console.log(`The ${prop} is ${obj[prop].to_json()} `);
                         tag = obj[prop];
                     }
                 }
             } 
             // subtract start from end to find duration once done looping through properties
             total_focus_time += end - start; 
+            // console.log(`We've caluclated ${total_focus_time} for the total focus time`);
             focus_time += end - start; 
-
+            // console.log(`We've caluclated ${focus_time} for the focus time from the report task info`);
             sector = new ChartSection({
                 category: tag,
                 duration: focus_time
             });  
             
             chart_sector.push(sector);
+            // console.log("We've pushed to the chart_sector and will move on to the next report task info.");
         }
 /************* the following is for focus_percentage; requires retrieving user_settings from current user*/
-        // var user_work_start, user_work_stop;
-        // // retrieve user settings; I'm not sure how to do this when I 
-        // // can't make this calcFocusPercentage() async but also can't
-        // // use a .then(()=> {...}) on the get_settings()
-        // var settings = await get_settings();
-        // user_work_start:any = settings.work_start_time;
-        // user_work_stop:any = settings.work_stop_time;
-           
-        // var totalWorkTime = user_work_stop - user_work_start; 
-/****************************************************************************** 4
+        var user_work_start, user_work_stop;
+        let user = await CurrentUser.get_loggedin();
+        var settings = await user.settings;
+        user_work_start = settings.work_start_time;
+        user_work_stop = settings.work_stop_time;
+        var totalWorkTime = user_work_stop - user_work_start; 
+/****************************************************************************** 
         Add in considerations of Google events (subtract even duration from totalWorkTime)
  ******************************************************************************/
-        var start_work:any = moment().hour(8).minutes(30), stop_work:any = moment().hour(13).minutes(30);
-        var totalWorkTime = stop_work - start_work;
+        //var start_work:any = moment().hour(8).minutes(30), stop_work:any = moment().hour(13).minutes(30);
+        var totalWorkTime = user_work_stop - user_work_start;
 
  /*************/
         this.total_focus_time = moment.duration(total_focus_time); // will change once focus_time is properly calculated
@@ -189,23 +205,17 @@ export class Report {
 
 export class DailyReport extends Report {
     timeline!: TimelineSection[];
-    private static populate_timeline() {
+    private populate_timeline() {
         // loop through this.report_task_collection
         // add things to this.timeline
         // include Google events
     }
 
     // I think we'll need to return 7 reports for the page instead of just the first one
-    public static getDailyReport() {
-        // var time_frame is this day (the default)
-        var time_frame:Period = new Period(moment().startOf('day'), moment());
-        time_frame.start = moment();
-        time_frame.end = moment().startOf('day');
-
-        let report = new DailyReport({ time_frame: time_frame});
-        report.fill_calculations();
+    public getDailyReport() {
+        this.fill_calculations();
         this.populate_timeline();
-        return report;
+        return this;
     }
 
     
@@ -250,10 +260,18 @@ export class MonthlyReport extends Report {
 }
 
 // Redirects to the correct get<Frequency>Report function
-export function getReport(type:String){
+export function getReport(type:String){ 
+    console.log("Get report type = ", type);
     switch (type.toLowerCase()) {
         case "daily":
-            DailyReport.getDailyReport();
+            // var time_frame is this day (the default)
+            // console.log("You called me!");
+            var time_frame:Period = new Period(moment().startOf('day'), moment());
+            let report = new DailyReport({time_frame: time_frame});
+            report.fill_calculations().then( report=> {
+                console.log(report);
+                return report;
+            });
             break;
         case "weekly":
             WeeklyReport.getWeeklyReport();
@@ -262,7 +280,7 @@ export function getReport(type:String){
             MonthlyReport.getMonthlyReport();
             break;
         default:
-            DailyReport.getDailyReport();
+            //
             break;        
     }
 }
