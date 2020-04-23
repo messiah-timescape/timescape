@@ -91,17 +91,17 @@ export class Report {
           var work_task = new ReportTaskInfo({
             completed: true,
             work_period: new Period(moment().subtract(5, "hours"), moment().subtract(3, "hours")),
-            tag: new Tag({name : "work"})
+            tag: new Tag({name : "work", color: "blue"})
         });
         var school_task = new ReportTaskInfo ({
             completed: true,
             work_period: new Period(moment().subtract(3, "hours"), moment().subtract(2, "hours")),
-            tag: new Tag({ name: "School"})
+            tag: new Tag({ name: "School", color: "purple"})
         });
         var chore_task = new ReportTaskInfo({
             completed: false,
             work_period: new Period(moment().subtract(7, "hours"), moment().subtract(1, "hour")),
-            tag: new Tag({ name: "Chore" })
+            tag: new Tag({ name: "Chore", color: "green"})
         });
 
         this.report_task_collection = [ work_task, school_task, chore_task];
