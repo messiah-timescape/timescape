@@ -109,8 +109,7 @@ export class Report {
 
     // populates all properties that hold aggregated data
     public async fill_calculations() {
-            await this.getReportData();
-        
+        await this.getReportData();
          
         // make declarations for all calculations
         var total_focus_time = 0, 
@@ -255,9 +254,11 @@ export function getReport(type:String){
     switch (type.toLowerCase()) {
         case "daily":
             // var time_frame is this day (the default)
+            console.log("You called me!");
             var time_frame:Period = new Period(moment().startOf('day'), moment());
             let report = new DailyReport({time_frame: time_frame});
-            return report.getDailyReport();
+            console.log(report.fill_calculations());
+            return report.fill_calculations();
         case "weekly":
             WeeklyReport.getWeeklyReport();
             break;
