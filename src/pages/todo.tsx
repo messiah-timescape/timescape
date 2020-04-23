@@ -36,6 +36,7 @@ const Todo = () => {
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
   const [tags, setTags] = useState<any>();
   const [renderTasks, setRenderTasks] = useState(false);
+  const [new_tag_model_open, setShow_new_tag_model]:[boolean, Function] = useState<boolean>(false);
 
   useEffect(() => {
     function syncTasks(taskList) {
@@ -54,6 +55,7 @@ const Todo = () => {
 
   const AddEditModal = () => {
     let task = {
+      id: currentEditTask ? currentEditTask.id : undefined,
       order: 1,
       name: currentEditTask ? currentEditTask.name : "",
       notes: currentEditTask ? currentEditTask.notes : "",
@@ -74,6 +76,7 @@ const Todo = () => {
     }
 
     function generateTagSelection() {
+      // set_new_tag_model_open(false);
       let temp: any = [];
 
       if (tags) {
@@ -96,13 +99,18 @@ const Todo = () => {
         });
       }
 
+      temp.push(
+        <IonSelectOption value='AddTag' key='AddTag'>
+          Add +
+        </IonSelectOption>
+      )
       return temp;
     }
 
     return (
       <IonModal
         isOpen={true}
-        onDidDismiss={() => setShowEdit(false)}
+        onDidDismiss={() => {setShowEdit(false);}}
         cssClass="edit-modal"
       >
         <IonContent className="ion-padding">
@@ -119,7 +127,7 @@ const Todo = () => {
               className="save-button"
               onClick={() => {
                 setShowEdit(false);
-                currentEditTask ? handleEdit() : handleAdd();
+                (currentEditTask && currentEditTask.id) ? handleEdit() : handleAdd();
               }}
             >
               Save
@@ -144,11 +152,19 @@ const Todo = () => {
               name="tags"
               id="tags-field"
               multiple={false}
+              interface='popover'
               placeholder="Add Tag"
               onIonChange={(e) => {
-                task.tag = new UsermodelDto(
-                  (e.target as HTMLInputElement).value
-                );
+                let selection = (e.target as HTMLInputElement).value;
+                if (selection === 'AddTag') {
+                  setShowEdit(false);
+                  setCurrentEditTask(task);
+                  setShow_new_tag_model(true);
+                } else {
+                  task.tag = new UsermodelDto(
+                    (e.target as HTMLInputElement).value
+                  );
+                }
               }}
             >
               {generateTagSelection()}
@@ -320,6 +336,51 @@ const Todo = () => {
     );
   };
 
+  const NewTagModel = () => {
+    
+    return <IonModal
+      isOpen={new_tag_model_open}
+      onDidDismiss={() => {
+        setShow_new_tag_model(false);
+        setShowEdit(true);
+        setCurrentEditTask(undefined);
+      }}
+      cssClass="new-tag-modal"
+    ><IonContent className="ion-padding">
+    <div className="modal-buttons">
+      <p
+        className="cancel-button"
+        onClick={() => {
+          setShow_new_tag_model(false);
+        }}
+      >
+        Cancel
+      </p>
+      <p
+        className="save-button"
+        onClick={() => {
+          setShow_new_tag_model(false);
+        }}
+      >
+        Save
+      </p>
+    </div>
+
+    <IonItem className="input-item">
+      <IonInput
+        name="name"
+        placeholder="Tag Name"
+        id="name-field"
+        required
+        onIonChange={(e) => {
+          // task.name = (e.target as HTMLInputElement).value;
+        }}
+      ></IonInput>
+    </IonItem>
+  </IonContent>
+    </IonModal>
+  }
+
   const LoadingScreen = () => {
     return (
       <div className="lds-ripple">
@@ -343,6 +404,7 @@ const Todo = () => {
 
           <DeleteModal />
           {showEdit ? <AddEditModal /> : <React.Fragment />}
+          <NewTagModel/>
         </IonContent>
       </IonPage>
     </div>
