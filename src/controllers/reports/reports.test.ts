@@ -1,5 +1,5 @@
-import { Report } from "./reports";
-import { Period } from "../../models";
+import { Report, ReportTaskInfo, getReport } from "./reports";
+import { Period, Tag } from "../../models";
 import moment from "moment";
 import init_app from "../../init_app";
 import { TestLoginActions } from "../user/login.test";
@@ -19,16 +19,21 @@ describe ("Report tests", ()=>{
         let time_frame = new Period(moment().subtract(1, "day"), moment());
         
         var report = new Report({ time_frame: time_frame });
-        report = await report.fill_calculations();
-        console.log(report);
-        console.log(report.report_task_collection);
+        var work_tag, school_tag, chore_tag;
+        work_tag = await new Tag();
+        work_tag.name = "work";
+        work_tag.color = "blue";
+        // console.log(work_tag);
+        // report = await report.fill_calculations();
+        // console.log(report);
+        // console.log(report.report_task_collection);
+        console.log("Let's call getReport() ", await getReport('daily'));
         done();
     });
 
     // it('let\'s try to run a query and see what we get', async ()=> {
     //     let user = await CurrentUser.get_loggedin();
     //     let report = new Report({time_frame: new Period(moment().subtract(1, 'day'), moment())});
-    //     console.log(report.time_frame.start);
     //     let mapping_promises:Promise<any>[] = [];
     //     user.work_periods
     //         .whereGreaterOrEqualThan('start', report.time_frame.start.toDate())
@@ -36,7 +41,6 @@ describe ("Report tests", ()=>{
     //             console.log(`We've filtered the start time and have ${work_periods}`);
     //             for(var prop in work_periods) {
     //                 if (work_periods[prop].end.isAfter(report.time_frame.end)) {
-    //                     console.log(`Now we're making sure that the ${work_periods[prop].end} is after ${this.time_frame.end} to remove it.`);
     //                     var index = parseInt(prop);
     //                     work_periods.splice(index, 1);
     //                 }

@@ -54,34 +54,34 @@ export class Report {
 
     // Creates ReportTaskInfo and populates this.report_task_collection
     public async getReportData() {
-        // let user = await CurrentUser.get_loggedin();
-        // console.log(`Our user is`, user);
-        // let mapping_promises:Promise<any>[] = [];
-        // user.work_periods
-        //     .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
-        //     .find().then( work_periods => {
-        //         console.log(`We've filtered the start time and have ${work_periods}`);
-        //         for(var prop in work_periods) {
-        //             if (work_periods[prop].end.isAfter(this.time_frame.end)) {
-        //                 console.log(`Now we're making sure that the ${work_periods[prop].end} is after ${this.time_frame.end} to remove it.`);
-        //                 var index = parseInt(prop);
-        //                 work_periods.splice(index, 1);
-        //             }
-        //         }
-        //         console.log("These are the work_periods we're returning ", work_periods);
-        //         work_periods.forEach(work_period => {
-        //             console.log("And here we have an element of the work_period array ", work_period);
-        //             mapping_promises.push((async () => {
-        //                 let task = (await work_period.task!.promise);
-        //                 if ( task.tag ) await task.tag.promise;
-        //                 this.report_task_collection.push(new ReportTaskInfo({
-        //                     completed: task.completed,
-        //                     work_period: work_period,
-        //                     tag: (task.tag)?task.tag.model:undefined
-        //                 }));
-        //             })());
-        //         });
-        //     });
+        let user = await CurrentUser.get_loggedin();
+        console.log(`Our user is`, user);
+        let mapping_promises:Promise<any>[] = [];
+        await user.work_periods
+            .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
+            .find().then( work_periods => {
+                console.log(`We've filtered the start time and have ${work_periods}`);
+                for(var prop in work_periods) {
+                    if (work_periods[prop].end.isAfter(this.time_frame.end)) {
+                        console.log(`Now we're making sure that the ${work_periods[prop].end} is after ${this.time_frame.end} to remove it.`);
+                        var index = parseInt(prop);
+                        work_periods.splice(index, 1);
+                    }
+                }
+                console.log("These are the work_periods we're returning ", work_periods);
+                work_periods.forEach(work_period => {
+                    console.log("And here we have an element of the work_period array ", work_period);
+                    mapping_promises.push((async () => {
+                        let task = (await work_period.task!.promise);
+                        if ( task.tag ) await task.tag.promise;
+                        this.report_task_collection.push(new ReportTaskInfo({
+                            completed: task.completed,
+                            work_period: work_period,
+                            tag: (task.tag)?task.tag.model:undefined
+                        }));
+                    })());
+                });
+            });
 
         // mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
         //     if (events) {
@@ -89,40 +89,40 @@ export class Report {
         //     }
         // }));
     
-        // await Promise.all(mapping_promises);     
-        var tag = new Tag();
-        var tag1 = new Tag();
-        var tag2 = new Tag();
-        tag.name = "work";
-        tag1.name = "school";
-        tag2.name = "chore";
-        tag.color = TagColors.blue;
-        tag1.color = TagColors.purple;
-        tag2.color = TagColors.green;
+        await Promise.all(mapping_promises);     
+        // var tag = new Tag();
+        // var tag1 = new Tag();
+        // var tag2 = new Tag();
+        // tag.name = "work";
+        // tag1.name = "school";
+        // tag2.name = "chore";
+        // tag.color = TagColors.blue;
+        // tag1.color = TagColors.purple;
+        // tag2.color = TagColors.green;
 
-        var work_task = new ReportTaskInfo({
-            completed: true,
-            work_period: new Period(moment().subtract(5, "hours"), moment().subtract(3, "hours")),
-            tag: tag
-        });
-        var school_task = new ReportTaskInfo ({
-            completed: true,
-            work_period: new Period(moment().subtract(3, "hours"), moment().subtract(2, "hours")),
-            tag: tag1
-        });
-        var chore_task = new ReportTaskInfo({
-            completed: false,
-            work_period: new Period(moment().subtract(7, "hours"), moment().subtract(1, "hour")),
-            tag: tag2
-        });
+        // var work_task = new ReportTaskInfo({
+        //     completed: true,
+        //     work_period: new Period(moment().subtract(5, "hours"), moment().subtract(3, "hours")),
+        //     tag: tag
+        // });
+        // var school_task = new ReportTaskInfo ({
+        //     completed: true,
+        //     work_period: new Period(moment().subtract(3, "hours"), moment().subtract(2, "hours")),
+        //     tag: tag1
+        // });
+        // var chore_task = new ReportTaskInfo({
+        //     completed: false,
+        //     work_period: new Period(moment().subtract(7, "hours"), moment().subtract(1, "hour")),
+        //     tag: tag2
+        // });
 
-        this.report_task_collection = [ work_task, school_task, chore_task];
+        // this.report_task_collection = [ work_task, school_task, chore_task];
     }
 
     // populates all properties that hold aggregated data
     public async fill_calculations() {
         await this.getReportData();
-        // console.log("This is what we have for the report task collection: ", this.report_task_collection);
+        console.log("This is what we have for the report task collection: ", JSON.stringify(this.report_task_collection));
         // make declarations for all calculations
         var total_focus_time = 0, 
             completed = 0,
@@ -182,9 +182,6 @@ export class Report {
         }
 /************* the following is for focus_percentage; requires retrieving user_settings from current user*/
         var user_work_start, user_work_stop;
-        // retrieve user settings; I'm not sure how to do this when I 
-        // can't make this calcFocusPercentage() async but also can't
-        // use a .then(()=> {...}) on the get_settings()
         let user = await CurrentUser.get_loggedin();
         var settings = await user.settings;
         user_work_start = settings.work_start_time;
