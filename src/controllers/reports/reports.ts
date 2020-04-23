@@ -3,6 +3,7 @@ import { Period } from "../../models/task";
 // import {get_events} from "../user/get_events";
 import CurrentUser from "../user";
 import { Tag } from "../../models";
+import { TagColors } from "../../models/field_types";
 
 /**************** NOTE TO SELF *************
  * Weekly and Monthly reports need daily aggregations for productivity (focus_percentage and tasks_completed)
@@ -86,22 +87,24 @@ export class Report {
         // //     }
         // // }));
     
-        // await Promise.all(mapping_promises);
-        
-          var work_task = new ReportTaskInfo({
+        // await Promise.all(mapping_promises);     
+        var tag = new Tag(), tag1 = new Tag(), tag2 = new Tag();
+        tag.name = "work", tag1.name = "school", tag2.name = "chore";
+        tag.color = TagColors.blue, tag1.color = TagColors.purple, tag2.color = TagColors.green;
+        var work_task = new ReportTaskInfo({
             completed: true,
             work_period: new Period(moment().subtract(5, "hours"), moment().subtract(3, "hours")),
-            tag: new Tag({name : "work", color: "blue"})
+            tag: tag
         });
         var school_task = new ReportTaskInfo ({
             completed: true,
             work_period: new Period(moment().subtract(3, "hours"), moment().subtract(2, "hours")),
-            tag: new Tag({ name: "School", color: "purple"})
+            tag: tag1
         });
         var chore_task = new ReportTaskInfo({
             completed: false,
             work_period: new Period(moment().subtract(7, "hours"), moment().subtract(1, "hour")),
-            tag: new Tag({ name: "Chore", color: "green"})
+            tag: tag2
         });
 
         this.report_task_collection = [ work_task, school_task, chore_task];
