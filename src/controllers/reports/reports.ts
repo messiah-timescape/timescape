@@ -55,7 +55,7 @@ export class Report {
     // Creates ReportTaskInfo and populates this.report_task_collection
     public async getReportData() {
         let user = await CurrentUser.get_loggedin();
-        console.log(`Our user is`, user);
+        // console.log(`Our user is`, user);
         let mapping_promises:Promise<any>[] = [];
         await user.work_periods
             .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
@@ -92,7 +92,6 @@ export class Report {
     // populates all properties that hold aggregated data
     public async fill_calculations() {
         await this.getReportData();
-        console.log("This is what we have for the report task collection: ", JSON.stringify(this.report_task_collection));
         // make declarations for all calculations
         var total_focus_time = 0, 
             completed = 0,
@@ -102,7 +101,6 @@ export class Report {
             chart_sector:ChartSection[] = [];
 
         for (var key in this.report_task_collection) {
-            // console.log("We're hitting ", key, " for report_task_collection.");
             var obj = this.report_task_collection[key];
             // reset focus_time for new task info
             focus_time = 0;
@@ -111,28 +109,23 @@ export class Report {
                 if(obj.hasOwnProperty(prop)) {
                     // find "completed" on ReportTaskInfo
                     if (prop === "completed" && obj[prop] === true) {
-                        // console.log(`We've found ${obj[prop]} is the value for ${prop}`);
                         completed++;
                     }
                     // find "work_period" on ReportTaskInfo
                     if(prop === "work_period") {
-                        // console.log(`We've moved on to ${prop}`);
                         let period = obj[prop];
                         var start, end;
                         // find the "start" and "end" values
                         for (let val in period) {
                             if (val === "start") {
-                                // console.log(`The ${val} for ${period.to_json()} is ${period[val]}`);
                                 start = period[val];
                             } else if (val === "end") {
-                                // console.log(`The ${val} for ${period.to_json()} is ${period[val]}`);
                                 end = period[val];
                             }
                         }
                     }
                     // find tag and save
                     if(prop === "tag") {
-                        // console.log(`The ${prop} is ${obj[prop].to_json()} `);
                         tag = obj[prop];
                     }
                 }
@@ -228,16 +221,41 @@ export class MonthlyReport extends Report {
 
 // Redirects to the correct get<Frequency>Report function
 export function getReport(type:String){ 
-    console.log("Get report type = ", type);
     switch (type.toLowerCase()) {
         case "daily":
             // var time_frame is this day (the default)
-            var time_frame:Period = new Period(moment().startOf('day'), moment());
-            let report = new DailyReport({time_frame: time_frame});
-            var time_frame1:Period = new Period(moment().subtract(1, 'day').startOf('day'), moment().subtract(1, 'day').endOf('day'));
-            let report1 = new DailyReport({time_frame: time_frame1});
-            var reports:Promise<Report>[] = [report.fill_calculations(), report1.fill_calculations()];           
-            return reports;
+            var reports:Promise<Report>[] = [];
+            var today, yesterday, two_days_ago, three_days_ago, four_days_ago, five_days_ago, six_days_ago, seven_days_ago;
+            var var_names:Period[] = [];
+            for(var i = 0; i < 8; i++) {
+                var_names[i] = new Period(moment().subtract(i, 'days').startOf('day'), moment().subtract(i, 'days').endOf('day'));
+                let report = new DailyReport({time_frame: var_names[i]});
+                reports.push(report.fill_calculations());                
+            }
+
+            return Promise.all(reports); //.then( values=> {
+            //     console.log(values);
+            // });
+            // break;
+            // var today:Period = new Period(moment().startOf('day'), moment());
+            // let today_report = new DailyReport({time_frame: today});
+
+            // var yesterday:Period = new Period(moment().subtract(1, 'day').startOf('day'), moment().subtract(1, 'day').endOf('day'));
+            // let yesterday_report = new DailyReport({time_frame: yesterday});
+
+            // var two_days_ago:Period = new Period(moment().subtract(2, "days").startOf('day'), moment().subtract(2, "days").endOf('day'));
+            // let two_days_ago_report = new DailyReport({time_frame: two_days_ago});
+
+            // var three_days_ago:Period = new Period(moment().subtract(3, 'days').startOf('day'), moment().subtract(3, 'days').endOf('day'));
+
+            // var four_days_ago:Period = new Period(moment().subtract(4, 'days').startOf('day'), moment().subtract(4, 'days').endOf('day'));
+
+            // var five_days_ago
+
+            // var six_days_ago
+
+            // var seven_days_ago
+            // var reports:Promise<Report>[] = [report.fill_calculations(), report1.fill_calculations()];           
         case "weekly":
             WeeklyReport.getWeeklyReport();
             break;
