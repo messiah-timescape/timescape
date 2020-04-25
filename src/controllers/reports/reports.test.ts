@@ -16,18 +16,7 @@ describe ("Report tests", ()=>{
 
 
     it('runs some functions from report.ts', async done=>{
-        let time_frame = new Period(moment().subtract(1, "day"), moment());
-        
-        var report = new Report({ time_frame: time_frame });
-        var work_tag, school_tag, chore_tag;
-        work_tag = await new Tag();
-        work_tag.name = "work";
-        work_tag.color = "blue";
-        // console.log(work_tag);
-        // report = await report.fill_calculations();
-        // console.log(report);
-        // console.log(report.report_task_collection);
-        console.log("Let's call getReport() ", await getReport('daily'));
+        await getReport('daily');
         done();
     });
 
