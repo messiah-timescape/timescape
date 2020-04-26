@@ -11,31 +11,31 @@ import { TagColors } from "../../models/field_types";
 
 /* A data object to hold all the information we want from the tasks for the report */
 export class ReportTaskInfo {
-    completed!:Boolean;
-    work_period!:Period;
-    tag!:Tag;
+  completed!: Boolean;
+  work_period!: Period;
+  tag!: Tag;
 
-    constructor(init_fields:Partial<ReportTaskInfo>) {
-        Object.assign(this, init_fields);
-        return this;
-    }
+  constructor(init_fields: Partial<ReportTaskInfo>) {
+    Object.assign(this, init_fields);
+    return this;
+  }
 }
 
 /* A section of the pie chart in reports as well as a section in the graph for weekly/monthly reports */
 export class ChartSection {
-    category!: Tag; // Tag.name | "Break" | "Other" ("Other" is cateogry of Task where Task.tag === undefined)
-    duration!: Duration; // is there a way to require fields 'hours' and 'seconds'?
-    
-    constructor(init_fields:object) {
-        Object.assign(this, init_fields);
-        return this;
-    }
+  category!: Tag; // Tag.name | "Break" | "Other" ("Other" is cateogry of Task where Task.tag === undefined)
+  duration!: Duration; // is there a way to require fields 'hours' and 'seconds'?
+
+  constructor(init_fields: object) {
+    Object.assign(this, init_fields);
+    return this;
+  }
 }
 
 /* A section for the timeline in daily report */
 export class TimelineSection {
-    category!: Tag; 
-    section!: Period; // beginning and end of a section
+  category!: Tag;
+  section!: Period; // beginning and end of a section
 }
 
 /* A report with all aggregated data */
@@ -52,42 +52,47 @@ export class Report {
         return this;
     }
 
-    // Creates ReportTaskInfo and populates this.report_task_collection
-    public async getReportData() {
-        let user = await CurrentUser.get_loggedin();
-        // console.log(`Our user is`, user);
-        let mapping_promises:Promise<any>[] = [];
-        await user.work_periods
-            .whereGreaterOrEqualThan('start', this.time_frame.start.toDate())
-            .find().then( work_periods => {
-                for(var prop in work_periods) {
-                    if (work_periods[prop].end.isAfter(this.time_frame.end)) {
-                        var index = parseInt(prop);
-                        work_periods.splice(index, 1);
-                    }
-                }
+  // Creates ReportTaskInfo and populates this.report_task_collection
+  public async getReportData() {
+    let user = await CurrentUser.get_loggedin();
+    // console.log(`Our user is`, user);
+    let mapping_promises: Promise<any>[] = [];
+    await user.work_periods
+      .whereGreaterOrEqualThan("start", this.time_frame.start.toDate())
+      .find()
+      .then((work_periods) => {
+        for (var prop in work_periods) {
+          if (work_periods[prop].end.isAfter(this.time_frame.end)) {
+            var index = parseInt(prop);
+            work_periods.splice(index, 1);
+          }
+        }
 
-                work_periods.forEach(work_period => {
-                    mapping_promises.push((async () => {
-                        let task = (await work_period.task!.promise);
-                        if ( task.tag ) await task.tag.promise;
-                        this.report_task_collection.push(new ReportTaskInfo({
-                            completed: task.completed,
-                            work_period: work_period,
-                            tag: (task.tag)?task.tag.model:undefined
-                        }));
-                    })());
-                });
-            });
+        work_periods.forEach((work_period) => {
+          mapping_promises.push(
+            (async () => {
+              let task = await work_period.task!.promise;
+              if (task.tag) await task.tag.promise;
+              this.report_task_collection.push(
+                new ReportTaskInfo({
+                  completed: task.completed,
+                  work_period: work_period,
+                  tag: task.tag ? task.tag.model : undefined,
+                })
+              );
+            })()
+          );
+        });
+      });
 
-        // mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
-        //     if (events) {
-        //         this.report_task_collection = this.report_task_collection.concat(events);
-        //     }
-        // }));
-    
-        await Promise.all(mapping_promises);     
-    }
+    // mapping_promises.push(get_events(this.time_frame.start, this.time_frame.end).then( events => {
+    //     if (events) {
+    //         this.report_task_collection = this.report_task_collection.concat(events);
+    //     }
+    // }));
+
+    await Promise.all(mapping_promises);
+  }
 
     // populates all properties that hold aggregated data
     public async fill_calculations() {
@@ -177,8 +182,8 @@ export class Report {
         this.focus_percentage = Math.round((focus_time / totalWorkTime) * 100);
         this.chart_sectors = chart_sector;
 
-        return this;
-    }
+    return this;
+  }
 }
 
 export class DailyReport extends Report {
@@ -191,67 +196,58 @@ export class DailyReport extends Report {
 }
 
 export class WeeklyReport extends Report {
-    graph!: ChartSection[];
+  graph!: ChartSection[];
 
-    private static populate_graph() {
-        // loop through this.report_task_collection
-        // add things to this.graph
-    }
+  private static populate_graph() {
+    // loop through this.report_task_collection
+    // add things to this.graph
+  }
 
-    // I think we'll need to return 7 reports for the page instead of just the first one
-    public static getWeeklyReport() {
-        // var time_frame is this week (the default)
-        var time_frame:Period = new Period(moment().startOf('week'), moment());
+  // I think we'll need to return 7 reports for the page instead of just the first one
+  public static getWeeklyReport() {
+    // var time_frame is this week (the default)
+    var time_frame: Period = new Period(moment().startOf("week"), moment());
 
-        let report = new WeeklyReport(time_frame).fill_calculations();
-        this.populate_graph();
-        return report;
-    }
+    let report = new WeeklyReport(time_frame).fill_calculations();
+    this.populate_graph();
+    return report;
+  }
 }
 
 export class MonthlyReport extends Report {
-    graph!: ChartSection[];
+  graph!: ChartSection[];
 
-    private static populate_graph() {
-        // loop through this.report_task_collection
-        // add things to this.graph
-    }
+  private static populate_graph() {
+    // loop through this.report_task_collection
+    // add things to this.graph
+  }
 
-    // I think we'll need to return 7 reports for the page instead of just the first one
-    public static getMonthlyReport() {
-        // var time_frame is this month (the defualt)
-        var time_frame:Period = new Period(moment().startOf('month'), moment());
+  // I think we'll need to return 7 reports for the page instead of just the first one
+  public static getMonthlyReport() {
+    // var time_frame is this month (the defualt)
+    var time_frame: Period = new Period(moment().startOf("month"), moment());
 
-        let report = new MonthlyReport(time_frame).fill_calculations();
-        this.populate_graph();
-        return report;
-    }
+    let report = new MonthlyReport(time_frame).fill_calculations();
+    this.populate_graph();
+    return report;
+  }
 }
 
 // Redirects to the correct get<Frequency>Report function
 export function getReport(type:String){ 
     switch (type.toLowerCase()) {
         case "daily":
-            // var daily_reports:Promise<Report>[] = [];
-            // var time_frames:Period[] = [];
+            var daily_reports:Promise<Report>[] = [];
+            var time_frames:Period[] = [];
 
-            // // create the latest 7 daily reports
-            // for(var i = 0; i < 7; i++) {
-            //     time_frames[i] = new Period(moment().subtract(i, 'days').startOf('day'), moment().subtract(i, 'days').endOf('day'));
-            //     let report = new DailyReport({time_frame: time_frames[i]});
-            //     daily_reports.push(report.fill_calculations());                
-            // }
+            // create the latest 7 daily reports
+            for(var i = 0; i < 7; i++) {
+                time_frames[i] = new Period(moment().subtract(i, 'days').startOf('day'), moment().subtract(i, 'days').endOf('day'));
+                let report = new DailyReport({time_frame: time_frames[i]});
+                daily_reports.push(report.fill_calculations());                
+            }
             
-            // Promise.all(daily_reports).then( reports=> {
-            //     console.log(JSON.stringify(reports));
-            // });
-            // break;
-            var time_frame:Period = new Period(moment().startOf('day'), moment());
-            var report = new DailyReport({ time_frame : time_frame });
-            report.fill_calculations().then( report=> {
-                console.log(JSON.stringify(report).toString());
-            })
-                    
+            return Promise.all(daily_reports);                    
         case "weekly":
             var weekly_reports:Promise<Report>[] = [];
             var week_time_frames:Period[] = [];
@@ -279,7 +275,6 @@ export function getReport(type:String){
             return Promise.all(monthly_reports);        
     }
 }
-
 
 /*****************************************
 * Calculations (from tasks in timeframe):

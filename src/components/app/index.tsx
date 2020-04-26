@@ -19,6 +19,7 @@ import Intro from "../../pages/intro";
 import Survey from "../../pages/survey";
 import Settings from "../../pages/settings";
 import Reports from "../../pages/reports";
+import DailyReport from "../../pages/dailyReport";
 import init_app from "../../init_app";
 
 /* Core CSS required for Ionic components to work properly */
@@ -52,6 +53,7 @@ const App: React.FC = () => {
             <Route path="/register" component={Register} exact={true} />
             <Route path="/addtask" component={AddTask} exact={true} />
             <Route path="/reports" component={Reports} exact={true} />
+            <Route path="/dailyreport" component={DailyReport} exact={true} />
             <Route path="/todo" component={Todo} exact={true} />
             <Route path="/intro" component={Intro} exact={true} />
             <Route path="/survey" component={Survey} exact={true} />
