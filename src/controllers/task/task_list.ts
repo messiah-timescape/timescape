@@ -42,6 +42,9 @@ class TaskList extends CollectionList<Task>{
       group.tasks = [];
     }
     
+    // if (this.current_user.timer.current_task)
+    //   await this.current_user.timer.current_task.promise;
+
     let ordered_groups = [...this.groups].sort((a,b) => a.index - b.index);
     this.model_array.forEach(task => {
       if(task){

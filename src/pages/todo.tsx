@@ -273,28 +273,33 @@ const Todo = () => {
                     taskGroup.tasks.map((task) => {
                       return (
                         <IonItemSliding key={task.id + "tag"}>
-                          <IonItem key={task.id + "item"} onClick={() => {
+                          <IonItem key={task.id + "item"}>
+                            <div className="task" key={task.id}>
+                              <IonItem className="checkbox-div">
+                                <div className="checkbox-div">
+                                    <IonCheckbox
+                                      className="checkbox"
+                                      onClick={() => complete_task(task.id)}
+                                      checked={task.completed}
+                                    />
+                                </div>
+                              </IonItem>
+                              <IonItem onClick={() => {
                                 setCurrentEditTask(task);
                                 setShowEdit(true);
-                              }}>
-                            <div className="task" key={task.id}>
-                              <div className="checkbox-div">
-                                <IonItem>
-                                  <IonCheckbox
-                                    className="checkbox"
-                                    onClick={() => complete_task(task.id)}
-                                    checked={task.completed}
-                                  />
-                                </IonItem>
-                              </div>
-                              <div key={task.id + "task"}>
-                                <p>{task.name}</p>
-                                {task.tag ? (
-                                  <p className={`tag ${task.tag.model.color}`}>
-                                    {task.tag.model.name}
+                              }} className="body">
+                                <div key={task.id + "task"}>
+                                  <p>{task.name}</p>
+                                  <p>
+                                    {task.tag ? (
+                                      <span className={`tag ${task.tag.model.color}`}>
+                                        {task.tag.model.name}
+                                      </span>
+                                    ) : undefined}
+                                    {<span></span>}
                                   </p>
-                                ) : undefined}
-                              </div>
+                                </div>
+                              </IonItem>
                             </div>
                           </IonItem>
                           <IonItemOptions side="start" key={task.id + "slide"}>

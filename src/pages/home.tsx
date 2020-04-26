@@ -24,7 +24,7 @@ import { get_controller } from "../controllers/timer/control_timer";
 import Fade from "react-reveal/Fade";
 import task_sync from "../controllers/task/task_list";
 
-let timer_controller;
+let timer_controller, timer_ctrl_obj;
 const Home: React.FC = () => {
   const [timerView, setTimerView] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -51,24 +51,31 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!timer_controller)
-      timer_controller = get_controller(state_setter).then(async (ctrl) => {
-        if (ctrl.timer.is_started()) {
-          await ctrl.timer.current_task!.promise;
-          if (ctrl.timer.current_task!.model!.tag)
-            await ctrl.timer.current_task!.model!.tag.promise;
-          setCurrentTask(ctrl.timer.current_task!.model);
+    async function init_timer () {
+      if (timer_ctrl_obj.timer.is_started()) {
+        await timer_ctrl_obj.timer.current_task!.promise;
+        if (timer_ctrl_obj.timer.current_task!.model!.tag)
+          await timer_ctrl_obj.timer.current_task!.model!.tag.promise;
+        setCurrentTask(timer_ctrl_obj.timer.current_task!.model);
 
-          setTimerView(true);
-          ctrl.start_counter();
-        }
+        setTimerView(true);
+        timer_ctrl_obj.start_counter();
+      }
+    }
+
+    if (!timer_controller) {
+      timer_controller = get_controller(state_setter).then(async (ctrl) => {
+        timer_ctrl_obj = ctrl;
+        await init_timer();
         return ctrl;
       });
+    } else {
+      timer_ctrl_obj.state_setter = state_setter;
+      init_timer();
+    }
 
     return () => {
-      timer_controller.then( async ctrl => {
-        ctrl.stop_counter()
-      } )
+      timer_ctrl_obj.stop_counter();
     };
   }, []);
 
@@ -82,13 +89,9 @@ const Home: React.FC = () => {
     if (timer_controller) {
       setTimerView(!timerView);
       if (!timerView) {
-        timer_controller.then((ctrl) => {
-          ctrl.start();
-        });
+        timer_ctrl_obj.start();
       } else {
-        timer_controller.then((ctrl) => {
-          ctrl.stop();
-        });
+        timer_ctrl_obj.stop();
       }
       setPaused(false); // if stop timer while on break we want to set it back to an unpaused state
     }
@@ -98,31 +101,21 @@ const Home: React.FC = () => {
     if (timer_controller) {
       setPaused(!paused);
       if (!paused) {
-        console.log("Timer paused");
-
-        timer_controller.then((ctrl) => {
-          ctrl.start_break();
-        });
+        timer_ctrl_obj.start_break();
       } else {
-        console.log("Timer resumed");
-
-        timer_controller.then((ctrl) => {
-          ctrl.start();
-        });
+        timer_ctrl_obj.start();
       }
     }
   }
 
   function complete() {
     if (timer_controller) {
-      timer_controller.then((controller) => {
-        showCompleteTask(true);
-        setTimeout(() => {
-          showCompleteTask(false);
-        }, 2000);
-        controller.complete_task().then(() => {
-          setTimerView(false);
-        });
+      showCompleteTask(true);
+      setTimeout(() => {
+        showCompleteTask(false);
+      }, 2000);
+      timer_ctrl_obj.complete_task().then(() => {
+        setTimerView(false);
       });
     }
   }
