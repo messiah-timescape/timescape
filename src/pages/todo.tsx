@@ -26,7 +26,9 @@ import {
 } from "../controllers/task/task_actions";
 import moment from "moment";
 import Fade from "react-reveal/Fade";
-import { UsermodelDto } from "../models/field_types";
+import { UsermodelDto, TagColors } from "../models/field_types";
+import { create_tag } from "../controllers/tags/tag_actions";
+import { Tag, Task } from "../models";
 import LoadingIcon from "../components/LoadingIcon";
 // import { create_tag } from "../controllers/tags/tag_actions";
 // import { Tag } from "../models/tag";
@@ -35,11 +37,12 @@ import LoadingIcon from "../components/LoadingIcon";
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [currentEditTask, setCurrentEditTask]: [any, any] = useState();
+  const [currentEditTask, setCurrentEditTask]: [Partial<Task> | undefined, any] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
   const [tags, setTags] = useState<any>();
   const [renderTasks, setRenderTasks] = useState(false);
+  const [new_tag_model_open, setShow_new_tag_model]:[boolean, Function] = useState<boolean>(false);
 
   useEffect(() => {
     function syncTasks(taskList) {
@@ -57,35 +60,48 @@ const Todo = () => {
   }, []);
 
   const AddEditModal = () => {
-    let task = {
+    let task:Partial<Task> = {
+      id: currentEditTask ? currentEditTask.id : undefined,
       order: 1,
       name: currentEditTask ? currentEditTask.name : "",
       notes: currentEditTask ? currentEditTask.notes : "",
       deadline: currentEditTask ? currentEditTask.deadline : moment(),
-      tag: currentEditTask ? currentEditTask.tag : null,
+      tag: currentEditTask ? currentEditTask.tag : undefined,
     };
 
     function handleAdd() {
-      create_task(task);
+      if ( task ) {
+        create_task(task);
+      }
       setCurrentEditTask(null);
     }
 
     function handleEdit() {
-      if (task.name.length > 0) {
-        update_task(currentEditTask.id, task);
+      if ( !task.id ) {
+        throw new Error("No id to task you are trying to edit");
+      }
+      if (task.name && task.name.length > 0) {
+        update_task(task.id, task);
       }
       setCurrentEditTask(null);
     }
 
     function generateTagSelection() {
+      // set_new_tag_model_open(false);
       let temp: any = [];
+
+      temp.push(
+        <IonSelectOption value='AddTag' key='AddTag'>
+          Add +
+        </IonSelectOption>
+      )
 
       if (tags) {
         tags.forEach((tag) => {
           let selectBoolean = false;
 
           if (currentEditTask) {
-            if (currentEditTask.tag) {
+            if (currentEditTask.tag && currentEditTask.tag.model) {
               if (currentEditTask.tag.model.name === tag.name) {
                 selectBoolean = true;
               }
@@ -99,14 +115,13 @@ const Todo = () => {
           );
         });
       }
-
       return temp;
     }
 
     return (
       <IonModal
         isOpen={true}
-        onDidDismiss={() => setShowEdit(false)}
+        onDidDismiss={() => {setShowEdit(false);}}
         cssClass="edit-modal"
       >
         <IonContent className="ion-padding">
@@ -123,7 +138,7 @@ const Todo = () => {
               className="save-button"
               onClick={() => {
                 setShowEdit(false);
-                currentEditTask ? handleEdit() : handleAdd();
+                (currentEditTask && currentEditTask.id) ? handleEdit() : handleAdd();
               }}
             >
               Save
@@ -148,11 +163,19 @@ const Todo = () => {
               name="tags"
               id="tags-field"
               multiple={false}
+              interface='popover'
               placeholder="Add Tag"
               onIonChange={(e) => {
-                task.tag = new UsermodelDto(
-                  (e.target as HTMLInputElement).value
-                );
+                let selection:string = (e.target as HTMLInputElement).value;
+                if (selection === 'AddTag') {
+                  setShowEdit(false);
+                  setCurrentEditTask(task);
+                  setShow_new_tag_model(true);
+                } else {
+                  task.tag = new UsermodelDto<Tag>(
+                    (selection as unknown) as Tag
+                  );
+                }
               }}
             >
               {generateTagSelection()}
@@ -175,14 +198,14 @@ const Todo = () => {
             <p>Due:</p>
             <IonDatetime
               name="time"
-              value={
-                currentEditTask
+              value={(task.deadline)?
+                (currentEditTask)
                   ? `${task.deadline.get("month") + 1} ${task.deadline.get(
                       "date"
                     )} ${task.deadline.get("year")}`
                   : `${
                       task.deadline.month() + 1
-                    } ${task.deadline.date()} ${task.deadline.year()}`
+                    } ${task.deadline.date()} ${task.deadline.year()}`:undefined
               }
               displayFormat="MM DD YYYY"
               id="time-field"
@@ -324,6 +347,100 @@ const Todo = () => {
     );
   };
 
+  const NewTagModel = () => {
+    
+    let tag:Partial<Tag> = {};
+
+    const save_new_tag = async () => {
+      return await create_tag( tag );
+    };
+
+    return <IonModal
+      isOpen={new_tag_model_open}
+      onDidDismiss={() => {
+        setShow_new_tag_model(false);
+        setShowEdit(true);
+        // setCurrentEditTask(undefined);
+      }}
+      cssClass="new-tag-modal"
+    ><IonContent className="ion-padding">
+    <div className="modal-buttons">
+      <p
+        className="cancel-button"
+        onClick={() => {
+          setShow_new_tag_model(false);
+        }}
+      >
+        Cancel
+      </p>
+      <p
+        className="save-button"
+        onClick={() => {
+          save_new_tag().then( tag => {
+            setShow_new_tag_model(false);
+            if (!currentEditTask) setCurrentEditTask(new Task());
+            currentEditTask!.tag = new UsermodelDto<Tag>(tag);
+            setCurrentEditTask( currentEditTask );
+          });
+        }}
+      >
+        Save
+      </p>
+    </div>
+
+<IonItem className="input-item">
+  <IonInput
+    name="name"
+    placeholder="Tag Name"
+    id="name-field"
+    required
+    onIonChange={(e) => {
+      tag.name = (e.target as HTMLInputElement).value;
+    }}
+  ></IonInput>
+</IonItem>
+
+<IonItem className="input-item">
+  <IonSelect
+              name="color"
+              id="color-field"
+              multiple={false}
+              interface='popover'
+              placeholder="Select Color"
+              onIonChange={(e) => {
+                let selection:string = (e.target as HTMLInputElement).value;
+                tag.color = TagColors[selection];
+              }}
+            >
+              {(()=>{
+
+                let color_list:JSX.Element[] = [];
+                
+                for (let color in TagColors) {
+                  let selected = tag.color === color;
+                  color_list.push(
+                    <IonSelectOption value={color} key={color} selected={selected} className={color}>
+                      {color}
+                    </IonSelectOption>
+                  )
+                }
+                return color_list;
+              })()}
+            </IonSelect>
+</IonItem>
+  </IonContent>
+    </IonModal>
+  }
+
+  // const LoadingScreen = () => {
+  //   return (
+  //     <div className="lds-ripple">
+  //       <div></div>
+  //       <div></div>
+  //     </div>
+  //   );
+  // };
+
   return (
     <div className="todo-parent-div">
       <IonPage>
@@ -337,6 +454,7 @@ const Todo = () => {
           {renderTasks ? tasksHTML : <LoadingIcon />}
           <DeleteModal />
           {showEdit ? <AddEditModal /> : <React.Fragment />}
+          <NewTagModel/>
         </IonContent>
       </IonPage>
     </div>
