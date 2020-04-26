@@ -9,6 +9,71 @@
 .date-title {
   margin-bottom: 0;
 }
+.report-card {
+  ion-card {
+    margin: 0;
+    margin-top: 12px;
+  }
+  h2 {
+    color: black;
+    margin-bottom: 0;
+  }
+  .total-focus-time {
+    display: flex;
+    .text {
+      flex: 1;
+      h1 {
+        color: black;
+        margin-top: 0;
+      }
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    .yellow-right-arrow {
+      flex: 1;
+      justify-content: flex-end;
+      display: flex;
+      align-items: center;
+      padding-right: 1em;
+
+      .mask {
+        height: 40px;
+        width: 40px;
+        background-color: var(--ion-color-primary);
+        mask: url("../assets/yellow-arrow-right.svg") no-repeat center;
+        mask-size: 30px;
+      }
+    }
+  }
+}
+
+.filter {
+  margin-left: 0;
+  width: fit-content;
+  padding: 1em 1em;
+  border-radius: 10px !important;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 1em 0;
+
+  ion-select {
+    padding: 0;
+    width: 90px;
+  }
+}
+
+.no-tasks-here {
+  width: 100%;
+  position: relative;
+  bottom: 0;
+  text-align: center;
+  color: #9e9e9e94;
+}
 
 .statistics-cards {
   display: flex;
@@ -31,5 +96,11 @@
     h1 {
       color: black;
     }
+  }
+
+  ion-icon {
+    position: absolute;
+    right: 1.1em;
+    bottom: 0.9em;
   }
 }

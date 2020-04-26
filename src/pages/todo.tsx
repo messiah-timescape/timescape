@@ -27,6 +27,7 @@ import {
 import moment from "moment";
 import Fade from "react-reveal/Fade";
 import { UsermodelDto } from "../models/field_types";
+import LoadingIcon from "../components/LoadingIcon";
 // import { create_tag } from "../controllers/tags/tag_actions";
 // import { Tag } from "../models/tag";
 // import { TagColors } from "../models/field_types";
@@ -323,15 +324,6 @@ const Todo = () => {
     );
   };
 
-  const LoadingScreen = () => {
-    return (
-      <div className="lds-ripple">
-        <div></div>
-        <div></div>
-      </div>
-    );
-  };
-
   return (
     <div className="todo-parent-div">
       <IonPage>
@@ -342,7 +334,7 @@ const Todo = () => {
         </div>
 
         <IonContent>
-          {renderTasks ? tasksHTML : <LoadingScreen />}
+          {renderTasks ? tasksHTML : <LoadingIcon />}
           <DeleteModal />
           {showEdit ? <AddEditModal /> : <React.Fragment />}
         </IonContent>
