@@ -16,6 +16,7 @@ import CheckAuth from "../helpers/CheckAuth";
 import { getReport } from "../controllers/reports/reports";
 import LoadingIcon from "../components/LoadingIcon";
 import config from "react-global-configuration";
+import { Tag } from "../models";
 
 ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
 

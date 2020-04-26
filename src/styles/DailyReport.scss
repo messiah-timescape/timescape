@@ -23,3 +23,35 @@
     }
   }
 }
+
+.tag-card {
+  ion-card {
+    color: white;
+    margin: 1em 0;
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    h3 {
+      margin-top: 0;
+      font-weight: 100;
+    }
+  }
+
+  .green {
+    background-image: linear-gradient(315deg, #3bb78f 0%, #0bab64 74%);
+  }
+
+  .blue {
+    background-image: linear-gradient(315deg, #0abcf9 0%, #2c69d1 74%);
+  }
+
+  .purple {
+    background-image: linear-gradient(315deg, #c05fd5 0%, #647dee 74%);
+  }
+
+  .red {
+    background-image: linear-gradient(315deg, #ee8c68 0%, #ff6f6f 74%);
+  }
+}
