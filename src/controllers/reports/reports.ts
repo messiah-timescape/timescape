@@ -42,8 +42,8 @@ export class TimelineSection {
 export class Report {
     time_frame!: Period;
     total_focus_time!: Duration;
-    tasks_completed!:Number;
-    focus_percentage!:Number; // 65 will resemble 65%
+    tasks_completed:number = 0;
+    focus_percentage!:number; // 65 will resemble 65%
     chart_sectors!: ChartSection[];
     report_task_collection:ReportTaskInfo[] = [];
 
@@ -98,7 +98,8 @@ export class Report {
             tag:Tag = new Tag(), 
             focus_time = 0, 
             sector:ChartSection,
-            chart_sector:ChartSection[] = [];
+            chart_sector:ChartSection[] = [],
+            sector_tag_checklist:Tag[] = [];
 
         for (var key in this.report_task_collection) {
             var obj = this.report_task_collection[key];
@@ -126,7 +127,15 @@ export class Report {
                     }
                     // find tag and save
                     if(prop === "tag") {
-                        tag = obj[prop];
+                        console.log("Here's what we get for the tag: ", obj[prop]);
+                        // if tag is undefined, make it "Other"
+                        if(obj[prop] === undefined) {
+                            tag = new Tag();
+                            tag.name = "Other";
+                            tag.color = TagColors.gray;
+                        } else {
+                            tag = obj[prop];
+                        }
                     }
                 }
             } 
@@ -134,12 +143,23 @@ export class Report {
             total_focus_time += end - start; 
             focus_time += end - start; 
 
-            sector = new ChartSection({
-                category: tag,
-                duration: moment.duration(focus_time)
-            });  
-            
-            chart_sector.push(sector);
+            // if the sector_tag_checklist does not contain the tag, create a new chart sector (and add tag to checklist)
+            if(!sector_tag_checklist.includes(tag)) {
+                sector = new ChartSection({
+                    category: tag,
+                    duration: moment.duration(focus_time)
+                }); 
+                chart_sector.push(sector);
+                sector_tag_checklist.push(tag);
+            } else {
+                // find the sector with the same tag
+                chart_sector.forEach( sector => {
+                    if(sector.category === tag) {
+                        // add focus_time to the duration
+                        sector.duration = sector.duration.add(moment.duration(focus_time));
+                    }
+                });
+            }
         }
 /************* the following is for focus_percentage; requires retrieving user_settings from current user*/
         var user_work_start, user_work_stop;
@@ -150,9 +170,7 @@ export class Report {
         var totalWorkTime = user_work_stop - user_work_start;
 /****************************************************************************** 
         Add in considerations of Google events (subtract even duration from totalWorkTime)
- ******************************************************************************/
-        var totalWorkTime = user_work_stop - user_work_start;
-
+ ******************************************************************************
  /*************/
         this.total_focus_time = moment.duration(total_focus_time);
         this.tasks_completed = completed;
@@ -169,16 +187,7 @@ export class DailyReport extends Report {
         // loop through this.report_task_collection
         // add things to this.timeline
         // include Google events
-    }
-
-    // I think we'll need to return 7 reports for the page instead of just the first one
-    public getDailyReport() {
-        this.fill_calculations();
-        this.populate_timeline();
-        return this;
-    }
-
-    
+    }    
 }
 
 export class WeeklyReport extends Report {
@@ -223,48 +232,51 @@ export class MonthlyReport extends Report {
 export function getReport(type:String){ 
     switch (type.toLowerCase()) {
         case "daily":
-            // var time_frame is this day (the default)
-            var reports:Promise<Report>[] = [];
-            var today, yesterday, two_days_ago, three_days_ago, four_days_ago, five_days_ago, six_days_ago, seven_days_ago;
-            var var_names:Period[] = [];
-            for(var i = 0; i < 8; i++) {
-                var_names[i] = new Period(moment().subtract(i, 'days').startOf('day'), moment().subtract(i, 'days').endOf('day'));
-                let report = new DailyReport({time_frame: var_names[i]});
-                reports.push(report.fill_calculations());                
-            }
+            // var daily_reports:Promise<Report>[] = [];
+            // var time_frames:Period[] = [];
 
-            return Promise.all(reports); //.then( values=> {
-            //     console.log(values);
+            // // create the latest 7 daily reports
+            // for(var i = 0; i < 7; i++) {
+            //     time_frames[i] = new Period(moment().subtract(i, 'days').startOf('day'), moment().subtract(i, 'days').endOf('day'));
+            //     let report = new DailyReport({time_frame: time_frames[i]});
+            //     daily_reports.push(report.fill_calculations());                
+            // }
+            
+            // Promise.all(daily_reports).then( reports=> {
+            //     console.log(JSON.stringify(reports));
             // });
             // break;
-            // var today:Period = new Period(moment().startOf('day'), moment());
-            // let today_report = new DailyReport({time_frame: today});
-
-            // var yesterday:Period = new Period(moment().subtract(1, 'day').startOf('day'), moment().subtract(1, 'day').endOf('day'));
-            // let yesterday_report = new DailyReport({time_frame: yesterday});
-
-            // var two_days_ago:Period = new Period(moment().subtract(2, "days").startOf('day'), moment().subtract(2, "days").endOf('day'));
-            // let two_days_ago_report = new DailyReport({time_frame: two_days_ago});
-
-            // var three_days_ago:Period = new Period(moment().subtract(3, 'days').startOf('day'), moment().subtract(3, 'days').endOf('day'));
-
-            // var four_days_ago:Period = new Period(moment().subtract(4, 'days').startOf('day'), moment().subtract(4, 'days').endOf('day'));
-
-            // var five_days_ago
-
-            // var six_days_ago
-
-            // var seven_days_ago
-            // var reports:Promise<Report>[] = [report.fill_calculations(), report1.fill_calculations()];           
+            var time_frame:Period = new Period(moment().startOf('day'), moment());
+            var report = new DailyReport({ time_frame : time_frame });
+            report.fill_calculations().then( report=> {
+                console.log(JSON.stringify(report).toString());
+            })
+                    
         case "weekly":
-            WeeklyReport.getWeeklyReport();
-            break;
+            var weekly_reports:Promise<Report>[] = [];
+            var week_time_frames:Period[] = [];
+
+            // create the latest 7 weekly reports
+            for(var i = 0; i < 7; i++) {
+                week_time_frames[i] = new Period(moment().subtract(i, 'week').startOf('week'), moment().subtract(i, 'week').endOf('week'));
+                let report = new WeeklyReport({time_frame: week_time_frames[i]});
+                weekly_reports.push(report.fill_calculations());                
+            }
+
+            return Promise.all(weekly_reports); 
         case "monthly":
-            MonthlyReport.getMonthlyReport();
-            break;
-        default:
-            //
-            break;        
+            // var time_frame is this day (the default)
+            var monthly_reports:Promise<Report>[] = [];
+            var month_time_frames:Period[] = [];
+
+            // create the latest 7 monthly reports
+            for(i = 0; i < 7; i++) {
+                month_time_frames[i] = new Period(moment().subtract(i, 'month').startOf('month'), moment().subtract(i, 'month').endOf('month'));
+                let report = new MonthlyReport({time_frame: month_time_frames[i]});
+                monthly_reports.push(report.fill_calculations());                
+            }
+
+            return Promise.all(monthly_reports);        
     }
 }
 

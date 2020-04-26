@@ -66,6 +66,7 @@ export enum TagColors {
     red = 'red',
     green = 'green',
     blue = 'blue',
-    purple = 'purple'
+    purple = 'purple',
+    gray = 'gray'
 }
 
