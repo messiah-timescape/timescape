@@ -53,10 +53,8 @@ export class TimerController {
                     current_task
                 ));
                 this.timer.break_start = undefined;
-                console.log("Break over!");
             } else {
                 this.timer.timer_start = moment();
-                console.log("Let's gooo!", this.timer.timer_start);
             }
         }).then( passthrough => {
             this.start_counter();
@@ -67,7 +65,6 @@ export class TimerController {
     async start_break() {
         return this.modify_timer( () => {
             this.timer.break_start = moment();
-            console.log("Break time!");
         }).then( passthrough => {
             this.pause_counter();
             return passthrough;
@@ -98,7 +95,6 @@ export class TimerController {
     async set_current_task(task:Task) {
         return await this.modify_timer( async () => {
             this.timer.current_task = new UsermodelDto<Task>(task);
-            console.log("So this is what you've been working on!");
         });
     }
 
