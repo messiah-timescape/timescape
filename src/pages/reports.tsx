@@ -16,7 +16,6 @@ import CheckAuth from "../helpers/CheckAuth";
 import { getReport } from "../controllers/reports/reports";
 import LoadingIcon from "../components/LoadingIcon";
 import config from "react-global-configuration";
-import { Tag } from "../models";
 
 ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
 
@@ -40,46 +39,6 @@ function getUniqueId() {
 
   return Math.floor(Math.random() * Math.floor(max));
 }
-
-const ReportCard = (reportCard) => {
-  const currentDate =
-    reportCard.reportCard.time_frame.start.format("dddd") +
-    ", " +
-    reportCard.reportCard.time_frame.start.format("MMMM") +
-    " " +
-    reportCard.reportCard.time_frame.start.date();
-
-  return (
-    <div
-      className="report-card"
-      onClick={() => {
-        config.set(
-          { qux: "grault" },
-          { freeze: false, environment: "production" }
-        );
-        config.set({ dailyReport: reportCard });
-      }}
-    >
-      <IonCard routerLink="/dailyreport">
-        <h2>{currentDate}</h2>
-        <div className="total-focus-time">
-          <div className="text">
-            <p>Total focus time</p>
-            <h1>
-              {parseFloat(
-                reportCard.reportCard.total_focus_time.asHours()
-              ).toFixed(2)}{" "}
-              hours
-            </h1>
-          </div>
-          <div className="yellow-right-arrow">
-            <div className="mask" />
-          </div>
-        </div>
-      </IonCard>
-    </div>
-  );
-};
 
 function resetChartVariables() {
   dataSource = {
@@ -108,6 +67,33 @@ function getHexValue(color) {
       return "#6999d0";
     case "purple":
       return "#c05fd5";
+    case "gray":
+      return "#9e9e9e";
+  }
+}
+
+function parseDate(date, filter) {
+  switch (filter) {
+    case "daily": {
+      return (
+        date.format("dddd") + ", " + date.format("MMMM") + " " + date.date()
+      );
+    }
+
+    case "weekly": {
+      return (
+        "Week of " +
+        date.format("dddd") +
+        ", " +
+        date.format("MMMM") +
+        " " +
+        date.date()
+      );
+    }
+
+    case "monthly": {
+      return date.format("MMMM") + " " + date.format("YYYY");
+    }
   }
 }
 
@@ -128,7 +114,6 @@ const Reports: React.FC = () => {
       setReport(res);
 
       console.log(res);
-
       setTimeout(() => {
         setshowStats(true);
       }, 500);
@@ -141,15 +126,47 @@ const Reports: React.FC = () => {
         });
       });
 
-      setMostRecentReportDate(
-        res[0].time_frame.start.format("dddd") +
-          ", " +
-          res[0].time_frame.start.format("MMMM") +
-          " " +
-          res[0].time_frame.start.date()
-      );
+      setMostRecentReportDate(parseDate(res[0].time_frame.start, filter));
     });
-  }, []);
+  }, [filter]);
+
+  const ReportCard = (reportCard) => {
+    const currentDate = parseDate(
+      reportCard.reportCard.time_frame.start,
+      filter
+    );
+
+    return (
+      <div
+        className="report-card"
+        onClick={() => {
+          config.set(
+            { qux: "grault" },
+            { freeze: false, environment: "production" }
+          );
+          config.set({ dailyReport: reportCard });
+        }}
+      >
+        <IonCard routerLink="/dailyreport">
+          <h2>{currentDate}</h2>
+          <div className="total-focus-time">
+            <div className="text">
+              <p>Total focus time</p>
+              <h1>
+                {parseFloat(
+                  reportCard.reportCard.total_focus_time.asHours()
+                ).toFixed(2)}{" "}
+                hours
+              </h1>
+            </div>
+            <div className="yellow-right-arrow">
+              <div className="mask" />
+            </div>
+          </div>
+        </IonCard>
+      </div>
+    );
+  };
 
   return (
     <IonPage>
@@ -170,7 +187,7 @@ const Reports: React.FC = () => {
               >
                 <IonSelectOption value="daily">Daily</IonSelectOption>
                 <IonSelectOption value="weekly">Weekly</IonSelectOption>
-                <IonSelectOption value="monthly">Mont hly</IonSelectOption>
+                <IonSelectOption value="monthly">Monthly</IonSelectOption>
               </IonSelect>
             </IonCard>
             {report ? (

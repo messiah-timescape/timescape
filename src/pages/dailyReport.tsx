@@ -23,7 +23,15 @@ function getHexValue(color) {
       return "#6999d0";
     case "purple":
       return "#c05fd5";
+    case "gray":
+      return "#9e9e9e";
   }
+}
+
+function getUniqueId() {
+  let max = 100000;
+
+  return Math.floor(Math.random() * Math.floor(max));
 }
 
 const DailyReport: React.FC = () => {
@@ -63,8 +71,6 @@ const DailyReport: React.FC = () => {
     dataSource: dataSource,
   };
 
-  console.log(dailyReport);
-
   dailyReport.reportCard.chart_sectors.forEach((sector) => {
     dataSource.data.push({
       label: sector.category ? sector.category.name : "other",
@@ -73,28 +79,17 @@ const DailyReport: React.FC = () => {
     });
   });
 
-  const TagCard = () => {
+  const TagCard = (task) => {
+    let timeFrameText =
+      task.task.work_period.start.format("LT") +
+      " - " +
+      task.task.work_period.end.format("LT");
+
     return (
       <React.Fragment>
-        <IonCard className="green">
-          <h1>3:15am - 4:30am</h1>
-          <h3>#homework</h3>
-        </IonCard>
-        <IonCard className="blue">
-          <h1>4:45am - 6:00am</h1>
-          <h3>#chore</h3>
-        </IonCard>
-        <IonCard className="green">
-          <h1>7:00am - 7:45am</h1>
-          <h3>#homework</h3>
-        </IonCard>
-        <IonCard className="purple">
-          <h1>8:13am - 12:33pm</h1>
-          <h3>#school</h3>
-        </IonCard>
-        <IonCard className="red">
-          <h1>5:00pm - 9:12pm</h1>
-          <h3>#event</h3>
+        <IonCard className={task.task.tag ? task.task.tag.color : "gray"}>
+          <h1>{timeFrameText}</h1>
+          {task.task.tag ? <h3>#{task.task.tag.name}</h3> : <h3>No tag set</h3>}
         </IonCard>
       </React.Fragment>
     );
@@ -145,7 +140,9 @@ const DailyReport: React.FC = () => {
 
             <h3>Your timeline</h3>
             <div className="tag-card">
-              <TagCard />
+              {dailyReport.reportCard.report_task_collection.map((task) => {
+                return <TagCard task={task} key={getUniqueId()} />;
+              })}
             </div>
           </Fade>
         ) : (
