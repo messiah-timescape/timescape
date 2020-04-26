@@ -273,14 +273,19 @@ const Todo = () => {
                     taskGroup.tasks.map((task) => {
                       return (
                         <IonItemSliding key={task.id + "tag"}>
-                          <IonItem key={task.id + "item"}>
+                          <IonItem key={task.id + "item"} onClick={() => {
+                                setCurrentEditTask(task);
+                                setShowEdit(true);
+                              }}>
                             <div className="task" key={task.id}>
                               <div className="checkbox-div">
-                                <IonCheckbox
-                                  className="checkbox"
-                                  onClick={() => complete_task(task.id)}
-                                  checked={task.completed}
-                                />
+                                <IonItem>
+                                  <IonCheckbox
+                                    className="checkbox"
+                                    onClick={() => complete_task(task.id)}
+                                    checked={task.completed}
+                                  />
+                                </IonItem>
                               </div>
                               <div key={task.id + "task"}>
                                 <p>{task.name}</p>
