@@ -43,6 +43,9 @@ import "../theme/variables.scss";
 const App: React.FC = () => {
   init_app();
 
+  let currentTab = window.location.href.split("/");
+  let currentTabString = currentTab[currentTab.length - 1];
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -61,27 +64,35 @@ const App: React.FC = () => {
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
 
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="todo" href="/todo">
-              <IonIcon icon={checkmark} />
-              <IonLabel>To-Do</IonLabel>
-            </IonTabButton>
+          {currentTabString !== "login" &&
+          currentTabString !== "register" &&
+          currentTabString !== "intro" &&
+          currentTabString !== "survey" &&
+          currentTabString !== "addtask" ? (
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="todo" href="/todo">
+                <IonIcon icon={checkmark} />
+                <IonLabel>To-Do</IonLabel>
+              </IonTabButton>
 
-            <IonTabButton tab="reports" href="/reports">
-              <IonIcon icon={document} />
-              <IonLabel>Reports</IonLabel>
-            </IonTabButton>
+              <IonTabButton tab="reports" href="/reports">
+                <IonIcon icon={document} />
+                <IonLabel>Reports</IonLabel>
+              </IonTabButton>
 
-            <IonTabButton tab="home" href="/home">
-              <IonIcon icon={stopwatch} />
-              <IonLabel>Dashboard</IonLabel>
-            </IonTabButton>
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={stopwatch} />
+                <IonLabel>Dashboard</IonLabel>
+              </IonTabButton>
 
-            <IonTabButton tab="settings" href="/settings">
-              <IonIcon icon={settings} />
-              <IonLabel>Settings</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
+              <IonTabButton tab="settings" href="/settings">
+                <IonIcon icon={settings} />
+                <IonLabel>Settings</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          ) : (
+            <IonTabBar></IonTabBar>
+          )}
         </IonTabs>
       </IonReactRouter>
     </IonApp>

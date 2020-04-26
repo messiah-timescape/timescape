@@ -1,6 +1,10 @@
 .div-content {
   text-align: center;
-  position: absolute;
+  // position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   top: 15%;
   left: 50%;
   transform: translate(-50%, 0%);
@@ -15,6 +19,11 @@
     width: 275px;
     margin-top: 2em;
   }
+}
+
+.logo {
+  width: 15em;
+  max-width: 100%;
 }
 
 .alt-login {
@@ -110,6 +119,9 @@
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+.login-button {
 }
 
 main {

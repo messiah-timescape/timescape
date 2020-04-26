@@ -16,6 +16,7 @@ import {
   userlogin_email_password,
   userlogin_google_oauth,
 } from "../controllers/user/login";
+import logo from "../assets/timescape_logo.png";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -70,7 +71,7 @@ const Login: React.FC = () => {
       <IonPage>
         <IonContent class="ion-padding" color="transparent">
           <div className="div-content">
-            <h1>Login</h1>
+            <img src={logo} className="logo" />
 
             <form className="form-login">
               <IonItem className="input">
@@ -126,7 +127,7 @@ const Login: React.FC = () => {
                 </div>
               ) : (
                 <IonButton
-                  className="round-button button"
+                  className="login-button"
                   onClick={() =>
                     handleSubmit(
                       (document.getElementById(
