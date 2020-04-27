@@ -41,10 +41,10 @@ export class TimelineSection {
 /* A report with all aggregated data */
 export class Report {
     time_frame!: Period;
-    total_focus_time!: Duration;
+    total_focus_time: Duration = moment.duration(0);
     tasks_completed:number = 0;
-    focus_percentage!:number; // 65 will resemble 65%
-    chart_sectors!: ChartSection[];
+    focus_percentage:number = 0; // 65 will resemble 65%
+    chart_sectors:ChartSection[] = [];
     report_task_collection:ReportTaskInfo[] = [];
 
     constructor(init_fields:object) { // REFACTOR: right now it accepts any object

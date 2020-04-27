@@ -10,6 +10,11 @@ export let create_task = async (input_task:Partial<Task>)=> {
 
 export let delete_task = async (task_id:string)=> {
     let curr_user = await CurrentUser.get_loggedin();
+    // delete all the work_periods for the task
+    (await curr_user.work_periods!.whereEqualTo("task", task_id).find()).forEach( work_period => {
+        console.log("Deleting work period ", work_period.id);
+        curr_user.work_periods!.delete(work_period.id);
+    });
     return await curr_user.tasks!.delete(task_id);
 }
 
