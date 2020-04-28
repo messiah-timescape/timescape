@@ -104,7 +104,7 @@ export class Report {
             focus_time = 0, 
             sector:ChartSection,
             chart_sector:ChartSection[] = [],
-            sector_tag_checklist:Tag[] = [];
+            sector_tag_checklist:String[] = []; // array of tag id's 
 
         for (var key in this.report_task_collection) {
             var obj = this.report_task_collection[key];
@@ -132,7 +132,6 @@ export class Report {
                     }
                     // find tag and save
                     if(prop === "tag") {
-                        console.log("Here's what we get for the tag: ", obj[prop]);
                         // if tag is undefined, make it "Other"
                         if(obj[prop] === undefined) {
                             tag = new Tag();
@@ -149,13 +148,13 @@ export class Report {
             focus_time += end - start; 
 
             // if the sector_tag_checklist does not contain the tag, create a new chart sector (and add tag to checklist)
-            if(!sector_tag_checklist.includes(tag)) {
+            if(!sector_tag_checklist.includes(tag.id)) {
                 sector = new ChartSection({
                     category: tag,
                     duration: moment.duration(focus_time)
                 }); 
                 chart_sector.push(sector);
-                sector_tag_checklist.push(tag);
+                sector_tag_checklist.push(tag.id);
             } else {
                 // find the sector with the same tag
                 chart_sector.forEach( sector => {
