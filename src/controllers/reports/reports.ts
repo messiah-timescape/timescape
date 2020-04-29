@@ -13,6 +13,7 @@ import { TagColors } from "../../models/field_types";
 export class ReportTaskInfo {
   completed!: Boolean;
   work_period!: Period;
+  task_name!: String;
   tag!: Tag;
 
   constructor(init_fields: Partial<ReportTaskInfo>) {
@@ -68,12 +69,12 @@ export class Report {
 
         var task_complete_checklist:String[] = [], task_completed = false;
 
-        work_periods.forEach((work_period) => { //changed passed to work_periods
+        work_periods.forEach((work_period) => {
           mapping_promises.push(
             (async () => {
               let task = await work_period.task!.promise;
               if (task.tag) await task.tag.promise;
-
+              
               if (task.completed && !task_complete_checklist.includes(task.id)) {
                 task_completed = true;
                 task_complete_checklist.push(task.id);
@@ -85,6 +86,7 @@ export class Report {
                 new ReportTaskInfo({
                   completed: task_completed,
                   work_period: work_period,
+                  task_name: task.name,
                   tag: task.tag ? task.tag.model : undefined,
                 })
               );

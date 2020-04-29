@@ -90,6 +90,7 @@ const DailyReport: React.FC = () => {
         <IonCard className={task.task.tag ? task.task.tag.color : "gray"}>
           <h1>{timeFrameText}</h1>
           {task.task.tag ? <h3>#{task.task.tag.name}</h3> : <h3>No tag set</h3>}
+          <h5>{task.task.task_name}</h5>
         </IonCard>
       </React.Fragment>
     );
