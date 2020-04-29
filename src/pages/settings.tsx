@@ -113,7 +113,7 @@ const Settings: React.FC = () => {
                         <IonLabel>
                             <h1>Personal</h1>
                         </IonLabel>
-                        <IonButton fill="clear" slot="end" onClick={() => setEdit(true)}>edit</IonButton>
+                        <IonButton id="edit-settings-button" fill="clear" slot="end" onClick={() => setEdit(true)}>edit</IonButton>
                     </IonItemDivider>
                     <IonItem lines="none">
                         <IonText>
@@ -162,6 +162,7 @@ const Settings: React.FC = () => {
 
                 <IonModal
                     isOpen={edit}
+                    id="edit-settings-modal"
                     onDidDismiss={() => setEdit(false)}
                 >
                     <IonContent className="ion-padding">

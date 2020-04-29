@@ -9,7 +9,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent,
+  IonCardContent
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import breakIcon from "../assets/breakIcon.png";
@@ -166,10 +166,10 @@ const Home: React.FC = () => {
                   );
                 })
               ) : (
-                <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
-                  No tasks here!
-                </h4>
-              )}
+                  <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+                    No tasks here!
+                  </h4>
+                )}
             </React.Fragment>
           );
         })}
@@ -243,14 +243,14 @@ const Home: React.FC = () => {
           </IonButton>
 
           <IonButton
-          id="cancel-timer"
-          hidden={!showSelectTask}
-          onClick={() => {
-            setShowSelectTask(false);
-          }}
-        >
-          Cancel
-        </IonButton>
+            id="cancel-timer"
+            hidden={!showSelectTask}
+            onClick={() => {
+              setShowSelectTask(false);
+            }}
+          >
+            Cancel
+          </IonButton>
         </IonContent>
 
         <IonModal
@@ -259,74 +259,77 @@ const Home: React.FC = () => {
           cssClass="timer-view"
           backdropDismiss={false}
         >
-          <IonGrid className="timer-grid">
-            <IonRow>
-              <IonCol offset="2">
-                <IonGrid>
-                  <IonRow>
-                    <IonCol size="4" offset="0">
-                      <strong className="big-numbers">
-                        {hours.toString().padStart(2, "0")}
-                      </strong>
-                    </IonCol>
-                    <IonCol size="4">
-                      <strong className="big-numbers">
-                        {minutes.toString().padStart(2, "0")}
-                      </strong>
-                    </IonCol>
-                    <IonCol size="4" className="small-numbers">
-                      <span>{seconds.toString().padStart(2, "0")}</span>
-                    </IonCol>
-                  </IonRow>
-                </IonGrid>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="4" offset="2">
-                <div className="timer-icons" onClick={() => toggleTimer()}>
-                  <img src={stopIcon} alt="" />
-                  <p id="yellow">Stop Working</p>
-                </div>
-              </IonCol>
-              <IonCol size="5">
-                <div className="timer-icons" onClick={() => pauseTimer()}>
-                  <img src={paused ? resumeIcon : breakIcon} alt=""></img>
-                  <p id="blue">{paused ? "Back to Work" : "Take a Break"}</p>
-                </div>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <IonContent>
+            <IonGrid className="timer-grid">
+              <IonRow className="timer">
+                <IonCol size="3" offset="2">
+                  <strong className="big-numbers">
+                    {hours.toString().padStart(2, "0")}
+                  </strong>
+                </IonCol>
 
-          <div className="current-task-section">
-            <p id="current-task-section-head">
-              <strong>Task in Progress</strong>
-            </p>
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>
-                  {currentTask ? currentTask.name : "No task set?"}
-                </IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                {currentTask ? (
-                  <p
-                    className={`tag ${
-                      currentTask.tag ? currentTask.tag.model.color : undefined
-                    }`}
-                  >
-                    {currentTask.tag ? currentTask.tag.model.name : undefined}
-                  </p>
-                ) : undefined}
-              </IonCardContent>
-            </IonCard>
-            <IonButton
-              id="complete-task-button"
-              fill="outline"
-              onClick={() => complete()}
-            >
-              Complete Task
-            </IonButton>
-          </div>
+                <IonCol sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                  <strong className="big-numbers">
+                    {minutes.toString().padStart(2, "0")}
+                  </strong>
+                </IonCol>
+
+                <IonCol className="small-numbers" sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
+                  <span>{seconds.toString().padStart(2, "0")}</span>
+                </IonCol>
+              </IonRow>
+
+              <IonRow>
+                <IonCol>
+                  <div className="timer-icons" onClick={() => toggleTimer()}>
+                    <img src={stopIcon} alt="" />
+                    <p id="yellow">Stop</p>
+                  </div>
+                </IonCol>
+
+                <IonCol>
+                  <div className="timer-icons" onClick={() => pauseTimer()}>
+                    <img src={paused ? resumeIcon : breakIcon} alt=""></img>
+                    <p id="blue">{paused ? "Work" : "Break"}</p>
+                  </div>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+
+            <div className="current-task-section">
+              <p id="current-task-section-head">
+                <strong>Task in Progress</strong>
+              </p>
+
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>
+                    {currentTask ? currentTask.name : "No task set?"}
+                  </IonCardTitle>
+                </IonCardHeader>
+
+                <IonCardContent>
+                  {currentTask ? (
+                    <p
+                      className={`tag ${
+                        currentTask.tag ? currentTask.tag.model.color : undefined
+                        }`}
+                    >
+                      {currentTask.tag ? currentTask.tag.model.name : undefined}
+                    </p>
+                  ) : undefined}
+                </IonCardContent>
+              </IonCard>
+
+              <IonButton
+                id="complete-task-button"
+                fill="outline"
+                onClick={() => complete()}
+              >
+                Complete Task
+                  </IonButton>
+            </div>
+          </IonContent>
         </IonModal>
 
         <IonModal
@@ -335,10 +338,16 @@ const Home: React.FC = () => {
           cssClass="complete-task-modal"
           backdropDismiss={false}
         >
-          <div className="complete-task-div">
-            <img src={taskCompleteIcon} alt="" />
-            <h2>Task Complete!</h2>
-          </div>
+
+          <IonGrid className="complete-task-grid">
+            <IonRow>
+              <img src={taskCompleteIcon} alt="" />
+            </IonRow>
+            <IonRow>
+              <h2>Task Complete!</h2>
+            </IonRow>
+          </IonGrid>
+
         </IonModal>
       </IonPage>
     </React.Fragment>
