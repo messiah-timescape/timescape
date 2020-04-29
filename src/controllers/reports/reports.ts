@@ -40,17 +40,17 @@ export class TimelineSection {
 
 /* A report with all aggregated data */
 export class Report {
-    time_frame!: Period;
-    total_focus_time: Duration = moment.duration(0);
-    tasks_completed:number = 0;
-    focus_percentage:number = 0; // 65 will resemble 65%
-    chart_sectors:ChartSection[] = [];
-    report_task_collection:ReportTaskInfo[] = [];
+  time_frame!: Period;
+  total_focus_time: Duration = moment.duration(0);
+  tasks_completed:number = 0;
+  focus_percentage:number = 0; // 65 will resemble 65%
+  chart_sectors:ChartSection[] = [];
+  report_task_collection:ReportTaskInfo[] = [];
 
-    constructor(init_fields:object) { // REFACTOR: right now it accepts any object
-        Object.assign(this, init_fields);
-        return this;
-    }
+  constructor(init_fields:object) { // REFACTOR: right now it accepts any object
+      Object.assign(this, init_fields);
+      return this;
+  }
 
   // Creates ReportTaskInfo and populates this.report_task_collection
   public async getReportData() {
@@ -61,21 +61,29 @@ export class Report {
       .whereGreaterOrEqualThan("start", this.time_frame.start.toDate())
       .find()
       .then((work_periods) => {
-        for (var prop in work_periods) {
-          if (work_periods[prop].end.isAfter(this.time_frame.end)) {
-            var index = parseInt(prop);
-            work_periods.splice(index, 1);
-          }
-        }
 
-        work_periods.forEach((work_period) => {
+        work_periods = work_periods.filter( element=> {
+            return (element.end.isBefore(this.time_frame.end));
+        });
+
+        var task_complete_checklist:String[] = [], task_completed = false;
+
+        work_periods.forEach((work_period) => { //changed passed to work_periods
           mapping_promises.push(
             (async () => {
               let task = await work_period.task!.promise;
               if (task.tag) await task.tag.promise;
+
+              if (task.completed && !task_complete_checklist.includes(task.id)) {
+                task_completed = true;
+                task_complete_checklist.push(task.id);
+              } else {
+                task_completed = false;
+              }
+
               this.report_task_collection.push(
                 new ReportTaskInfo({
-                  completed: task.completed,
+                  completed: task_completed,
                   work_period: work_period,
                   tag: task.tag ? task.tag.model : undefined,
                 })
@@ -158,7 +166,7 @@ export class Report {
             } else {
                 // find the sector with the same tag
                 chart_sector.forEach( sector => {
-                    if(sector.category === tag) {
+                    if(sector.category === tag) { 
                         // add focus_time to the duration
                         sector.duration = sector.duration.add(moment.duration(focus_time));
                     }
