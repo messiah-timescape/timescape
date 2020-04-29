@@ -105,6 +105,18 @@ export class Report {
     // populates all properties that hold aggregated data
     public async fill_calculations() {
         await this.getReportData();
+
+        // sort work_periods
+        this.report_task_collection.sort( (a, b) => {
+          if (a.work_period.start.isAfter(b.work_period.start)) {
+            return 1;
+          } else if (a.work_period.start.isBefore(b.work_period.start)) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+
         // make declarations for all calculations
         var total_focus_time = 0, 
             completed = 0,
