@@ -6,6 +6,8 @@ import moment from "moment";
 import Weekdays from "../utils/weekdays";
 import CheckAuth from "../helpers/CheckAuth";
 import user from "../controllers/user/index";
+import { get_settings, update_settings } from "../controllers/user/settings";
+import { UserSettings } from "../models/user";
 // import { get_settings } from "../controllers/user/settings";
 const Settings: React.FC = () => {
 
@@ -13,7 +15,7 @@ const Settings: React.FC = () => {
     //------------Replace moment with data from database-----------
     //  - Right now overworkLimit, startWork, and stopWork have test moment values
     //  - Giving them moments from the database is all thats needed to update the display
-    const [overworkLimit, updateOverworkLimit] = useState(moment({hour: 3, minute: 30}));
+    const [overworkLimit, updateOverworkLimit] = useState(moment.duration(3, 'hours'));
     const [startWork, updateStartWork] = useState(moment({hour: 8, minute: 0}));
     const [stopWork, updateStopWork] = useState(moment({hour: 15, minute: 30}));
 
@@ -22,15 +24,45 @@ const Settings: React.FC = () => {
     //  - workdays is an object array for each day of the week
     //  - if isChecked is true for an object then val is a Weekday the user has marked as a workday
     //  ** If this was a dumb way of doing it let me know, I'll fix it **
-    const [workdays] = useState([
-        {val: Weekdays.Monday, isChecked: true},
-        {val: Weekdays.Tuesday, isChecked: true},
-        {val: Weekdays.Wednesday, isChecked: true},
-        {val: Weekdays.Thursday, isChecked: true},
-        {val: Weekdays.Friday, isChecked: true},
-        {val: Weekdays.Saturday, isChecked: true},
-        {val: Weekdays.Sunday, isChecked: true}
+    const [workdays, update_workdays] = useState([
+        {val: Weekdays.Monday, isChecked: false},
+        {val: Weekdays.Tuesday, isChecked: false},
+        {val: Weekdays.Wednesday, isChecked: false},
+        {val: Weekdays.Thursday, isChecked: false},
+        {val: Weekdays.Friday, isChecked: false},
+        {val: Weekdays.Saturday, isChecked: false},
+        {val: Weekdays.Sunday, isChecked: false}
     ]);
+
+    useEffect(()=> {
+        let settings:UserSettings;
+        get_settings().then( response => {
+            settings = response;
+            
+            updateOverworkLimit(settings.overwork_limit);
+            updateStartWork(settings.work_start_time);
+            updateStopWork(settings.work_stop_time);
+            let work_days = [
+                {val: Weekdays.Monday, isChecked: false},
+                {val: Weekdays.Tuesday, isChecked: false},
+                {val: Weekdays.Wednesday, isChecked: false},
+                {val: Weekdays.Thursday, isChecked: false},
+                {val: Weekdays.Friday, isChecked: false},
+                {val: Weekdays.Saturday, isChecked: false},
+                {val: Weekdays.Sunday, isChecked: false}
+            ];
+            // settings.work_days = [];
+            settings.work_days.forEach( work_day => {
+                work_days.map( (row, index) => {
+                    if ( row.val === work_day ) {
+                        row.isChecked = true;
+                    }
+                    return row;
+                })
+            });
+            update_workdays(work_days);
+        });
+    }, []);
 
     const [currentUser, setCurrentUser] = useState(String);
     let token = user.get_loggedin();
@@ -41,28 +73,17 @@ const Settings: React.FC = () => {
         }
     });
 
+    
+
     //--------------Pulls all the data enterd from the edit modal and sets the new values--------------
     function saveSettings(start, stop, limit, m, t, w, r, f, s, u) {
-        console.log("Settings SHALL BE SAVED!!!");
-        console.log("");
-        console.log("----------Before-Updates----------");
-        console.log("startWork: ", startWork);
-        console.log("stopWork: ", stopWork);
-        console.log("overworkLimit: ", overworkLimit);
-        console.log("Monday: ", workdays[0]);
-        console.log("Tuesday: ", workdays[1]);
-        console.log("Wednesday: ", workdays[2]);
-        console.log("Thursday: ", workdays[3]);
-        console.log("Friday: ", workdays[4]);
-        console.log("Saturday: ", workdays[5]);
-        console.log("Sunday: ", workdays[6]);
 
         //----------Updates the variables so all changes are displayed-----------
 
         // parseZone is used to keep the time the same but also fix deprecation issues
         updateStartWork(moment.parseZone(start));
         updateStopWork(moment.parseZone(stop));
-        updateOverworkLimit(moment.parseZone(limit));
+        updateOverworkLimit(moment.duration(limit));
 
         workdays[0].isChecked = m;
         workdays[1].isChecked = t;
@@ -71,20 +92,19 @@ const Settings: React.FC = () => {
         workdays[4].isChecked = f;
         workdays[5].isChecked = s;
         workdays[6].isChecked = u;
-        //-----------End--------------
+        update_workdays(workdays);
 
-        console.log("");
-        console.log("----------After-Updates----------");
-        console.log("startWork: ", startWork);
-        console.log("stopWork: ", stopWork);
-        console.log("overworkLimit: ", overworkLimit);
-        console.log("Monday: ", workdays[0]);
-        console.log("Tuesday: ", workdays[1]);
-        console.log("Wednesday: ", workdays[2]);
-        console.log("Thursday: ", workdays[3]);
-        console.log("Friday: ", workdays[4]);
-        console.log("Saturday: ", workdays[5]);
-        console.log("Sunday: ", workdays[6]);
+        let user_settings:UserSettings = new UserSettings();
+        user_settings.work_start_time = moment.parseZone(start);
+        user_settings.work_stop_time = moment.parseZone(stop);
+        user_settings.overwork_limit = moment.duration(limit);
+        user_settings.work_days = [];
+        workdays.forEach( row => {
+            if ( row.isChecked ){
+                user_settings.work_days.push(row.val);
+            }
+        });
+        update_settings(user_settings);
 
         // Makes the modal go away
         setEdit(false);
@@ -138,7 +158,7 @@ const Settings: React.FC = () => {
                             <p>Avg Work Period:</p>
                         </IonText>
                         <IonText slot="end">
-                            <p>{overworkLimit.format('H:mm')}</p>
+                            <p>{overworkLimit.humanize()}</p>
                         </IonText>
                     </IonItem>
 

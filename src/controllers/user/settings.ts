@@ -17,7 +17,7 @@ export let update_settings = async (input_settings:Partial<UserSettings>)=> {
 }
 
 // returns the user's settings
-export let get_settings = async () =>{
+export let get_settings = async (): Promise<UserSettings> =>{
     let curr_user = await CurrentUser.get_loggedin();
     let user_settings = curr_user.settings;
     return user_settings;

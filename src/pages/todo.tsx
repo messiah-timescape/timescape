@@ -30,6 +30,7 @@ import { UsermodelDto, TagColors } from "../models/field_types";
 import { create_tag } from "../controllers/tags/tag_actions";
 import { Tag, Task } from "../models";
 import LoadingIcon from "../components/LoadingIcon";
+import { get_controller } from "../controllers/timer/control_timer";
 // import { create_tag } from "../controllers/tags/tag_actions";
 // import { Tag } from "../models/tag";
 // import { TagColors } from "../models/field_types";
@@ -43,9 +44,19 @@ const Todo = () => {
   const [tags, setTags] = useState<any>();
   const [renderTasks, setRenderTasks] = useState(false);
   const [new_tag_model_open, setShow_new_tag_model]:[boolean, Function] = useState<boolean>(false);
+  const [current_task, set_current_task]:[Task | undefined, Function] = useState<Task>();
 
   useEffect(() => {
-    function syncTasks(taskList) {
+    async function syncTasks(taskList) {
+      
+      await get_controller(()=>{}).then(async ctrl => {
+        if (ctrl.timer.current_task) {
+          await ctrl.timer.current_task.promise;
+          console.log("Current task set", ctrl.timer.current_task.model)
+          set_current_task(ctrl.timer.current_task.model);
+        }
+      });
+      console.log("Gen tasks");
       setTasksHTML(GenerateTasks(taskList));
       setRenderTasks(true);
     }
@@ -57,6 +68,7 @@ const Todo = () => {
     CheckAuth();
     task_sync(syncTasks);
     tag_sync(syncTags);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const AddEditModal = () => {
@@ -275,9 +287,10 @@ const Todo = () => {
                         <IonItemSliding key={task.id + "tag"}>
                           <IonItem key={task.id + "item"}>
                             <div className="task" key={task.id}>
-                              <IonItem className="checkbox-div">
+                              <IonItem className="checkbox-div" lines="none">
                                 <div className="checkbox-div">
                                     <IonCheckbox
+                                      disabled = {current_task && current_task.id === task.id}
                                       className="checkbox"
                                       onClick={() => complete_task(task.id)}
                                       checked={task.completed}
@@ -287,7 +300,7 @@ const Todo = () => {
                               <IonItem onClick={() => {
                                 setCurrentEditTask(task);
                                 setShowEdit(true);
-                              }} className="body">
+                              }} className="body" lines="none">
                                 <div key={task.id + "task"}>
                                   <p>{task.name}</p>
                                   <p>
@@ -296,7 +309,8 @@ const Todo = () => {
                                         {task.tag.model.name}
                                       </span>
                                     ) : undefined}
-                                    {<span></span>}
+                                    {(current_task && current_task.id === task.id) ?
+                                      <span>Timer running, stop to edit task.</span> : undefined}
                                   </p>
                                 </div>
                               </IonItem>
@@ -398,46 +412,46 @@ const Todo = () => {
       </p>
     </div>
 
-<IonItem className="input-item">
-  <IonInput
-    name="name"
-    placeholder="Tag Name"
-    id="name-field"
-    required
-    onIonChange={(e) => {
-      tag.name = (e.target as HTMLInputElement).value;
-    }}
-  ></IonInput>
-</IonItem>
+    <IonItem className="input-item">
+      <IonInput
+        name="name"
+        placeholder="Tag Name"
+        id="name-field"
+        required
+        onIonChange={(e) => {
+          tag.name = (e.target as HTMLInputElement).value;
+        }}
+      ></IonInput>
+    </IonItem>
 
-<IonItem className="input-item">
-  <IonSelect
-              name="color"
-              id="color-field"
-              multiple={false}
-              interface='popover'
-              placeholder="Select Color"
-              onIonChange={(e) => {
-                let selection:string = (e.target as HTMLInputElement).value;
-                tag.color = TagColors[selection];
-              }}
-            >
-              {(()=>{
+    <IonItem className="input-item">
+      <IonSelect
+                  name="color"
+                  id="color-field"
+                  multiple={false}
+                  interface='popover'
+                  placeholder="Select Color"
+                  onIonChange={(e) => {
+                    let selection:string = (e.target as HTMLInputElement).value;
+                    tag.color = TagColors[selection];
+                  }}
+                >
+                  {(()=>{
 
-                let color_list:JSX.Element[] = [];
-                
-                for (let color in TagColors) {
-                  let selected = tag.color === color;
-                  color_list.push(
-                    <IonSelectOption value={color} key={color} selected={selected} className={color}>
-                      {color}
-                    </IonSelectOption>
-                  )
-                }
-                return color_list;
-              })()}
-            </IonSelect>
-</IonItem>
+                    let color_list:JSX.Element[] = [];
+                    
+                    for (let color in TagColors) {
+                      let selected = tag.color === color;
+                      color_list.push(
+                        <IonSelectOption key={color} selected={selected} className={color}>
+                          <span className={`tag ${color}`}> </span><span>{color}</span>
+                        </IonSelectOption>
+                      )
+                    }
+                    return color_list;
+                  })()}
+                </IonSelect>
+    </IonItem>
   </IonContent>
     </IonModal>
   }
