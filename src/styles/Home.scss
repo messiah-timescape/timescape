@@ -1,7 +1,7 @@
 // -----------Desktop----------
 .timer-grid {
   width: 70%;
-  margin-top: 3em;
+  // margin-top: 3em;
 }
 
 .timer-icons {
@@ -19,9 +19,27 @@
   }
 }
 
-.big-numbers {
-  font-size: calc(24px + (42 - 24) * ((100vw - 300px) / (1600 - 300)));
-  line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px)/(1600 - 300)));
+.left {
+  margin-right: 6em;
+}
+
+.timer-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6em;
+  margin-top: 2em;
+
+  .big-numbers {
+    // font-size: calc(24px + (42 - 24) * ((100vw - 300px) / (1600 - 300)));
+    font-size: 4em;
+    margin-right: 0.3em;
+    // line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px) / (1600 - 300)));
+  }
+
+  .small-numbers {
+    font-size: 2em;
+  }
 }
 
 .small-numbers {
@@ -30,19 +48,27 @@
   --ion-grid-column-padding-md: 1em;
   --ion-grid-column-padding-sm: 1em;
   --ion-grid-column-padding-xs: 0.7em;
-  
+
   span {
     font-size: calc(18px + (22 - 18) * ((100vw - 300px) / (1600 - 300)));
-    line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px)/(1600 - 300)));
+    line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px) / (1600 - 300)));
   }
 }
 
 .current-task-section {
-  position: absolute;
+  // position: absolute;
   top: 37%;
   left: 2.5%;
-  width: 95%;
+  // width: 95%;
 
+  .task-title {
+    text-align: left;
+    margin-top: 0;
+  }
+  ion-card {
+    margin: 0;
+    padding: 1.5em 1em;
+  }
   ion-card-title {
     text-align: left;
   }
@@ -50,21 +76,32 @@
 
 .timer-view {
   height: 90%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
   div {
     box-shadow: none !important;
     text-align: center;
   }
 }
+
+.header {
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-top: 0;
+  }
+}
 //-------------------
 .complete-task-modal {
   div {
-    box-shadow: none !important;
-  }
-  .modal-wrapper {
-    --height: 100%;
-    --width: 100%;
-    position: absolute;
-    bottom: 10%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
   }
 
   .complete-task-grid {
@@ -193,7 +230,8 @@ ion-badge {
 }
 
 #start-timer {
-  width: 50%;
+  width: 80%;
+  display: inline-block;
   position: absolute;
   bottom: 3%;
   left: 50%;
@@ -216,15 +254,22 @@ ion-badge {
 }
 
 #current-task-section-head {
-  padding-left: 1.5em;
-  margin-top: 7em;
+  // padding-left: 1.5em;
+  margin-top: 3em;
+  padding-left: 1em;
+  text-align: left;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
 }
 
 #complete-task-button {
-  position: absolute;
+  // position: absolute;
   width: 70%;
-  left: 50%;
-  transform: translate(-50%);
+  // left: 50%;
+  // transform: translate(-50%);
   color: var(--ion-color-success);
   --color-activated: var(--ion-color-success);
   --border-radius: 25px;

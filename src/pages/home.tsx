@@ -9,7 +9,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent
+  IonCardContent,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import breakIcon from "../assets/breakIcon.png";
@@ -51,7 +51,7 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    async function init_timer () {
+    async function init_timer() {
       if (timer_ctrl_obj.timer.is_started()) {
         await timer_ctrl_obj.timer.current_task!.promise;
         if (timer_ctrl_obj.timer.current_task!.model!.tag)
@@ -166,10 +166,10 @@ const Home: React.FC = () => {
                   );
                 })
               ) : (
-                  <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
-                    No tasks here!
-                  </h4>
-                )}
+                <h4 className="no-tasks-here" key={taskGroup.index + "status"}>
+                  No tasks here!
+                </h4>
+              )}
             </React.Fragment>
           );
         })}
@@ -218,6 +218,7 @@ const Home: React.FC = () => {
             {/* <IonAvatar id="profile-pic"></IonAvatar> put avatar pic here in src */}
 
             <IonButton
+              className="logout-button"
               hidden={timerView || showSelectTask}
               onClick={() => {
                 userlogout().then(() => {
@@ -259,75 +260,63 @@ const Home: React.FC = () => {
           cssClass="timer-view"
           backdropDismiss={false}
         >
-          <IonContent>
-            <IonGrid className="timer-grid">
-              <IonRow className="timer">
-                <IonCol size="3" offset="2">
-                  <strong className="big-numbers">
-                    {hours.toString().padStart(2, "0")}
-                  </strong>
-                </IonCol>
+          <IonContent className="ion-padding">
+            <div className="centering-div">
+              <div className="timer-div">
+                <strong className="big-numbers">
+                  {hours.toString().padStart(2, "0")}
+                </strong>
 
-                <IonCol sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
-                  <strong className="big-numbers">
-                    {minutes.toString().padStart(2, "0")}
-                  </strong>
-                </IonCol>
+                <strong className="big-numbers">
+                  {minutes.toString().padStart(2, "0")}
+                </strong>
 
-                <IonCol className="small-numbers" sizeXs="3" sizeSm="3" sizeMd="3" sizeLg="3">
-                  <span>{seconds.toString().padStart(2, "0")}</span>
-                </IonCol>
-              </IonRow>
+                <span className="small-numbers">
+                  {seconds.toString().padStart(2, "0")}
+                </span>
+              </div>
 
-              <IonRow>
-                <IonCol>
-                  <div className="timer-icons" onClick={() => toggleTimer()}>
-                    <img src={stopIcon} alt="" />
-                    <p id="yellow">Stop</p>
-                  </div>
-                </IonCol>
+              <div className="action-buttons">
+                <div className="timer-icons left" onClick={() => toggleTimer()}>
+                  <img src={stopIcon} alt="" />
+                  <p id="yellow">Stop</p>
+                </div>
 
-                <IonCol>
-                  <div className="timer-icons" onClick={() => pauseTimer()}>
-                    <img src={paused ? resumeIcon : breakIcon} alt=""></img>
-                    <p id="blue">{paused ? "Work" : "Break"}</p>
-                  </div>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
+                <div className="timer-icons" onClick={() => pauseTimer()}>
+                  <img src={paused ? resumeIcon : breakIcon} alt=""></img>
+                  <p id="blue">{paused ? "Work" : "Break"}</p>
+                </div>
+              </div>
 
-            <div className="current-task-section">
-              <p id="current-task-section-head">
-                <strong>Task in Progress</strong>
-              </p>
+              <div className="current-task-section">
+                <p id="current-task-section-head">Task in Progress</p>
 
-              <IonCard>
-                <IonCardHeader>
-                  <IonCardTitle>
+                <IonCard>
+                  <h2 className="task-title">
                     {currentTask ? currentTask.name : "No task set?"}
-                  </IonCardTitle>
-                </IonCardHeader>
+                  </h2>
 
-                <IonCardContent>
                   {currentTask ? (
                     <p
                       className={`tag ${
-                        currentTask.tag ? currentTask.tag.model.color : undefined
-                        }`}
+                        currentTask.tag
+                          ? currentTask.tag.model.color
+                          : undefined
+                      }`}
                     >
                       {currentTask.tag ? currentTask.tag.model.name : undefined}
                     </p>
                   ) : undefined}
-                </IonCardContent>
-              </IonCard>
+                </IonCard>
 
-              <IonButton
-                id="complete-task-button"
-                fill="outline"
-                onClick={() => complete()}
-              >
-                Complete Task
-                  </IonButton>
+                <IonButton
+                  id="complete-task-button"
+                  fill="outline"
+                  onClick={() => complete()}
+                >
+                  Complete Task
+                </IonButton>
+              </div>
             </div>
           </IonContent>
         </IonModal>
@@ -338,16 +327,17 @@ const Home: React.FC = () => {
           cssClass="complete-task-modal"
           backdropDismiss={false}
         >
+          <div>
+            <img src={taskCompleteIcon} alt="" />
+            <h2>Task Complete!</h2>
+          </div>
 
-          <IonGrid className="complete-task-grid">
+          {/* <IonGrid className="complete-task-grid">
             <IonRow>
-              <img src={taskCompleteIcon} alt="" />
             </IonRow>
             <IonRow>
-              <h2>Task Complete!</h2>
             </IonRow>
-          </IonGrid>
-
+          </IonGrid> */}
         </IonModal>
       </IonPage>
     </React.Fragment>

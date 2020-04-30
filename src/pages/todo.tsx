@@ -12,6 +12,7 @@ import {
   IonSelectOption,
   IonSelect,
   IonTextarea,
+  IonCard,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";
@@ -38,21 +39,30 @@ import { get_controller } from "../controllers/timer/control_timer";
 const Todo = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [currentEditTask, setCurrentEditTask]: [Partial<Task> | undefined, any] = useState();
+  const [currentEditTask, setCurrentEditTask]: [
+    Partial<Task> | undefined,
+    any
+  ] = useState();
   const [toDeleteId, setToDeleteId] = useState(0);
   const [tasksHTML, setTasksHTML]: [any, any] = useState();
   const [tags, setTags] = useState<any>();
   const [renderTasks, setRenderTasks] = useState(false);
-  const [new_tag_model_open, setShow_new_tag_model]:[boolean, Function] = useState<boolean>(false);
-  const [current_task, set_current_task]:[Task | undefined, Function] = useState<Task>();
+  const [new_tag_model_open, setShow_new_tag_model]: [
+    boolean,
+    Function
+  ] = useState<boolean>(false);
+  const [current_task, set_current_task]: [
+    Task | undefined,
+    Function
+  ] = useState<Task>();
+  const [showTitleAlert, setShowTitleAlert] = useState(false);
 
   useEffect(() => {
     async function syncTasks(taskList) {
-      
-      await get_controller(()=>{}).then(async ctrl => {
+      await get_controller(() => {}).then(async (ctrl) => {
         if (ctrl.timer.current_task) {
           await ctrl.timer.current_task.promise;
-          console.log("Current task set", ctrl.timer.current_task.model)
+          console.log("Current task set", ctrl.timer.current_task.model);
           set_current_task(ctrl.timer.current_task.model);
         }
       });
@@ -62,17 +72,18 @@ const Todo = () => {
     }
 
     function syncTags(tagList) {
+      console.log(tagList);
       setTags(tagList);
     }
 
     CheckAuth();
     task_sync(syncTasks);
     tag_sync(syncTags);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const AddEditModal = () => {
-    let task:Partial<Task> = {
+    let task: Partial<Task> = {
       id: currentEditTask ? currentEditTask.id : undefined,
       order: 1,
       name: currentEditTask ? currentEditTask.name : "",
@@ -82,14 +93,14 @@ const Todo = () => {
     };
 
     function handleAdd() {
-      if ( task ) {
+      if (task) {
         create_task(task);
       }
       setCurrentEditTask(null);
     }
 
     function handleEdit() {
-      if ( !task.id ) {
+      if (!task.id) {
         throw new Error("No id to task you are trying to edit");
       }
       if (task.name && task.name.length > 0) {
@@ -103,10 +114,10 @@ const Todo = () => {
       let temp: any = [];
 
       temp.push(
-        <IonSelectOption value='AddTag' key='AddTag'>
+        <IonSelectOption value="AddTag" key="AddTag">
           Add +
         </IonSelectOption>
-      )
+      );
 
       if (tags) {
         tags.forEach((tag) => {
@@ -133,7 +144,9 @@ const Todo = () => {
     return (
       <IonModal
         isOpen={true}
-        onDidDismiss={() => {setShowEdit(false);}}
+        // onDidDismiss={() => {
+        //   setShowEdit(false);
+        // }}
         cssClass="edit-modal"
       >
         <IonContent className="ion-padding">
@@ -149,13 +162,27 @@ const Todo = () => {
             <p
               className="save-button"
               onClick={() => {
-                setShowEdit(false);
-                (currentEditTask && currentEditTask.id) ? handleEdit() : handleAdd();
+                if (task.name) {
+                  setShowEdit(false);
+                  currentEditTask && currentEditTask.id
+                    ? handleEdit()
+                    : handleAdd();
+                } else {
+                  setShowTitleAlert(true);
+                }
               }}
             >
               Save
             </p>
           </div>
+
+          <IonAlert
+            isOpen={showTitleAlert}
+            onDidDismiss={() => setShowTitleAlert(false)}
+            header={"Houston, we have a problem."}
+            message={"A task title is required."}
+            buttons={["OK"]}
+          />
 
           <IonItem className="input-item">
             <IonInput
@@ -163,7 +190,6 @@ const Todo = () => {
               placeholder="Add Title"
               value={currentEditTask ? currentEditTask.name : ""}
               id="title-field"
-              required
               onIonChange={(e) => {
                 task.name = (e.target as HTMLInputElement).value;
               }}
@@ -175,11 +201,11 @@ const Todo = () => {
               name="tags"
               id="tags-field"
               multiple={false}
-              interface='popover'
+              interface="popover"
               placeholder="Add Tag"
               onIonChange={(e) => {
-                let selection:string = (e.target as HTMLInputElement).value;
-                if (selection === 'AddTag') {
+                let selection: string = (e.target as HTMLInputElement).value;
+                if (selection === "AddTag") {
                   setShowEdit(false);
                   setCurrentEditTask(task);
                   setShow_new_tag_model(true);
@@ -210,14 +236,16 @@ const Todo = () => {
             <p>Due:</p>
             <IonDatetime
               name="time"
-              value={(task.deadline)?
-                (currentEditTask)
-                  ? `${task.deadline.get("month") + 1} ${task.deadline.get(
-                      "date"
-                    )} ${task.deadline.get("year")}`
-                  : `${
-                      task.deadline.month() + 1
-                    } ${task.deadline.date()} ${task.deadline.year()}`:undefined
+              value={
+                task.deadline
+                  ? currentEditTask
+                    ? `${task.deadline.get("month") + 1} ${task.deadline.get(
+                        "date"
+                      )} ${task.deadline.get("year")}`
+                    : `${
+                        task.deadline.month() + 1
+                      } ${task.deadline.date()} ${task.deadline.year()}`
+                  : undefined
               }
               displayFormat="MM DD YYYY"
               id="time-field"
@@ -289,28 +317,41 @@ const Todo = () => {
                             <div className="task" key={task.id}>
                               <IonItem className="checkbox-div" lines="none">
                                 <div className="checkbox-div">
-                                    <IonCheckbox
-                                      disabled = {current_task && current_task.id === task.id}
-                                      className="checkbox"
-                                      onClick={() => complete_task(task.id)}
-                                      checked={task.completed}
-                                    />
+                                  <IonCheckbox
+                                    disabled={
+                                      current_task &&
+                                      current_task.id === task.id
+                                    }
+                                    className="checkbox"
+                                    onClick={() => complete_task(task.id)}
+                                    checked={task.completed}
+                                  />
                                 </div>
                               </IonItem>
-                              <IonItem onClick={() => {
-                                setCurrentEditTask(task);
-                                setShowEdit(true);
-                              }} className="body" lines="none">
+                              <IonItem
+                                onClick={() => {
+                                  setCurrentEditTask(task);
+                                  setShowEdit(true);
+                                }}
+                                className="body"
+                                lines="none"
+                              >
                                 <div key={task.id + "task"}>
                                   <p>{task.name}</p>
                                   <p>
                                     {task.tag ? (
-                                      <span className={`tag ${task.tag.model.color}`}>
+                                      <span
+                                        className={`tag ${task.tag.model.color}`}
+                                      >
                                         {task.tag.model.name}
                                       </span>
                                     ) : undefined}
-                                    {(current_task && current_task.id === task.id) ?
-                                      <span>Timer running, stop to edit task.</span> : undefined}
+                                    {current_task &&
+                                    current_task.id === task.id ? (
+                                      <span>
+                                        Timer running, stop to edit task.
+                                      </span>
+                                    ) : undefined}
                                   </p>
                                 </div>
                               </IonItem>
@@ -372,98 +413,95 @@ const Todo = () => {
   };
 
   const NewTagModel = () => {
-    
-    let tag:Partial<Tag> = {};
+    let tag: Partial<Tag> = {};
 
     const save_new_tag = async () => {
-      return await create_tag( tag );
+      return await create_tag(tag);
     };
 
-    return <IonModal
-      isOpen={new_tag_model_open}
-      onDidDismiss={() => {
-        setShow_new_tag_model(false);
-        setShowEdit(true);
-        // setCurrentEditTask(undefined);
-      }}
-      cssClass="new-tag-modal"
-    ><IonContent className="ion-padding">
-    <div className="modal-buttons">
-      <p
-        className="cancel-button"
-        onClick={() => {
+    return (
+      <IonModal
+        isOpen={new_tag_model_open}
+        onDidDismiss={() => {
           setShow_new_tag_model(false);
+          setShowEdit(true);
+          // setCurrentEditTask(undefined);
         }}
+        cssClass="new-tag-modal"
       >
-        Cancel
-      </p>
-      <p
-        className="save-button"
-        onClick={() => {
-          save_new_tag().then( tag => {
-            setShow_new_tag_model(false);
-            if (!currentEditTask) setCurrentEditTask(new Task());
-            currentEditTask!.tag = new UsermodelDto<Tag>(tag);
-            setCurrentEditTask( currentEditTask );
-          });
-        }}
-      >
-        Save
-      </p>
-    </div>
+        <IonContent className="ion-padding">
+          <div className="modal-buttons">
+            <p
+              className="cancel-button"
+              onClick={() => {
+                setShow_new_tag_model(false);
+              }}
+            >
+              Cancel
+            </p>
+            <p
+              className="save-button"
+              onClick={() => {
+                save_new_tag().then((tag) => {
+                  setShow_new_tag_model(false);
+                  if (!currentEditTask) setCurrentEditTask(new Task());
+                  currentEditTask!.tag = new UsermodelDto<Tag>(tag);
+                  setCurrentEditTask(currentEditTask);
+                });
+              }}
+            >
+              Save
+            </p>
+          </div>
 
-    <IonItem className="input-item">
-      <IonInput
-        name="name"
-        placeholder="Tag Name"
-        id="name-field"
-        required
-        onIonChange={(e) => {
-          tag.name = (e.target as HTMLInputElement).value;
-        }}
-      ></IonInput>
-    </IonItem>
+          <IonItem className="input-item">
+            <IonInput
+              name="name"
+              placeholder="Tag Name"
+              id="name-field"
+              required
+              onIonChange={(e) => {
+                tag.name = (e.target as HTMLInputElement).value;
+              }}
+            ></IonInput>
+          </IonItem>
 
-    <IonItem className="input-item">
-      <IonSelect
-                  name="color"
-                  id="color-field"
-                  multiple={false}
-                  interface='popover'
-                  placeholder="Select Color"
-                  onIonChange={(e) => {
-                    let selection:string = (e.target as HTMLInputElement).value;
-                    tag.color = TagColors[selection];
-                  }}
-                >
-                  {(()=>{
+          <IonItem className="input-item">
+            <IonSelect
+              name="color"
+              id="color-field"
+              multiple={false}
+              interface="popover"
+              placeholder="Select Color"
+              onIonChange={(e) => {
+                let selection: string = (e.target as HTMLInputElement).value;
+                tag.color = TagColors[selection];
+              }}
+            >
+              {(() => {
+                let color_list: JSX.Element[] = [];
 
-                    let color_list:JSX.Element[] = [];
-                    
-                    for (let color in TagColors) {
-                      let selected = tag.color === color;
-                      color_list.push(
-                        <IonSelectOption key={color} selected={selected} className={color}>
-                          <span className={`tag ${color}`}> </span><span>{color}</span>
-                        </IonSelectOption>
-                      )
-                    }
-                    return color_list;
-                  })()}
-                </IonSelect>
-    </IonItem>
-  </IonContent>
-    </IonModal>
-  }
-
-  // const LoadingScreen = () => {
-  //   return (
-  //     <div className="lds-ripple">
-  //       <div></div>
-  //       <div></div>
-  //     </div>
-  //   );
-  // };
+                for (let color in TagColors) {
+                  let selected = tag.color === color;
+                  color_list.push(
+                    <IonSelectOption
+                      key={color}
+                      selected={selected}
+                      className={color}
+                    >
+                      <span className={`tag ${color}`}> </span>
+                      <span>{color}</span>
+                    </IonSelectOption>
+                  );
+                }
+                return color_list;
+              })()}
+            </IonSelect>
+          </IonItem>
+        </IonContent>
+      </IonModal>
+    );
+  };
 
   return (
     <div className="todo-parent-div">
@@ -478,7 +516,7 @@ const Todo = () => {
           {renderTasks ? tasksHTML : <LoadingIcon />}
           <DeleteModal />
           {showEdit ? <AddEditModal /> : <React.Fragment />}
-          <NewTagModel/>
+          <NewTagModel />
         </IonContent>
       </IonPage>
     </div>
