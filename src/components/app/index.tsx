@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
   let currentTab = window.location.href.split("/");
   let currentTabString = currentTab[currentTab.length - 1];
-
+  console.log(currentTabString, currentTabString in ["login", "register", "intro", "survey", "addtask"]);
   return (
     <IonApp>
       <IonReactRouter>
@@ -63,26 +63,23 @@ const App: React.FC = () => {
             <Route path="/settings" component={Settings} exact={true} />
             <Route exact path="/" render={() => <Redirect to="/home" />} />
           </IonRouterOutlet>
+          {!(["login", "register", "intro", "survey", "addtask"].includes(currentTabString)) ? (
 
-          {currentTabString !== "login" &&
-          currentTabString !== "register" &&
-          currentTabString !== "intro" &&
-          currentTabString !== "survey" &&
-          currentTabString !== "addtask" ? (
             <IonTabBar slot="bottom">
+
               <IonTabButton tab="todo" href="/todo">
                 <IonIcon icon={checkmark} />
                 <IonLabel>To-Do</IonLabel>
               </IonTabButton>
 
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={stopwatch} />
+                <IonLabel>Timer</IonLabel>
+              </IonTabButton>
+
               <IonTabButton tab="reports" href="/reports">
                 <IonIcon icon={document} />
                 <IonLabel>Reports</IonLabel>
-              </IonTabButton>
-
-              <IonTabButton tab="home" href="/home">
-                <IonIcon icon={stopwatch} />
-                <IonLabel>Dashboard</IonLabel>
               </IonTabButton>
 
               <IonTabButton tab="settings" href="/settings">

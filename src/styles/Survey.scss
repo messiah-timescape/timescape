@@ -7,9 +7,7 @@ ion-progress-bar {
 
 .survey-modal-1 {
     max-width: 900px;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
+    margin: 50px;
 
     div {
         --box-shadow: none;
@@ -17,7 +15,7 @@ ion-progress-bar {
     }
 
     .modal-wrapper {
-        height: 60% !important;
+        height: 75% !important;
     }
 
     .modal-title {
@@ -40,19 +38,16 @@ ion-progress-bar {
 
     ion-list {
         ion-item {
-            height: 10%;
+            // height: 10%;
         }
     }
     
     .modal-wrapper {
-        height: 67% !important;
+        height: 75% !important;
     }
 
     .survey-nextButton {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translate(-50%, 0);
+        margin: auto;
     }
 }
 

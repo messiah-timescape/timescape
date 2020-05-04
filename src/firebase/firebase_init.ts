@@ -38,9 +38,9 @@ export default class FirebaseInit{
         if(!check_testing()) {
             this.firestore.enablePersistence().catch(function(err) {
                 if (err.code === 'failed-precondition') {
-                    throw new Error('Multiple tabs open, close all others');
+                    // throw new Error('Multiple tabs open, close all others');
                 } else if (err.code === 'unimplemented' && process.env.JEST_WORKER_ID === undefined) {
-                    throw new Error('I hate your browser');
+                    // throw new Error('I hate your browser');
                 }
             });
         }

@@ -12,7 +12,6 @@ import {
   IonSelectOption,
   IonSelect,
   IonTextarea,
-  IonCard,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "../styles/Todo.scss";

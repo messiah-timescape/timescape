@@ -2,14 +2,8 @@ import {
   IonContent,
   IonPage,
   IonButton,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonModal,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import breakIcon from "../assets/breakIcon.png";
@@ -39,6 +33,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const syncTasks = (taskList) => {
+      console.log(JSON.stringify(taskList));
       setTasksHTML(GenerateTasks(taskList));
     };
 

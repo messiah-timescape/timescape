@@ -120,7 +120,7 @@ export class Report {
         });
 
         // make declarations for all calculations
-        var total_focus_time = 0, 
+        let total_focus_time = 0, 
             completed = 0,
             tag:Tag = new Tag(), 
             focus_time = 0, 
@@ -179,12 +179,13 @@ export class Report {
                 sector_tag_checklist.push(tag.id);
             } else {
                 // find the sector with the same tag
-                chart_sector.forEach( sector => {
-                    if(sector.category === tag) { 
-                        // add focus_time to the duration
-                        sector.duration = sector.duration.add(moment.duration(focus_time));
-                    }
-                });
+                for ( let i; i < chart_sector.length; i++) {
+                  let sector = chart_sector[i];
+                  if(sector.category === tag) { 
+                      // add focus_time to the duration
+                      sector.duration = sector.duration.add(moment.duration(focus_time));
+                  }
+                }
             }
         }
 /************* the following is for focus_percentage; requires retrieving user_settings from current user*/
@@ -262,7 +263,7 @@ export function getReport(type:String){
             var time_frames:Period[] = [];
 
             // create the latest 7 daily reports
-            for(var i = 0; i < 7; i++) {
+            for(let i = 0; i < 7; i++) {
                 time_frames[i] = new Period(moment().subtract(i, 'days').startOf('day'), moment().subtract(i, 'days').endOf('day'));
                 let report = new DailyReport({time_frame: time_frames[i]});
                 daily_reports.push(report.fill_calculations());                
@@ -274,7 +275,7 @@ export function getReport(type:String){
             var week_time_frames:Period[] = [];
 
             // create the latest 7 weekly reports
-            for(var i = 0; i < 7; i++) {
+            for(let i = 0; i < 7; i++) {
                 week_time_frames[i] = new Period(moment().subtract(i, 'week').startOf('week'), moment().subtract(i, 'week').endOf('week'));
                 let report = new WeeklyReport({time_frame: week_time_frames[i]});
                 weekly_reports.push(report.fill_calculations());                
@@ -287,7 +288,7 @@ export function getReport(type:String){
             var month_time_frames:Period[] = [];
 
             // create the latest 7 monthly reports
-            for(i = 0; i < 7; i++) {
+            for(let i = 0; i < 7; i++) {
                 month_time_frames[i] = new Period(moment().subtract(i, 'month').startOf('month'), moment().subtract(i, 'month').endOf('month'));
                 let report = new MonthlyReport({time_frame: month_time_frames[i]});
                 monthly_reports.push(report.fill_calculations());                

@@ -71,7 +71,7 @@ const Login: React.FC = () => {
       <IonPage>
         <IonContent class="ion-padding" color="transparent">
           <div className="div-content">
-            <img src={logo} className="logo" />
+            <img src={logo} className="logo" alt=''/>
 
             <form className="form-login">
               <IonItem className="input">
